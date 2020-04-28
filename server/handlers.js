@@ -410,7 +410,7 @@ const handleUserEvents = async (req, res, next) => {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     });
-    //dsfsdf
+    //dsfsdfasddsa
     //connect to db
     client.connect(async (err) => {
         if (err) throw { Error: err, message: "error occured connected to DB" }
