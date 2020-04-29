@@ -24,6 +24,7 @@
     "react-scripts": "3.4.1",
     "react-use-auth": "^0.6.1",
     "redux": "^4.0.5",
+    "spherical-geometry-js": "^2.0.0",
     "styled-components": "^5.1.0"
   },
   "scripts": {

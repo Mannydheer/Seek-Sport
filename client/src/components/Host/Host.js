@@ -35,6 +35,8 @@ const skillLevel = [
 
 const Host = () => {
 
+
+
     const userLoggedIn = useSelector(state => state.userReducer);
     //use this for real.
     const selectedPark = useSelector(state => state.parkReducer.selectedPark);
@@ -60,7 +62,9 @@ const Host = () => {
             skillSelect !== "Choose skill level" &&
             selectedPark !== null &&
             //make sure the time is past the actual current time.
-            currentMinutes <= startMinutes) {
+            startDate.getTime() > new Date().getTime()) {
+
+            console.log(startDate.getTime(), new Date().getTime())
 
 
             let hostingInformation = {
@@ -79,6 +83,7 @@ const Host = () => {
                 Registration: new Date(),
                 isBooked: true,
                 readTime: startDate.toLocaleTimeString(),
+                bookedDate: startDate.toLocaleDateString(),
                 time: startDate,
                 duration: parseInt(duration)
 
@@ -102,6 +107,7 @@ const Host = () => {
                     })
                 })
                 let hostResponse = await response.json()
+                console.log(hostResponse)
                 //ADD DISPATCHED?
                 if (hostResponse.status === 200) {
                     setSuccess(hostResponse.message)
@@ -117,7 +123,7 @@ const Host = () => {
         }
         //if any of the cases fail. 
         else {
-            return
+            setSuccess('Invalid time booking.')
         }
     }
 
