@@ -38,67 +38,29 @@ const Host = () => {
     const userLoggedIn = useSelector(state => state.userReducer);
     //use this for real.
     const selectedPark = useSelector(state => state.parkReducer.selectedPark);
-    const allEvents = useSelector(state => state.eventReducer.events);
 
 
     //
     const [sportSelect, setSportSelect] = useState("Choose sport");
     const [skillSelect, setSkillSelect] = useState("Choose skill level");
-    const [time, setTime] = useState("Choose Time");
-    const [fieldError, setFieldError] = useState(false);
+    const [duration, setDuration] = useState(1);
     const [success, setSuccess] = useState(false);
-    const [timeError, setTimeError] = useState(null);
-
-
-    // const [minutes, setMinutes] = useState(new Date(), 30)
-    // const [hours, setHours] = useState(setMinutes(new Date(), 30), 17)
     const [startDate, setStartDate] = useState(new Date())
-
-    // console.log(minutes)
-    // console.log(hours)
-    // console.log(startDate)
-
-
-    const dispatch = useDispatch();
-
-
 
     const handleHostInformation = async (event) => {
         //add selected park.
         event.preventDefault();
-
-        let allowFetch = false;
-
-        //need to check if there are any other bookings at the park for that specific time.
-        //first check if that there are any events at the selected park.
-        if (allEvents.events[selectedPark.id]) {
-            //if there are, loop through and see if any of the times match with the time inserted.
-            let matchedTime = allEvents.events[selectedPark.id].find(park => {
-                if (park.time === startDate.toLocaleTimeString()) {
-                    return true
-                }
-            })
-            if (matchedTime) {
-                //if there is a time already, cannot fetch. 
-                allowFetch = false
-                setTimeError("Seems like there already a booking at that time. ")
-            }
-            else {
-                allowFetch = true
-            }
-
-        } else {
-            //if there isnt any matched times 
-            allowFetch(true)
-        }
+        //---------------------TIME ----------------------------
+        let d = new Date();
+        let currentMinutes = d.getHours() * 60 + d.getMinutes()
+        let startMinutes = startDate.getHours() * 60 + startDate.getMinutes()
 
         //ONLY IF ALLOW FETCH IS TRUE.
         if (sportSelect !== "Choose sport" &&
             skillSelect !== "Choose skill level" &&
             selectedPark !== null &&
             //make sure the time is past the actual current time.
-            startDate.getTime() > (new Date().getTime()) &&
-            allowFetch) {
+            currentMinutes <= startMinutes) {
 
 
             let hostingInformation = {
@@ -116,7 +78,9 @@ const Host = () => {
                 parkId: selectedPark.id,
                 Registration: new Date(),
                 isBooked: true,
-                time: startDate.toLocaleTimeString()
+                readTime: startDate.toLocaleTimeString(),
+                time: startDate,
+                duration: parseInt(duration)
 
 
             }
@@ -136,39 +100,31 @@ const Host = () => {
                         eventInformation: eventInformation,
                         hostingInformation: hostingInformation
                     })
-
                 })
+                let hostResponse = await response.json()
                 //ADD DISPATCHED?
-                if (response.status === 200) {
-                    setSuccess(true)
-                    setFieldError(false)
-                    let hostReponse = await response.json()
+                if (hostResponse.status === 200) {
+                    setSuccess(hostResponse.message)
                 }
-
+                else if (hostResponse.status === 400) {
+                    console.log(hostResponse.message)
+                    setSuccess(hostResponse.message)
+                }
             }
             catch (err) {
                 console.log(err, "catch error inside handleHosting in Host component.")
             }
-
-
         }
-
         //if any of the cases fail. 
         else {
-            setFieldError(true)
+            return
         }
     }
 
-
     const handleChange = (date) => {
-
         console.log(date)
         setStartDate(date)
     };
-
-
-
-
 
     return (
 
@@ -191,12 +147,8 @@ const Host = () => {
                         )
                     })}
                 </select>
-                {/* <input type='text'></input>
-                <input type='text'></input> */}
-                <button type='submit'>Submit</button>
-                {fieldError && <div>Something went wrong. Keep in mind you cannot book an event past your current time.</div>}
-                {success && <div>Thanks for signing up.</div>}
-                {timeError !== null && <div>{timeError}</div>}
+
+
                 <DatePicker
                     todayButton="Today"
                     selected={startDate}
@@ -210,6 +162,14 @@ const Host = () => {
                     timeCaption="time"
                     dateFormat="MMMM d, yyyy h:mm aa"
                 />
+                <select required onChange={(event) => setDuration(event.target.value)}>
+                    <option>Duration (hrs)</option>
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                </select>
+                <button type='submit'>Submit</button>
+                {success !== false && <div>{success}</div>}
 
 
             </form>

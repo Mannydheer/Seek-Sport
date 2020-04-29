@@ -263,13 +263,25 @@ const handleHosting = async (req, res, next) => {
     //authorization through token gets validated first. 
     console.log('inside handle hOSTINGLSDKJFLKDSJFLJSFJSDFLKJSDFLKJ')
 
-    let hostingInformation = req.body.hostingInformation
-    let eventInformation = req.body.eventInformation
+    let hostingInformation = req.body.hostingInformation;
+    let eventInformation = req.body.eventInformation;
+    let startDate = eventInformation.time;
+    let duration = eventInformation.duration;
+
+    //pseudocode.
+    //first find all the events associated with that USERID and at the SAME PARK. 
+    //if there are none, everything passes and you can book at that park.
+    //if found, loop through their events at that park and check if there are any time clashes.
+    //if time clashes send back message saying you have already booked at that time.
+
+
+
 
     const client = new MongoClient(uri, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     });
+
     //connect to db
     client.connect(async (err) => {
         if (err) throw { Error: err, message: "error occured connected to DB" }
@@ -277,7 +289,7 @@ const handleHosting = async (req, res, next) => {
         try {
             const db = client.db(dbName)
             //first see if the host already exists.
-            let findhost = await db.collection(collectionHosts).findOne({ name: hostingInformation.name })
+            let findhost = await db.collection(collectionHosts).findOne({ userId: hostingInformation.userId })
             //if you dont find a host.
             if (!findhost) {
                 //make a new host
@@ -302,14 +314,80 @@ const handleHosting = async (req, res, next) => {
                     })
 
             }
+            //if a matching host is found.
             else {
-                eventInformation.hostId = findhost._id
-                await db.collection(collectionEvents).insertOne(eventInformation)
-                res.status(200).json({
-                    status: 200,
-                    message: "Already existing Host. Reservation successful. Thanks for booking!",
-                    hostingInformation: hostingInformation
-                })
+                //find all events related to the host. 
+                //either with ID or hostId?
+                let allEvents = await db.collection(collectionEvents).find({ userId: hostingInformation.userId }).toArray()
+
+                if (!allEvents) {
+                    res.status(400).json({ message: "There are no events under this host." })
+                }
+                //if there are events under this host. 
+                else {
+
+                    //filter the events related to that park.
+                    let filteredEvents = allEvents.filter(event => {
+                        if (event.parkId === eventInformation.parkId) {
+                            return event
+                        }
+                    })
+                    if (!filteredEvents) {
+                        res.status(400).json({ message: "This host has no events at the specified park under this host." })
+                    }
+                    else {
+                        //now check for the time.
+                        //---------------------TIME ----------------------------
+                        let d = new Date();
+                        //get the currentMinutes - live time.
+                        let currentMinutes = d.getHours() * 60 + d.getMinutes()
+                        // get the time in minutes that the person tried booked.
+                        let startMinutes = (new Date(startDate).getHours() * 60) + (new Date(startDate).getMinutes())
+                        // convert the duration to minutes.
+                        let durationMinutes = parseInt(duration) * 60;
+                        // get the end minutes
+                        let endMinutes = startMinutes + durationMinutes;
+                        //
+                        let timeConflict = false;
+
+
+                        await filteredEvents.forEach(async (event) => {
+
+                            try {
+                                //for each event, grab the start time.
+                                let eventStartTime = new Date(event.time).getHours() * 60 + (new Date(event.time).getMinutes());
+                                let eventEndTime = event.duration * 60 + eventStartTime;
+                                console.log('inside foreach')
+                                console.log(eventEndTime, 'event duration time')
+                                console.log(eventStartTime, 'event start time.')
+                                console.log(startMinutes, 'START MINUTES')
+                                console.log(endMinutes, 'endmimutes')
+                                //see if the start time is within the start-end time for the current booking.
+                                if (startMinutes <= eventEndTime && startMinutes >= eventStartTime || endMinutes <= eventEndTime && endMinutes >= eventStartTime) {
+                                    //then he cannot book.
+                                    timeConflict = true;
+                                    res.status(400).json({ status: 400, message: "There is a time conflict. You have already booked at this park during this time range." })
+
+                                    return;
+                                }
+                            } catch (err) { err }
+
+                        });
+                        if (!timeConflict) {
+
+
+                            eventInformation.hostId = findhost._id
+                            await db.collection(collectionEvents).insertOne(eventInformation)
+                            res.status(200).json({
+                                status: 200,
+                                message: "Reservation successful. Thanks for booking! Keep in mind you have other events under your name.",
+                                hostingInformation: hostingInformation
+                            })
+                        }
+                    }
+
+
+                }
             }
 
 
@@ -325,6 +403,7 @@ const handleHosting = async (req, res, next) => {
         }
     })
 }
+
 
 
 const handleGetHosts = async (req, res, next) => {

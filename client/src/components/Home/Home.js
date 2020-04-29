@@ -114,7 +114,7 @@ const NavigationLink = styled(NavLink)`
     border-radius: 25px; */
   font-size: 1.1rem;
   background: none;
-  border-radius: 25px;
+  border-radius: 10px;
   border: solid white 2px;
   transition: 0.5s all ease;
   text-decoration: none;
