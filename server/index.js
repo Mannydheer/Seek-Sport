@@ -11,7 +11,8 @@ const { handleSignUp, handleLogin,
     handleHosting,
     handleGetHosts,
     handleGetEvents,
-    handleUserEvents
+    handleUserEvents,
+    handleJoinEvent
 } = require('./handlers')
 
 const { auth } = require('../server/middleware')
@@ -62,6 +63,9 @@ app.get('/getParksWithHosts', handleGetHosts)
 app.get('/getEvents', handleGetEvents)
 //user events.
 app.get('/userEvents/:_id', auth, handleUserEvents)
+//join event.
+app.post('/joinEvent', auth, handleJoinEvent)
+
 
 
 

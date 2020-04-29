@@ -46,6 +46,12 @@ export const requestEvents = () => ({
 
 })
 
+export const updateEvent = (event) => ({
+    type: 'UPDATE_EVENT',
+    event
+
+})
+
 
 
 

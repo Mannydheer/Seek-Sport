@@ -5,35 +5,41 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectPark, requestHosts, retrieveHosts, retrieveHostsError } from '../actions/parkActions';
 import ParkDetails from '../ParkDetails';
 import DatePicker from "react-datepicker";
+import { skillLevel, sports } from '../data';
+//geometry
+
 
 import "react-datepicker/dist/react-datepicker.css";
 
 
 //DATA
-const sports = [
-    "Choose sport",
-    "Soccer",
-    "Tennis",
-    "Basket-Ball",
-    "Badminton",
-    "Hockey",
-    "Dodgeball",
-    "Volleyball",
-];
+// const sports = [
+//     "Choose sport",
+//     "Soccer",
+//     "Tennis",
+//     "Basket-Ball",
+//     "Badminton",
+//     "Hockey",
+//     "Dodgeball",
+//     "Volleyball",
+// ];
 
-const skillLevel = [
-    "Choose skill level",
-    "Beginner",
-    "Intermediate",
-    "Advanced"
+// const skillLevel = [
+//     "Choose skill level",
+//     "Beginner",
+//     "Intermediate",
+//     "Advanced"
 
-];
+// ];
 
 
 
 
 
 const Host = () => {
+
+
+
 
 
 

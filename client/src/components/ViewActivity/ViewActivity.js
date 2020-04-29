@@ -45,31 +45,6 @@ const ViewActivity = () => {
         }
     }, [])
 
-    // useEffect(() => {
-
-    //     //check if the user logged in is hosting any of his own games.
-    //     //cannot join his own games.
-    //     if (hostsInfo.hosts !== null) {
-    //         let matchedUser = hostsInfo.hosts.find(host => {
-    //             if (host.userId === userInfo._id) {
-    //                 return host;
-    //             }
-    //         })
-    //     }
-    //     else {
-    //         setError(true)
-    //     }
-
-
-
-    // }, [])
-
-    console.log(hostedEvent)
-
-
-
-
-
     return (
         <>
             {!error ? <div>

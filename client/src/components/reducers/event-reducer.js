@@ -45,6 +45,24 @@ export default function eventReducer(state = intitialState, action) {
                 events: null
             }
         }
+        case "UPDATE_EVENT": {
+            console.log(action.event, 'actione vent')
+            let stateCopy = { ...state }
+            let singleEvent = stateCopy.events[action.event.parkId]
+
+            console.log(singleEvent)
+            let indexEvent = singleEvent.find((event, index) => {
+                if (event._id === action.event._id) {
+                    return index
+                }
+            })
+            console.log(indexEvent)
+            stateCopy.events[action.event.parkId][indexEvent] = action.event
+
+            return {
+                ...stateCopy
+            }
+        }
 
 
 

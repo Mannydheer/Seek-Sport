@@ -8,6 +8,7 @@ const dbName = 'ParkGames';
 const collectionUsers = 'Users'
 const collectionHosts = 'Hosts'
 const collectionEvents = 'Events'
+const collectionParticipants = 'Participants'
 
 const assert = require('assert')
 var ObjectId = require('mongodb').ObjectID;
@@ -253,7 +254,7 @@ const handlePhoto = async (req, res) => {
 
 //@endpoint POST /hostingInformation
 //@desc store the info into the database of the reservating
-//@access PRIVATE - will need to validate token? YES- add
+//@access PRIVATE - will need to validate token? YES
 
 // ------------------- HOSTING ---------------------
 
@@ -312,20 +313,17 @@ const handleHosting = async (req, res, next) => {
                             console.log(err, 'error occured inside handlehsoting catch in the .then async')
                         }
                     })
-
             }
             //if a matching host is found.
             else {
                 //find all events related to the host. 
                 //either with ID or hostId?
                 let allEvents = await db.collection(collectionEvents).find({ userId: hostingInformation.userId }).toArray()
-
                 if (!allEvents) {
                     res.status(400).json({ message: "There are no events under this host." })
                 }
                 //if there are events under this host. 
                 else {
-
                     //filter the events related to that park.
                     let filteredEvents = allEvents.filter(event => {
                         if (event.parkId === eventInformation.parkId) {
@@ -349,10 +347,7 @@ const handleHosting = async (req, res, next) => {
                         let endMinutes = startMinutes + durationMinutes;
                         //
                         let timeConflict = false;
-
-
                         await filteredEvents.forEach(async (event) => {
-
                             try {
                                 //for each event, grab the start time.
                                 let eventStartTime = new Date(event.time).getHours() * 60 + (new Date(event.time).getMinutes());
@@ -363,19 +358,20 @@ const handleHosting = async (req, res, next) => {
                                 console.log(startMinutes, 'START MINUTES')
                                 console.log(endMinutes, 'endmimutes')
                                 //see if the start time is within the start-end time for the current booking.
-                                if (startMinutes <= eventEndTime && startMinutes >= eventStartTime || endMinutes <= eventEndTime && endMinutes >= eventStartTime) {
-                                    //then he cannot book.
-                                    timeConflict = true;
-                                    res.status(400).json({ status: 400, message: "There is a time conflict. You have already booked at this park during this time range." })
+                                if (startMinutes <= eventEndTime && startMinutes >= eventStartTime
+                                    || endMinutes <= eventEndTime && endMinutes >= eventStartTime) {
 
-                                    return;
+                                    //also check if its the same day. becuase it it isnt
+                                    if (event.bookedDate === eventInformation.bookedDate) {
+                                        timeConflict = true;
+                                        res.status(400).json({ status: 400, message: "There is a time conflict. You have already booked at this park during this time range." })
+                                        return;
+                                    }
                                 }
                             } catch (err) { err }
 
                         });
                         if (!timeConflict) {
-
-
                             eventInformation.hostId = findhost._id
                             await db.collection(collectionEvents).insertOne(eventInformation)
                             res.status(200).json({
@@ -385,12 +381,8 @@ const handleHosting = async (req, res, next) => {
                             })
                         }
                     }
-
-
                 }
             }
-
-
             //if you do, success. 
         }
         catch (error) {
@@ -520,6 +512,86 @@ const handleUserEvents = async (req, res, next) => {
 }
 
 
+//@endpoint POST /joinEvent
+//@desc join the event selected from ViewActivity comp.
+//@access PRIVATE - will need to validate token? YES
+const handleJoinEvent = async (req, res, next) => {
+
+    const participantDetails = req.body.participantDetails
+    const eventInformation = req.body.eventInformation
+
+    const client = new MongoClient(uri, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    });
+    //dsfsdfasddsa
+    //connect to db
+    client.connect(async (err) => {
+        if (err) throw { Error: err, message: "error occured connected to DB" }
+        console.log("Connected to DB in handleJoinEvent")
+        try {
+            const db = client.db(dbName)
+            //first check if the event has a participant id
+            //if there are none, then we need to create that object inside the participants collection.
+            if (!eventInformation.participantId) {
+                console.log('inside eventINformaiton particpssdfsf')
+                //push the details of the participant a document.
+                let r = await db.collection(collectionParticipants).insertOne({ participants: [participantDetails] })
+                assert(1, r.insertedCount)
+                //then assign the event with that participants Id object
+                let participantId = r.ops[0]._id;
+                await db.collection(collectionEvents).updateOne({ _id: ObjectId(eventInformation._id) }, { $set: { participantId: participantId } })
+                assert(1, r.modifiedCount)
+                assert(1, r.matchedCount)
+                let getEvent = await db.collection(collectionEvents).findOne({ _id: ObjectId(eventInformation._id) })
+
+                res.status(200).json({ status: 200, message: "Your the first one to sign up! Thanks for joining the event!", event: getEvent })
+
+            } else {
+                //if there is a participant ID.
+                //check if that participant doesnt already exist... in that event. 
+                let getParticipants = await db.collection(collectionParticipants)
+                    .findOne({ _id: ObjectId(eventInformation.participantId) })
+                //if you get participants. Which you will 100% because if you have a apeticipant ID then there are participants
+                //Look at if case just before.
+                console.log(getParticipants)
+                if (getParticipants) {
+                    //check if any of the participants in the array match the current participant trying to join.
+                    let existingParticipant = getParticipants.participants.find(participant => {
+                        if (participant.userId == participantDetails.userId) {
+                            return true
+                        }
+                    })
+                    console.log(existingParticipant)
+                    //if they do match...
+                    if (existingParticipant) {
+                        res.status(400).json({ status: 400, message: "You are already registered in this event." })
+                    }
+                    else {
+                        //if you don't find a matching participant.
+                        //add the incoming participant to that.
+                        let updateParticipant = await db.collection(collectionParticipants).updateOne({ _id: ObjectId(eventInformation.participantId) }, { $push: { participants: participantDetails } })
+                        assert(1, updateParticipant.matchedCount)
+                        assert(1, updateParticipant.modifiedCount)
+                        res.status(200).json({ status: 200, message: "Successfully joined the event!" })
+                    }
+
+                }
+            }
+
+        }
+        catch (error) {
+            console.log(error.stack, 'Catch Error in handleJoinEvent')
+            res.status(500).json({ status: 500, message: error.message })
+        }
+        finally {
+            console.log('disconnected')
+            client.close();
+        }
+    })
+}
+
+
 
 
 
@@ -531,5 +603,6 @@ module.exports = {
     handleLogin, handleGetUser,
     handleNearbySearch, handlePhoto,
     handleHosting, handleGetHosts,
-    handleGetEvents, handleUserEvents
+    handleGetEvents, handleUserEvents,
+    handleJoinEvent
 }
