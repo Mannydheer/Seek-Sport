@@ -64,7 +64,6 @@ export default function Join({ event }) {
                 let joinResponse = await response.json();
                 console.log(joinResponse.event)
                 if (joinResponse.status === 200) {
-                    dispatch(updateEvent(joinResponse.event))
                     setOpen(false)
 
                     window.alert(joinResponse.message)

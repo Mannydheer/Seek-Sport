@@ -531,9 +531,12 @@ const handleJoinEvent = async (req, res, next) => {
         console.log("Connected to DB in handleJoinEvent")
         try {
             const db = client.db(dbName)
+            //grab the event
+            let getEvent = await db.collection(collectionEvents).findOne({ _id: ObjectId(eventInformation._id) })
+
             //first check if the event has a participant id
             //if there are none, then we need to create that object inside the participants collection.
-            if (!eventInformation.participantId) {
+            if (!getEvent.participantId) {
                 console.log('inside eventINformaiton particpssdfsf')
                 //push the details of the participant a document.
                 let r = await db.collection(collectionParticipants).insertOne({ participants: [participantDetails] })
@@ -543,7 +546,7 @@ const handleJoinEvent = async (req, res, next) => {
                 await db.collection(collectionEvents).updateOne({ _id: ObjectId(eventInformation._id) }, { $set: { participantId: participantId } })
                 assert(1, r.modifiedCount)
                 assert(1, r.matchedCount)
-                let getEvent = await db.collection(collectionEvents).findOne({ _id: ObjectId(eventInformation._id) })
+                // let getEvent = await db.collection(collectionEvents).findOne({ _id: ObjectId(eventInformation._id) })
 
                 res.status(200).json({ status: 200, message: "Your the first one to sign up! Thanks for joining the event!", event: getEvent })
 
@@ -551,7 +554,7 @@ const handleJoinEvent = async (req, res, next) => {
                 //if there is a participant ID.
                 //check if that participant doesnt already exist... in that event. 
                 let getParticipants = await db.collection(collectionParticipants)
-                    .findOne({ _id: ObjectId(eventInformation.participantId) })
+                    .findOne({ _id: ObjectId(getEvent.participantId) })
                 //if you get participants. Which you will 100% because if you have a apeticipant ID then there are participants
                 //Look at if case just before.
                 console.log(getParticipants)
