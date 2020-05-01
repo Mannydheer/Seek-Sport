@@ -698,6 +698,10 @@ const handleLeaveEvent = async (req, res, next) => {
             let removeUserEvent = await db.collection(collectionUserEvents)
                 .updateOne({ _id: ObjectId(participantDetails.userId) }, { $pull: { events: eventInformation._id } })
 
+            console.log(removeUserEvent)
+
+
+
             assert(1, removeUserEvent.matchedCount)
             assert(1, removeUserEvent.modifiedCount)
 
@@ -744,10 +748,29 @@ const handleCancelEvent = async (req, res, next) => {
             let deletedEvent = await db.collection(collectionEvents).deleteOne({ _id: ObjectId(eventId) })
             assert(1, deletedEvent.deletedCount)
 
+            //pseudo
+            //also must remove all users that were registered for this event. 
+            //since we have the eventId... we can get the participantId and find the participants from the participant collection.
+            //now we have access to all the userIds from each participants.
+            //now for each user, we need to find the event being canceled in their array and delete it.
+            //now we need to find all users from the collectionUserEvents and delete the event. 
+
+            //now we have the participants.
+            let getParticipants = await db.collection(collectionParticipants).findOne({ _id: ObjectId(participantId) })
+            //we get an array.
+            getParticipants.participants.forEach(async (participant) => {
+                let removeUserEvent = await db.collection(collectionUserEvents).findOneAndUpdate({ _id: ObjectId(participant.userId) }, { $pull: { events: eventId } })
+            })
+
             //deleted participants.
             let deletedParticipants = await db.collection(collectionParticipants).deleteOne({ _id: ObjectId(participantId) })
+            console.log(deletedParticipants.deletedCount)
             assert(1, deletedParticipants.deletedCount)
-            // console.log(deletedParticipants)
+
+
+
+
+
             res.status(200).json({ status: 200, message: "Successfully canceled the event!" })
         }
         catch (error) {

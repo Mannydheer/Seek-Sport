@@ -37,18 +37,12 @@ const Home = () => {
             </InfoSection>
             {/* IMAGES */}
             <ImagesWrapper>
-                <div>
-                    <div>Soccer</div>
-                </div>
-                <div>
-                    <div>Tennis</div>
-                </div>
-                <div>
-                    <div>BasketBall</div>
-                </div>
-                <div><div>Footbal</div></div>
-                <div><div>Badminton</div></div>
-                <div><div>Hockey</div></div>
+                <Image src={'./Tennis.jpg'}></Image>
+                <Image src={'./Tennis.jpg'}></Image>
+                <Image src={'./Tennis.jpg'}></Image>
+                <Image src={'./Tennis.jpg'}></Image>
+                <Image src={'./Tennis.jpg'}></Image>
+                <Image src={'./Tennis.jpg'}></Image>
             </ImagesWrapper>
 
             {/* PURPOSE */}
@@ -221,4 +215,9 @@ const ImagesWrapper = styled.div`
 height: 15rem;
 width: 100vw;
 background-image: linear-gradient(15deg, #13547a 0%, #80d0c7 100%);
+`
+
+const Image = styled.img`
+width: 250px;
+height: 200px;
 `
