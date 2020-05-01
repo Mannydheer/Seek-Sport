@@ -55,7 +55,7 @@ const ViewActivity = () => {
         else {
             return
         }
-    }, [, canceled, setCanceled])
+    }, [])
 
     console.log(hostedEvent, 'HOSTED EVENTS')
 

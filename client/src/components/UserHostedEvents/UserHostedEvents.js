@@ -14,12 +14,12 @@ const UserHostedEvents = () => {
     const [error, setError] = useState(false)
     const [canceled, setCanceled] = useState(false)
 
-    console.log(userInfo._id)
 
     useEffect(() => {
 
         const handleUserEvents = async () => {
             let token = localStorage.getItem('accesstoken')
+            //will get all events related to the user.
             try {
                 let response = await fetch(`/userEvents/${userInfo._id}`, {
                     method: "GET",
@@ -34,45 +34,33 @@ const UserHostedEvents = () => {
                     console.log(userEvents.events, 'inside userhostedvenet')
                     setEvents(userEvents.events)
                     setParticipants(userEvents.participants)
+                    //setCanceled will be turned to true if a cancel occurs. 
+                    //this will cause useEffect to refetch event data.
                     setCanceled(false)
                 }
                 else {
                     setError(true)
                 }
-
             }
             catch (err) {
                 console.log(err, 'error occured inside catch for handler user events.')
                 setError(true)
             }
-
-
         }
-
         handleUserEvents();
-
     }, [canceled, setCanceled])
 
 
     return (
         <Wrapper>
-
             {events !== null && participants !== null && events.map(event => {
                 return (
                     <EventDetails canceled={canceled} setCanceled={setCanceled} event={event} />
-
                 )
             })}
-
-
             {error && <div>Error occured on the page.</div>}
-
-
-
         </Wrapper>
     )
-
-
 }
 
 export default UserHostedEvents;

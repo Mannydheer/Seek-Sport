@@ -10,6 +10,7 @@ import { loginSuccess, loginError, loginRequest } from '../actions/userActions';
 import { useDispatch, useSelector } from 'react-redux';
 import ViewActivity from '../ViewActivity';
 import UserHostedEvents from '../UserHostedEvents';
+import UserActivities from '../UserActivities';
 import Footer from '../Footer';
 
 
@@ -37,7 +38,6 @@ function App() {
         let response = await fetchUserProfile();
         console.log(response, 'inside app token')
         let userResponse = await response.json()
-
         if (response.status === 200) {
           let name = userResponse.username.split('@')[0]
           dispatch(loginSuccess({
@@ -82,6 +82,10 @@ function App() {
           </Route>
           <Route exact path='/userEvents'>
             {userLoggedIn.isAuthenticated ? <UserHostedEvents></UserHostedEvents> :
+              <h1 style={{ textAlign: 'center' }}>Must be logged in to view this page.</h1>}
+          </Route>
+          <Route exact path='/userActivities'>
+            {userLoggedIn.isAuthenticated ? <UserActivities></UserActivities> :
               <h1 style={{ textAlign: 'center' }}>Must be logged in to view this page.</h1>}
           </Route>
         </Switch>

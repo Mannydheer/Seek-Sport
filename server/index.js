@@ -20,7 +20,8 @@ const { handleSignUp, handleLogin,
     handleLeaveEvent,
     handleCurrentEventParticipants,
     handleCancelEvent,
-    handleSelectedParkEvents
+    handleSelectedParkEvents,
+    handleUserActivities
 } = require('./handlers')
 
 const { auth } = require('../server/middleware')
@@ -91,6 +92,8 @@ app.post('/viewActivityEvents', auth, handleViewActivityEvents)
 app.get('/currentEventParticipants/:participantId', auth, handleCurrentEventParticipants)
 //
 app.get('/selectedParkEvents/:parkId', auth, handleSelectedParkEvents)
+//user activities.
+app.get('/userActivities/:userId', auth, handleUserActivities)
 
 
 

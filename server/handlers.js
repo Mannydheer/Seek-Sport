@@ -9,6 +9,7 @@ const collectionUsers = 'Users'
 const collectionHosts = 'Hosts'
 const collectionEvents = 'Events'
 const collectionParticipants = 'Participants'
+const collectionUserEvents = 'UserEvents'
 
 const assert = require('assert')
 var ObjectId = require('mongodb').ObjectID;
@@ -84,7 +85,11 @@ const handleSignUp = async (req, res) => {
                     })
                     assert(1, r.insertedCount)
                     let getUser = await db.collection(collectionUsers).findOne({ username: signUpInfo.user })
-                    Promise.all([r, getUser])
+                    let userId = r.ops[0]._id;
+
+                    let createUserEvent = await db.collection(collectionUserEvents).insertOne({ _id: ObjectId(userId) })
+
+                    Promise.all([r, getUser, createUserEvent])
                         .then(() => {
                             //create jwt token here.
                             //get env, keep in mind how jwt is decontructed, header, payload
@@ -439,6 +444,8 @@ const handleHosting = async (req, res, next) => {
                             await db.collection(collectionEvents).updateOne({ _id: ObjectId(eventId) }, { $set: { participantId: participantId } })
                             assert(1, r.modifiedCount)
                             assert(1, r.matchedCount)
+                            //also you need to add the event you joined into the userEvent collection.
+
 
                             res.status(200).json({
                                 status: 200,
@@ -608,37 +615,38 @@ const handleJoinEvent = async (req, res, next) => {
             // //grab the event
             let getEvent = await db.collection(collectionEvents).findOne({ _id: ObjectId(eventInformation._id) })
             //see if there is a participant ID in that event. If so then there are at least 1 participant.
-            if (getEvent.participantId) {
-                //if there is a participant ID.
-                //check if that participant doesnt already exist... in that event. 
-                let getParticipants = await db.collection(collectionParticipants)
-                    .findOne({ _id: ObjectId(getEvent.participantId) })
-                //if you get participants. Which you will 100% because if you have a apeticipant ID then there are participants
-                //Look at if case just before.
-                if (getParticipants) {
-                    //check if any of the participants in the array match the current participant trying to join.
-                    let existingParticipant = getParticipants.participants.find(participant => {
-                        if (participant.userId == participantDetails.userId) {
-                            return true
-                        }
-                    })
-                    console.log(existingParticipant)
-                    //if they do match...
-                    if (existingParticipant) {
-                        res.status(400).json({ status: 400, message: "You are already registered in this event." })
+            //if there is a participant ID.
+            //check if that participant doesnt already exist... in that event. 
+            let getParticipants = await db.collection(collectionParticipants)
+                .findOne({ _id: ObjectId(getEvent.participantId) })
+            //if you get participants. Which you will 100% because if you have a apeticipant ID then there are participants
+            //Look at if case just before.
+            if (getParticipants) {
+                //check if any of the participants in the array match the current participant trying to join.
+                let existingParticipant = getParticipants.participants.find(participant => {
+                    if (participant.userId == participantDetails.userId) {
+                        return true
                     }
-                    else {
-                        //if you don't find a matching participant.
-                        //add the incoming participant to that.
-                        //since participant will now be joined.
-                        participantDetails.isJoined = true;
-                        //adding participants
-                        let updateParticipant = await db.collection(collectionParticipants).updateOne({ _id: ObjectId(eventInformation.participantId) }, { $push: { participants: participantDetails } })
-                        assert(1, updateParticipant.matchedCount)
-                        assert(1, updateParticipant.modifiedCount)
-                        res.status(200).json({ status: 200, message: "Successfully joined the event!" })
-                    }
+                })
+                //if they do match...
+                if (existingParticipant) {
+                    res.status(400).json({ status: 400, message: "You are already registered in this event." })
+                }
+                else {
+                    //if you don't find a matching participant.
+                    //add the incoming participant to that.
+                    //adding participants
+                    let updateParticipant = await db.collection(collectionParticipants).updateOne({ _id: ObjectId(eventInformation.participantId) }, { $push: { participants: participantDetails } })
+                    assert(1, updateParticipant.matchedCount)
+                    assert(1, updateParticipant.modifiedCount)
 
+                    //when signing up, you create a _id = to the userId in the collectionUserEvents.
+                    //now we will push the event id in the array in this event to keep track of which events the user JOINED!
+                    let addUserEvent = await db.collection(collectionUserEvents).updateOne({ _id: ObjectId(participantDetails.userId) }, { $push: { events: participantDetails.eventId } })
+                    assert(1, addUserEvent.matchedCount)
+                    assert(1, addUserEvent.modifiedCount)
+
+                    res.status(200).json({ status: 200, message: "Successfully joined the event!" })
                 }
             }
 
@@ -685,6 +693,15 @@ const handleLeaveEvent = async (req, res, next) => {
 
             assert(1, updateParticipant.matchedCount)
             assert(1, updateParticipant.modifiedCount)
+
+            //must also remove your event from the UserEvents collection.
+            let removeUserEvent = await db.collection(collectionUserEvents)
+                .updateOne({ _id: ObjectId(participantDetails.userId) }, { $pull: { events: eventInformation._id } })
+
+            assert(1, removeUserEvent.matchedCount)
+            assert(1, removeUserEvent.modifiedCount)
+
+
             res.status(200).json({ status: 200, message: "Successfully left the event!" })
         }
         catch (error) {
@@ -719,8 +736,18 @@ const handleCancelEvent = async (req, res, next) => {
         console.log("Connected to DB in handleCancelEvent")
         try {
             const db = client.db(dbName)
-            // //grab the event
+            let eventInfo = await db.collection(collectionEvents).findOne({ _id: ObjectId(eventId) })
+            let participantId = eventInfo.participantId;
+
+
+            //delete event
             let deletedEvent = await db.collection(collectionEvents).deleteOne({ _id: ObjectId(eventId) })
+            assert(1, deletedEvent.deletedCount)
+
+            //deleted participants.
+            let deletedParticipants = await db.collection(collectionParticipants).deleteOne({ _id: ObjectId(participantId) })
+            assert(1, deletedParticipants.deletedCount)
+            // console.log(deletedParticipants)
             res.status(200).json({ status: 200, message: "Successfully canceled the event!" })
         }
         catch (error) {
@@ -878,6 +905,50 @@ const handleSelectedParkEvents = async (req, res, next) => {
 }
 
 
+//@endpoint GET /userActivities
+//@desc get all events that the user joined
+//@access PRIVATE - will need to validate token? YES
+const handleUserActivities = async (req, res, next) => {
+
+    let userId = req.params.userId;
+    console.log(userId, 'inside handleuseracitivties')
+
+
+
+    const client = new MongoClient(uri, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    });
+    //connect to db
+    client.connect(async (err) => {
+        if (err) throw { Error: err, message: "error occured connected to DB" }
+        console.log("Connected to DB in handleSelectedParkEvents")
+        try {
+            const db = client.db(dbName)
+            //insert the hosting info into DB
+            await db.collection(collectionEvents).find({ parkId: parkId })
+                .toArray()
+                .then(data => {
+                    res.status(200).json({
+                        status: 200,
+                        message: "Success getting all events for selected park!",
+                        events: data
+                    })
+                })
+
+        }
+        catch (error) {
+            console.log(error.stack, 'Catch Error in handleSelectedParkEvents')
+            res.status(500).json({ status: 500, message: error.message })
+        }
+        finally {
+            console.log('disconnected')
+            client.close();
+        }
+    })
+}
+
+
 
 
 
@@ -896,4 +967,5 @@ module.exports = {
     handleJoinEvent, handleViewActivityEvents,
     handleLeaveEvent, handleCurrentEventParticipants,
     handleCancelEvent, handleSelectedParkEvents,
+    handleUserActivities
 }

@@ -35,7 +35,8 @@ const Navbar = () => {
         <NavigationLink exact to='/'><h1>PIKUP</h1></NavigationLink>
         <StyledLoginSignup>
           <NavigationLink exact to='/'><h2>Home</h2></NavigationLink>
-          {userLoggedIn.isAuthenticated && <NavigationLink exact to='/userEvents'><h2>Events</h2></NavigationLink>}
+          {userLoggedIn.isAuthenticated && <NavigationLink exact to='/userEvents'><h2>My Events</h2></NavigationLink>}
+          {userLoggedIn.isAuthenticated && <NavigationLink exact to='/userActivities'><h2>My Activities</h2></NavigationLink>}
           {/* <NavigationLink exact to='/'><h2>Home</h2></NavigationLink> */}
           {!userLoggedIn.isAuthenticated ? <Login></Login> : <StyledLoginButton onClick={handleLogout}>Logout</StyledLoginButton>}
           {!userLoggedIn.isAuthenticated && <Signup></Signup>}
