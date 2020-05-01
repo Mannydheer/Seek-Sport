@@ -62,7 +62,7 @@ export default function Join({ setJoined, joined, event }) {
 
     //function that will add participants.
     const handleJoinEvent = async () => {
-        if (userInfo.isAuthenticated) {
+        if (userInfo.isAuthenticated && skillSelect !== "Choose skill level") {
             const participantDetails = {
                 name: userInfo.user,
                 profileImage: userInfo.profileImage,

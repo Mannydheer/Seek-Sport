@@ -925,16 +925,37 @@ const handleUserActivities = async (req, res, next) => {
         console.log("Connected to DB in handleSelectedParkEvents")
         try {
             const db = client.db(dbName)
-            //insert the hosting info into DB
-            await db.collection(collectionEvents).find({ parkId: parkId })
-                .toArray()
-                .then(data => {
-                    res.status(200).json({
-                        status: 200,
-                        message: "Success getting all events for selected park!",
-                        events: data
-                    })
+            let userData = await db.collection(collectionUserEvents).findOne({ _id: ObjectId(userId) })
+            console.log(userData)
+
+            //if you have never signed up for any events yet.
+
+            if (!userData.events) {
+                res.status(400).json({
+                    status: 400,
+                    message: 'Seems like you are new, you may head to the home page to find activities or talk to our chatbot!'
                 })
+            }
+            else {
+                //if you registered for events.
+                let allEvents = [];
+                userData.events.forEach(event => {
+                    allEvents.push(ObjectId(event))
+                })
+                let eventData = await db.collection(collectionEvents)
+                    .find({ _id: { $in: allEvents } })
+                    .toArray();
+
+                if (eventData.length > 0) {
+                    res.status(200).json({ status: 200, message: 'Success getting all events you have registered for!', events: eventData })
+                }
+                else {
+                    res.status(400).json({ status: 400, message: 'Seems like you have no registered to any events! Head to the home page to find activities!' })
+                }
+                //find all the events that you have registered for.
+            }
+
+
 
         }
         catch (error) {

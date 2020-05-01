@@ -16,6 +16,7 @@ const ViewActivity = () => {
     //stores all nearby parks in store.
     const allParks = useSelector(state => state.parkReducer)
 
+    //check why it is here?
     const [canceled, setCanceled] = useState(false)
 
 
