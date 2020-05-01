@@ -48,7 +48,13 @@ const Navbar = () => {
 
 
         {/* Show User Name */}
-        {userLoggedIn.status === "authenticated" && <StyledName>{userLoggedIn.user.toUpperCase().split('')[0]}</StyledName>}
+        {userLoggedIn.status === "authenticated" &&
+          <div>
+            {/* <StyledName>{userLoggedIn.user.toUpperCase().split('')[0]}</StyledName> */}
+            <UserImage src={`./${userLoggedIn.profileImage}`}></UserImage>
+
+          </div>
+        }
 
 
 
@@ -62,6 +68,15 @@ const Navbar = () => {
 }
 
 export default Navbar;
+
+const UserImage = styled.img`
+width: 70px;
+height: 70px;
+position: absolute;
+border-radius: 50%;
+top: 2%;
+right: 2%;
+`
 
 const Header = styled.header`
 

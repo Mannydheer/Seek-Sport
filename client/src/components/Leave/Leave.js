@@ -6,19 +6,27 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { makeStyles } from '@material-ui/core/styles';
+
 import { skillLevel, sports } from '../data';
 import { useDispatch, useSelector } from 'react-redux';
+//snackbar
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+
+
+
 import {
     updateEvent
 } from '../actions/parkActions';
 import Snackbars from '../SnackBar';
 
-import { makeStyles } from '@material-ui/core/styles';
 
 //styled.
+
 const useStyles = makeStyles({
     root: {
-        background: "linear-gradient(15deg, #13547a 0%, #80d0c7 100%)",
+        background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
         border: 0,
         borderRadius: 3,
         boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
@@ -31,24 +39,25 @@ const useStyles = makeStyles({
 
 
 
-export default function Join({ setJoined, joined, event }) {
-
-    const dispatch = useDispatch();
-
-
+export default function Leave({ setRefetchParticipants, setJoined, joined, event }) {
 
     const [open, setOpen] = React.useState(false);
     const [openSnack, setOpenSnack] = useState(false);
     const [snackMsg, setSnackMsg] = useState('')
-    const userInfo = useSelector(state => state.userReducer)
+
+    const dispatch = useDispatch();
+
 
     //style modal.
     const classes = useStyles();
 
+
+
+    const userInfo = useSelector(state => state.userReducer)
+
     //control joined.
 
     //
-    const [skillSelect, setSkillSelect] = useState("Choose skill level");
 
     console.log(joined)
 
@@ -60,19 +69,14 @@ export default function Join({ setJoined, joined, event }) {
         setOpen(false);
     };
 
-    //function that will add participants.
-    const handleJoinEvent = async () => {
+    const handleLeaveEvent = async () => {
         if (userInfo.isAuthenticated) {
             const participantDetails = {
-                name: userInfo.user,
-                profileImage: userInfo.profileImage,
                 userId: userInfo._id,
-                skillSelected: skillSelect,
-                eventId: event._id,
             }
             let token = localStorage.getItem('accesstoken')
             try {
-                let response = await fetch("/joinEvent", {
+                let response = await fetch("/leaveEvent", {
                     method: "POST",
                     headers: {
                         'Content-Type': 'application/json',
@@ -84,59 +88,52 @@ export default function Join({ setJoined, joined, event }) {
                         participantDetails: participantDetails,
                     })
                 })
-                let joinResponse = await response.json();
-                console.log(joinResponse.event)
-                if (joinResponse.status === 200) {
-                    //double check why it happens for only one.
-                    setJoined(true)
+                let leaveResponse = await response.json();
+                console.log(leaveResponse.event)
+                if (leaveResponse.status === 200) {
+                    // setRefetchParticipants(true)
                     setOpen(false)
                     setOpenSnack(true)
-                    setSnackMsg(joinResponse.message)
+                    //since we left 
+                    setJoined(false)
+                    // //snackbar
+                    setSnackMsg(leaveResponse.message)
                 }
                 else {
-                    //set joined here?
                     setOpen(false)
-                    setOpenSnack(true)
-                    setSnackMsg(joinResponse.message)
+                    setSnackMsg(leaveResponse.message)
                 }
-            } catch (err) { throw err, 'inside catch JOIN component' }
+            } catch (err) { throw err, 'inside catch handleLeaveEvent component' }
         } else {
-            console.log('not auth inside JOIN component. In the else.')
+            console.log('not auth inside handleLeaveEvent component. In the else.')
         }
     }
-
-    console.log(joined, 'INSIDE JOIN COMPONENT')
-
+    console.log(joined, 'INSIDE LEAVE')
     return (
         <div>
-            <Button disabled={joined} variant="outlined" className={classes.root} onClick={handleClickOpen}>
-                Join?
+            <Button className={classes.root} disabled={!joined} variant="outlined" onClick={handleClickOpen}>
+                Leave?
       </Button>
+
             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">Join Game</DialogTitle>
+                <DialogTitle id="form-dialog-title">Leave Game</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Fill up the information to join.
+                        Are you sure you want to leave the game?
           </DialogContentText>
-                    <select required onChange={(event) => setSkillSelect(event.target.value)}>
-                        {skillLevel.map(skill => {
-                            return (
-                                <option key={skill}>{skill}</option>
-                            )
-                        })}
-                    </select>
+
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} color="primary">
                         Cancel
           </Button>
-                    <Button onClick={handleJoinEvent} color="primary">
+                    <Button onClick={handleLeaveEvent} color="primary">
                         Accept
           </Button>
                 </DialogActions>
             </Dialog>
-            <Snackbars snackMsg={snackMsg} openSnack={openSnack} setOpenSnack={setOpenSnack}></Snackbars>
 
+            <Snackbars snackMsg={snackMsg} openSnack={openSnack} setOpenSnack={setOpenSnack}></Snackbars>
         </div>
     );
 }

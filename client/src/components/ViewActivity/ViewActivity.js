@@ -15,46 +15,61 @@ const ViewActivity = () => {
     const dispatch = useDispatch();
     //stores all nearby parks in store.
     const allParks = useSelector(state => state.parkReducer)
-    //all hosted parks in sotre. 
-    const hostsInfo = useSelector(state => state.hostReducer)
-    //all events in sotre. 
-    const allEvents = useSelector(state => state.eventReducer)
 
-    const userInfo = useSelector(state => state.userReducer)
+    const [canceled, setCanceled] = useState(false)
 
 
-    const [parkInfo, setParkInfo] = useState(null)
     const [hostedEvent, setHostedEvents] = useState(null)
+
+
     //error
     const [error, setError] = useState(false)
 
     //on component mount.
     useEffect(() => {
-        //get the selected park. 
-        setParkInfo(allParks.selectedPark);
-        //find all hosts that are in this park.
-        //for the parkId, get all hosts who match this id.
-        //see if selectedPark has something inside.
+        //onMount, get the events for the selectedPark.
         if (allParks.selectedPark !== null) {
-            let matchedEvents = allEvents.events[allParks.selectedPark.id]
-            console.log(matchedEvents, 'MATCHEDEVENTS')
-            setHostedEvents(matchedEvents)
+            const handleSelectedParkEvents = async () => {
+                let token = localStorage.getItem('accesstoken')
+                try {
+                    let response = await fetch(`/selectedParkEvents/${allParks.selectedPark.id}`, {
+                        method: "GET",
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Accept: 'application/json',
+                            'Authorization': `${token}`
+                        },
+                    })
+                    let eventResponse = await response.json();
+                    if (eventResponse.status === 200) {
+                        setHostedEvents(eventResponse.events)
+                    } else {
+                        setError(true)
+                    }
+                } catch (err) {
+                    throw err
+                }
+            }
+            handleSelectedParkEvents()
         }
         else {
-            setError(true)
+            return
         }
-    }, [])
+    }, [, canceled, setCanceled])
+
+    console.log(hostedEvent, 'HOSTED EVENTS')
 
     return (
         <>
-            {!error ? <div>
-                {parkInfo !== null && <ParkDetails parkInfo={parkInfo} ></ParkDetails>}
+            {!allParks.selectedPark !== null ? <div>
+                {allParks.selectedPark !== null && <ParkDetails parkInfo={allParks.selectedPark} ></ParkDetails>}
                 {/**/}
-                {hostedEvent !== null &&
+                {hostedEvent !== null && allParks.selectedPark !== null &&
                     hostedEvent.map(event => {
-                        return <EventDetails event={event}></EventDetails>
+                        return <EventDetails canceled={canceled} setCanceled={setCanceled} event={event}></EventDetails>
                     })
                 }
+
             </div> : <div style={{ textAlign: 'center' }}>Please head over to the sports tab to view park acitivities.</div>}
         </>
     )

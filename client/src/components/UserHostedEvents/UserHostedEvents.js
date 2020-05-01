@@ -10,15 +10,15 @@ const UserHostedEvents = () => {
     const userInfo = useSelector(state => state.userReducer)
 
     const [events, setEvents] = useState(null)
+    const [participants, setParticipants] = useState(null)
     const [error, setError] = useState(false)
+    const [canceled, setCanceled] = useState(false)
 
     console.log(userInfo._id)
 
     useEffect(() => {
 
         const handleUserEvents = async () => {
-
-
             let token = localStorage.getItem('accesstoken')
             try {
                 let response = await fetch(`/userEvents/${userInfo._id}`, {
@@ -31,7 +31,10 @@ const UserHostedEvents = () => {
                 })
                 if (response.status === 200) {
                     let userEvents = await response.json();
+                    console.log(userEvents.events, 'inside userhostedvenet')
                     setEvents(userEvents.events)
+                    setParticipants(userEvents.participants)
+                    setCanceled(false)
                 }
                 else {
                     setError(true)
@@ -48,14 +51,16 @@ const UserHostedEvents = () => {
 
         handleUserEvents();
 
-    }, [])
+    }, [canceled, setCanceled])
+
 
     return (
         <Wrapper>
 
-            {events !== null && events.map(event => {
+            {events !== null && participants !== null && events.map(event => {
                 return (
-                    <EventDetails event={event}></EventDetails>
+                    <EventDetails canceled={canceled} setCanceled={setCanceled} event={event} />
+
                 )
             })}
 
@@ -74,10 +79,9 @@ export default UserHostedEvents;
 
 
 const Wrapper = styled.div`
-display: flex;
-justify-content: space-around;
-height: 100vh;
-margin-top: 5rem;
-
-
+   display: grid;
+    /* grid-template-columns: repeat(auto-fill, minmax(150px, 310px)); */
+    grid-template-rows: repeat(auto-fit, minmax(100px, 1fr) );
+    grid-column-gap: 10px;
+    grid-row-gap: 10px;
 `

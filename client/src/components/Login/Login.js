@@ -108,7 +108,12 @@ export default function SignIn() {
                     let name = userResponse.username.split('@')[0]
                     localStorage.setItem('accesstoken', userResponse.accessToken)
                     //dispatch to make userState
-                    dispatch(loginSuccess({ name: name, token: userResponse.accessToken, _id: userResponse._id }))
+                    dispatch(loginSuccess({
+                        name: name,
+                        token: userResponse.accessToken,
+                        _id: userResponse._id,
+                        profileImage: userResponse.profileImage
+                    }))
                     setOpen(false)
                 }
                 else {

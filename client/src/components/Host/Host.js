@@ -59,23 +59,28 @@ const Host = () => {
         //add selected park.
         event.preventDefault();
         //---------------------TIME ----------------------------
-        let d = new Date();
-        let currentMinutes = d.getHours() * 60 + d.getMinutes()
-        let startMinutes = startDate.getHours() * 60 + startDate.getMinutes()
+        console.log(startDate.getTime())
+        console.log(new Date().getTime())
+        console.log(startDate.getMinutes())
+        console.log(new Date().getMinutes())
 
         //ONLY IF ALLOW FETCH IS TRUE.
         if (sportSelect !== "Choose sport" &&
             skillSelect !== "Choose skill level" &&
             selectedPark !== null &&
             //make sure the time is past the actual current time.
-            startDate.getTime() > new Date().getTime()) {
+            startDate.getTime() >= new Date().getTime()) {
 
-            console.log(startDate.getTime(), new Date().getTime())
+            console.log(startDate.getMinutes(), new Date().getMinutes())
 
 
             let hostingInformation = {
                 name: userLoggedIn.user,
-                userId: userLoggedIn._id
+                userId: userLoggedIn._id,
+                profileImage: userLoggedIn.profileImage,
+                // skillSelected: skillSelect,
+                // sportSelect: sportSelect,
+
             }
 
             let eventInformation = {
@@ -116,6 +121,7 @@ const Host = () => {
                 console.log(hostResponse)
                 //ADD DISPATCHED?
                 if (hostResponse.status === 200) {
+
                     setSuccess(hostResponse.message)
                 }
                 else if (hostResponse.status === 400) {

@@ -8,6 +8,18 @@ import * as serviceWorker from './serviceWorker';
 
 const store = configureStore();
 
+const saveToLocalStorage = (state) => {
+  try {
+    const serializedState = JSON.stringify(state)
+    localStorage.setItem('state', serializedState)
+  } catch (e) { console.log(e) }
+
+}
+
+
+store.subscribe(() => saveToLocalStorage(store.getState()))
+
+
 ReactDOM.render(
   <Provider store={store}>
     <App />

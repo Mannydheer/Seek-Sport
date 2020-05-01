@@ -1,5 +1,7 @@
 require('dotenv').config();
 const jwt = require('jsonwebtoken')
+const multer = require('multer')
+
 
 
 //this token will pretty much be the middleware for any user
@@ -27,5 +29,9 @@ const auth = async (req, res, next) => {
         res.status(400).json({ message: 'Token is not valid.' })
     }
 }
+
+
+
+
 
 module.exports = { auth };

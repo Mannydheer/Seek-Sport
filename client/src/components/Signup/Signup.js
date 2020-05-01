@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -16,6 +16,8 @@ import Dialog from '@material-ui/core/Dialog';
 import styled from "styled-components";
 
 //
+import ImageUploader from 'react-images-upload';
+
 
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -66,6 +68,14 @@ const useStyles = makeStyles((theme) => ({
 export default function SignUp() {
     const [open, setOpen] = useState(false);
     const [error, setError] = useState(false)
+    const formRef = useRef(null);
+
+    // console.log(formRef.current, 'this is form ref current')
+    // console.log(formRef, 'this is form ref')
+
+
+    //for image uploader
+
     const dispatch = useDispatch();
 
 
@@ -73,6 +83,10 @@ export default function SignUp() {
         user: '',
         pass: '',
     })
+    const [file, setFile] = useState(null)
+
+    console.log(formRef)
+
 
 
     const classes = useStyles();
@@ -90,36 +104,65 @@ export default function SignUp() {
 
     const handleDone = (e) => {
         e.preventDefault();
+
+        const files = new FormData();
+        files.append('file', file)
+        files.append('name', userInfo.user)
+        files.append('pass', userInfo.pass)
+
+        console.log(files, 'this is filedata')
+
+
         const handleSignup = async () => {
-            dispatch(loginRequest())
-            try {
-                let response = await fetch('/SignUp', {
-                    method: "POST",
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-type': 'application/json'
-                    },
-                    body: JSON.stringify(userInfo)
-                })
-                let userResponse = await response.json();
-                if (response.status === 200) {
-                    //dispatch action.
-                    let name = userResponse.username.split('@')[0]
-                    dispatch(loginSuccess({ name: name, token: userResponse.accessToken, _id: userResponse._id }))
-                    setOpen(false)
+
+            if (userInfo.user !== '' && userInfo.pass !== '' && file !== null) {
+                dispatch(loginRequest())
+                try {
+                    let response = await fetch('/SignUp', {
+                        method: "POST",
+                        body: files
+                    })
+                    let userResponse = await response.json();
+                    if (response.status === 200) {
+                        //dispatch action.
+                        let name = userResponse.username.split('@')[0]
+                        dispatch(loginSuccess({
+                            name: name,
+                            token: userResponse.accessToken,
+                            _id: userResponse._id,
+                            profileImage: userResponse.profileImage
+                        }))
+                        setOpen(false)
+                    }
+                    else {
+                        setError(userResponse.message)
+                        dispatch(loginError(userResponse.message))
+                    }
                 }
-                else {
-                    setError(userResponse.message)
-                    dispatch(loginError(userResponse.message))
+
+                catch (err) {
+                    //dispatch?
+                    console.log(err)
                 }
             }
-            catch (err) {
-                //dispatch?
-                console.log(err)
+            else {
+                setError('Ensure all fields are filled.')
             }
         }
         handleSignup()
     }
+
+    const onDrop = (file) => {
+
+
+        if (file !== undefined) {
+            // let image = picture[0].name;
+            setFile(file[0])
+        }
+        else return;
+    }
+
+    console.log(file, 'this file')
 
 
 
@@ -138,7 +181,7 @@ export default function SignUp() {
                     <Typography component="h1" variant="h5">
                         Sign Up
         </Typography>
-                    <form className={classes.form} onSubmit={handleDone}>
+                    <form className={classes.form} onSubmit={handleDone} enctype="multipart/form-data">
                         <TextField
                             variant="outlined"
                             margin="normal"
@@ -177,6 +220,17 @@ export default function SignUp() {
                             value={userInfo.pass}
 
                         />
+                        <ImageUploader
+                            name='file'
+                            withIcon={true}
+                            buttonText='Upload Profile Picture!'
+                            onChange={onDrop}
+                            imgExtension={['.jpg', '.gif', '.png', '.gif']}
+                            maxFileSize={5242880}
+                            withPreview={true}
+                            withIcon={true}
+                        />
+
                         <Button
                             type="submit"
                             fullWidth

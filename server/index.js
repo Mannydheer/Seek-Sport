@@ -3,7 +3,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+//multer
+const multer = require('multer')
 
+// const upload = multer({ dest: 'uploads/' })
 
 const { handleSignUp, handleLogin,
     handleGetUser, handleNearbySearch,
@@ -12,16 +15,25 @@ const { handleSignUp, handleLogin,
     handleGetHosts,
     handleGetEvents,
     handleUserEvents,
-    handleJoinEvent
+    handleJoinEvent,
+    handleViewActivityEvents,
+    handleLeaveEvent,
+    handleCurrentEventParticipants,
+    handleCancelEvent,
+    handleSelectedParkEvents
 } = require('./handlers')
 
 const { auth } = require('../server/middleware')
-
 require('dotenv').config();
 
 //data file for items
 
+
+const upload = multer({ dest: './public/uploads/' })
+
+
 const PORT = 4000;
+
 
 
 
@@ -43,11 +55,14 @@ app.use(express.static('./server/assets'))
 app.use(bodyParser.json())
 app.use(express.urlencoded({ extended: false }))
 app.use('/', express.static(__dirname + '/'))
+// app.use('/uploads', express.static('/uploads'))
+
 
 
 //endpoints.
+// app.post('/fileUpload', , handleFile)
 //signup
-app.post('/SignUp', handleSignUp)
+app.post('/SignUp', upload.single('file'), handleSignUp)
 //login
 app.post('/Login', handleLogin)
 //get user
@@ -65,8 +80,17 @@ app.get('/getEvents', handleGetEvents)
 app.get('/userEvents/:_id', auth, handleUserEvents)
 //join event.
 app.post('/joinEvent', auth, handleJoinEvent)
+//leave event.
+app.post('/leaveEvent', auth, handleLeaveEvent)
+//cancel event.
+app.post('/cancelEvent', auth, handleCancelEvent)
 
-
+//viewActivityEvents 
+app.post('/viewActivityEvents', auth, handleViewActivityEvents)
+//selectedPark
+app.get('/currentEventParticipants/:participantId', auth, handleCurrentEventParticipants)
+//
+app.get('/selectedParkEvents/:parkId', auth, handleSelectedParkEvents)
 
 
 

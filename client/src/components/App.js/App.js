@@ -35,11 +35,17 @@ function App() {
       dispatch(loginRequest())
       try {
         let response = await fetchUserProfile();
+        console.log(response, 'inside app token')
         let userResponse = await response.json()
 
         if (response.status === 200) {
           let name = userResponse.username.split('@')[0]
-          dispatch(loginSuccess({ name: name, token: userResponse.accessToken, _id: userResponse._id }))
+          dispatch(loginSuccess({
+            name: name,
+            token: userResponse.accessToken,
+            _id: userResponse._id,
+            profileImage: userResponse.profileImage
+          }))
         }
         else {
           dispatch(loginError(userResponse.message))

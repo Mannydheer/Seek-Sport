@@ -7,6 +7,8 @@ import {
     requestEvents, retrieveEvents, retrieveEventsError
 } from '../actions/parkActions';
 
+import { lastSelectedPark } from '../actions/userActions';
+
 import { useDispatch, useSelector } from 'react-redux';
 //components
 import ParkSidebar from '../ParkSidebar';
@@ -20,6 +22,8 @@ const Map = ({ coordinates, parkMenu, setParkMenu }) => {
     //pass down coordinates as props.
 
     const dispatch = useDispatch();
+    //user reducer
+    const userLoggedIn = useSelector(state => state.userReducer)
     //stores all nearby parks in store.
     const allParks = useSelector(state => state.parkReducer)
     //all hosted parks in sotre. 
@@ -90,6 +94,7 @@ const Map = ({ coordinates, parkMenu, setParkMenu }) => {
         handleNearestPlacesAndHosts();
         // }
     }, [])
+
 
 
 

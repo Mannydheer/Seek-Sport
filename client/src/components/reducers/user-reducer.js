@@ -21,7 +21,8 @@ export default function userReducer(state = intitialState, action) {
                 isLoading: false,
                 user: action.user.name,
                 _id: action.user._id,
-                token: action.user.token
+                token: action.user.token,
+                profileImage: action.user.profileImage
 
             }
         }
@@ -46,6 +47,7 @@ export default function userReducer(state = intitialState, action) {
                 ...intitialState
             }
         }
+
 
         default:
             return state;
