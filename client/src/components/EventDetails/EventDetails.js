@@ -18,9 +18,7 @@ const EventDetails = ({ index, event, canceled, setCanceled }) => {
 
     //set state for the participants of that current event.
     const [currentEventParticipants, setCurrentEventParticipants] = useState(null)
-
     let location = useLocation().pathname;
-
     const [joined, setJoined] = useState(false)
 
 
@@ -74,7 +72,7 @@ const EventDetails = ({ index, event, canceled, setCanceled }) => {
 
     return (
         <Wrapper key={event._id}>
-            <Number>0{index + 1}.</Number>
+            {typeof index === "number" && <Number>0{index + 1}.</Number>}
 
             <MainText >
 
@@ -131,7 +129,7 @@ const EventDetails = ({ index, event, canceled, setCanceled }) => {
 export default EventDetails;
 const Wrapper = styled.div`
 display: flex;
-width: 90%;
+width: 100%;
 margin: 0 auto;
 border-bottom: 2px solid black;
 

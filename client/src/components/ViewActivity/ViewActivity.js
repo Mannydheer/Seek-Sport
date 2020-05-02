@@ -67,11 +67,14 @@ const ViewActivity = () => {
     return (
         <>
             {!allParks.selectedPark !== null ? <div>
-                {allParks.selectedPark !== null && <ParkDetails parkInfo={allParks.selectedPark} ></ParkDetails>}
+                {allParks.selectedPark !== null &&
+                    <StyledParkDetails><ParkDetails parkInfo={allParks.selectedPark} /></StyledParkDetails>
+
+                }
                 {/**/}
                 {hostedEvent !== null && allParks.selectedPark !== null &&
-                    hostedEvent.map(event => {
-                        return <EventDetails canceled={canceled} setCanceled={setCanceled} event={event}></EventDetails>
+                    hostedEvent.map((event, index) => {
+                        return <EventDetails index={index} canceled={canceled} setCanceled={setCanceled} event={event}></EventDetails>
                     })
                 }
 
@@ -85,6 +88,11 @@ export default ViewActivity;
 
 const Wrapper = styled.div`
 
+`
+
+const StyledParkDetails = styled.div`
+display: flex;
+justify-content: center;
 `
 
 

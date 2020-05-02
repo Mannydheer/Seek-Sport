@@ -7,4 +7,5 @@ export const PageWrapper = styled.div`
     margin-right: auto; 
     position: relative; 
     height: 100vh;
+    display: flex;
 `

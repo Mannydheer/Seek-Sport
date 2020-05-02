@@ -263,9 +263,8 @@ export default function SignUp() {
 const StyledButton = styled.div`
 
 background: none;
-  transition: 0.5s all ease;
   text-decoration: none;
-  transition-duration: 0.7s;
+
   color: white;
   text-transform: uppercase;
   padding: 0 20px 0 20px;

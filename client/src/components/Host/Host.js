@@ -6,6 +6,22 @@ import { selectPark, requestHosts, retrieveHosts, retrieveHostsError } from '../
 import ParkDetails from '../ParkDetails';
 import DatePicker from "react-datepicker";
 import { skillLevel, sports } from '../data';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
+import Button from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/core/styles';
+import FormControl from '@material-ui/core/FormControl';
+
+//themeprovider to style react-datepicker/
+import { ThemeProvider } from "styled-components";
+
+
+
+
+
+
+
 
 import EventDetails from '../EventDetails';
 //geometry
@@ -14,31 +30,34 @@ import EventDetails from '../EventDetails';
 import "react-datepicker/dist/react-datepicker.css";
 
 
-//DATA
-// const sports = [
-//     "Choose sport",
-//     "Soccer",
-//     "Tennis",
-//     "Basket-Ball",
-//     "Badminton",
-//     "Hockey",
-//     "Dodgeball",
-//     "Volleyball",
-// ];
+const useStyles = makeStyles(theme => ({
+    root: {
+        background: "linear-gradient(15deg, #13547a 0%, #80d0c7 100%)",
+        border: 0,
+        borderRadius: 3,
+        boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+        color: 'white',
+        height: 32,
 
-// const skillLevel = [
-//     "Choose skill level",
-//     "Beginner",
-//     "Intermediate",
-//     "Advanced"
+        padding: '0 30px',
+    },
+    formControl: {
+        margin: theme.spacing(1),
+        minWidth: 120,
+        display: 'flex'
 
-// ];
+    }
+}));
 
 
 
 
 
 const Host = () => {
+
+    //for modal class.
+    const classes = useStyles();
+
 
 
 
@@ -55,6 +74,8 @@ const Host = () => {
     const [skillSelect, setSkillSelect] = useState("Choose skill level");
     const [duration, setDuration] = useState("Choose duration");
     const [success, setSuccess] = useState(false);
+    const [error, setError] = useState(false);
+
     const [startDate, setStartDate] = useState(new Date())
     const [canceled, setCanceled] = useState(false)
 
@@ -72,8 +93,12 @@ const Host = () => {
         //---------------------TIME ----------------------------
 
 
-        let startTime = startDate.getHours() * 60 + startDate.getMinutes();
-        let currentTime = new Date().getHours() * 60 + new Date().getMinutes();
+        // let startTime = startDate.getHours() * 60 + startDate.getMinutes();
+        // let currentTime = new Date().getHours() * 60 + new Date().getMinutes();
+
+        let startTime = Math.round(((startDate.getTime() / 1000) / 60))
+        let currentTime = Math.round(((new Date().getTime() / 1000) / 60))
+
 
         console.log(startTime, currentTime)
         //ONLY IF ALLOW FETCH IS TRUE.
@@ -81,8 +106,7 @@ const Host = () => {
         if (sportSelect !== "Choose sport" &&
             skillSelect !== "Choose skill level" &&
             duration !== "Choose duration" &&
-            selectedPark !== null && startTime >= currentTime &&
-            startTime !== currentTime
+            selectedPark !== null && startTime >= currentTime
         ) {
             let hostingInformation = {
                 name: userLoggedIn.user,
@@ -132,22 +156,21 @@ const Host = () => {
                 if (hostResponse.status === 200) {
 
                     setSuccess(hostResponse.message)
+                    setError(null)
                 }
                 else if (hostResponse.status === 400) {
                     console.log(hostResponse.message)
-                    setSuccess(hostResponse.message)
+
+                    setError(hostResponse.message)
 
                 }
                 else if (hostResponse.status === 409) {
-                    setSuccess(hostResponse.message)
+                    setError(hostResponse.message)
                     console.log(hostResponse.timeConflictPark)
                     setCanceled(false)
-
                     //the backend should take care in that it will only send back 1 event
                     //there should never be a case where you can book two events at the same time as a single user.
-
                     setConflictEvent(hostResponse.timeConflictPark)
-
                 }
             }
             catch (err) {
@@ -157,23 +180,29 @@ const Host = () => {
         //if any of the cases fail. 
 
         else {
-            setSuccess('Make sure all fields have been selected.')
+            setSuccess('Make sure all fields have been selected and that a valid time was selected.')
         }
     }
 
     const handleChange = (date) => {
         console.log(date)
-        setSuccess(null)
+        setSuccess(false)
         setStartDate(date)
         setConflictEvent(null)
+        setError(false)
     };
 
-    // useEffect(() => {
-    //     setConflictEvent(null)
-    // }, [canceled, setCanceled])
 
+    useEffect(() => {
 
+        console.log('inside use efffect')
+        setError(false)
+        setConflictEvent(null)
+        setCanceled(false)
+    }, [canceled])
     //as cleanup for states?
+
+
 
 
 
@@ -182,115 +211,140 @@ const Host = () => {
 
     return (
 
-        <PageWrapper>
-            {selectedPark !== null ? <ParkDetails parkInfo={selectedPark} ></ParkDetails> : <div>Cannot book without selecting a park.</div>}
+        <PageContainer>
+            <Details>
+                {selectedPark !== null ? <ParkDetails parkInfo={selectedPark} ></ParkDetails> : <div>Cannot book without selecting a park.</div>}
+            </Details>
+
+            <form className={classes.formControl} onSubmit={handleHostInformation}>
+                <SelectDiv>
+                    <InputLabel shrink id="Select a sport"> Sport</InputLabel>
+                    <Select
+                        labelId="Select a sport"
+                        id="Sportselection"
+                        value={sportSelect}
+                        required onChange={(event) => setSportSelect(event.target.value)}>
+                        {sports.map(sport => {
+                            return (
+                                <MenuItem value={sport} key={sport}>{sport}</MenuItem>
+                            )
+                        })}
+                    </Select>
+                </SelectDiv>
+                <SelectDiv>
+                    <InputLabel shrink id="Select a skill">Skill</InputLabel>
+                    <Select
+                        labelId="Select a skill"
+                        id="Select a skill"
+                        value={skillSelect}
+                        required onChange={(event) => setSkillSelect(event.target.value)}>
+                        {skillLevel.map(skill => {
+                            return (
+                                <MenuItem value={skill} key={skill}>{skill}</MenuItem>
+                            )
+                        })}
+                    </Select>
+                </SelectDiv>
+                <SelectDiv>
+                    <InputLabel shrink id="Select duration">Duration</InputLabel>
+                    <Select
+                        labelId="Select duration"
+                        id="duration"
+                        value={duration}
+                        required onChange={(event) => setDuration(event.target.value)}>
+                        <MenuItem value={duration}>Duration (hrs)</MenuItem>
+                        <MenuItem value={1}>1</MenuItem>
+                        <MenuItem value={2}>2</MenuItem>
+                        <MenuItem value={3}>3</MenuItem>
+                    </Select>
+                </SelectDiv>
+                {/* DATES */}
+                <StyledDate>
+                    <DatePicker
+
+                        todayButton="Today"
+                        selected={startDate}
+                        onChange={handleChange}
+                        placeholderText="Click to select a date"
+                        minDate={new Date()}
+                        minTime={(new Date().setHours(7))}
+                        maxTime={(new Date().setHours(21))}
+                        showTimeSelect
+                        timeIntervals={30}
+                        timeCaption="time"
+                        dateFormat="MMMM d, yyyy h:mm aa"
+                    />
+                </StyledDate>
 
 
-            <form onSubmit={handleHostInformation}>
-                <select required onChange={(event) => setSportSelect(event.target.value)}>
-                    {sports.map(sport => {
-                        return (
-                            <option key={sport}>{sport}</option>
-                        )
-                    })}
-                </select>
-                <select required onChange={(event) => setSkillSelect(event.target.value)}>
-                    {skillLevel.map(skill => {
-                        return (
-                            <option key={skill}>{skill}</option>
-                        )
-                    })}
-                </select>
+                <Button type='submit' variant="outlined" className={classes.root}>Submit</Button>
 
-
-                <DatePicker
-                    todayButton="Today"
-                    selected={startDate}
-                    onChange={handleChange}
-                    placeholderText="Click to select a date"
-                    minDate={new Date()}
-                    minTime={(new Date().setHours(7))}
-                    maxTime={(new Date().setHours(21))}
-                    showTimeSelect
-                    timeIntervals={30}
-                    timeCaption="time"
-                    dateFormat="MMMM d, yyyy h:mm aa"
-                />
-                <select required onChange={(event) => setDuration(event.target.value)}>
-                    <option>Duration (hrs)</option>
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                </select>
-                <button type='submit'>Submit</button>
-                {success !== false && <div>{success}</div>}
-
-                {conflictEvent !== null &&
-                    <div>
-                        <div>CHANGE BOOKING?</div>
-                        <EventDetails canceled={canceled} setCanceled={setCanceled} event={conflictEvent} />
-                    </div>
-                }
 
 
             </form>
+            <StyledMessage>
+                {success !== false && <StyledSuccess>{success}</StyledSuccess>}
+                {error !== false && <StyledError>{error}</StyledError>}
+                {conflictEvent !== null &&
+                    <div>
+                        <ChangeBooking>Would you like to cancel your booking? If not, pick a different time!</ChangeBooking>
+                        {!canceled && <EventDetails canceled={canceled} setCanceled={setCanceled} event={conflictEvent} />}
+                    </div>}
+            </StyledMessage>
 
 
-        </PageWrapper>
+
+
+
+        </PageContainer>
     )
 
 }
 
 export default Host;
 
+const StyledSuccess = styled.div`
+font-size: 1.5rem;
+color: green;
+`
+const StyledError = styled.div`
+font-size: 1.5rem;
 
-// const parkInfo =
-// {
-//     business_status: 'OPERATIONAL',
-//     formatted_address: 'Rue Fleury O, Montréal, QC H3L 1B9, Canada',
-//     geometry: {
-//         location: {
-//             lat: 45.5440696,
-//             lng: -73.6655919
-//         },
-//         viewport: {
-//             northeast: {
-//                 lat: 45.54563832989272,
-//                 lng: -73.66410922010726
-//             },
-//             southwest: {
-//                 lat: 45.54293867010728,
-//                 lng: -73.66680887989271
-//             }
-//         }
-//     },
-//     icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/generic_recreational-71.png',
-//     id: '0954f1fa71a785bbbdc1fce14df48647a9ea5d57',
-//     name: 'Parc Tolhurst',
-//     opening_hours: {
-//         open_now: true
-//     },
-//     photos: [
-//         {
-//             height: 3456,
-//             html_attributions: [
-//                 '<a href="https://maps.google.com/maps/contrib/101021804328762220817">paul rossini</a>'
-//             ],
-//             photo_reference: 'CmRaAAAAdbfA3pze3_YBS_dpMcBOEopwoHWrSodO-2-fP9-FYJ7KCBcpKhgu7U3T90mz_8W6rFxrFKy0VI9N31LcxlAuN4UakpvJ4pAunHcd_24hpWwlRt2NAqQxfyYRIBpr7w8HEhAi9cdyOZB7i89zi3sfC6BmGhTDUSvzr4pYleLWaKaLxXi8SHz_oA',
-//             width: 4608
-//         }
-//     ],
-//     place_id: 'ChIJwUGDhpMYyUwRMCTSeBh8Z8E',
-//     plus_code: {
-//         compound_code: 'G8VM+JQ Montreal, Quebec',
-//         global_code: '87Q8G8VM+JQ'
-//     },
-//     rating: 4.3,
-//     reference: 'ChIJwUGDhpMYyUwRMCTSeBh8Z8E',
-//     types: [
-//         'park',
-//         'point_of_interest',
-//         'establishment'
-//     ],
-//     user_ratings_total: 143
-// }
+color: #ff0000;
+`
+const ChangeBooking = styled.div`
+font-size: 1.3rem;
+
+`
+
+const PageContainer = styled.div`
+    width: 80%; 
+    margin-left: auto; 
+    margin-right: auto; 
+    position: relative; 
+    height: 100vh;   
+
+    form {
+        width: 90%; 
+    margin-left: auto; 
+    margin-right: auto; 
+
+    }
+`
+const Details = styled.div`
+    width: 90%; 
+    margin-left: auto; 
+    margin-right: auto; 
+
+`
+
+const StyledDate = styled.div`
+`
+const SelectDiv = styled.div`
+`
+const StyledMessage = styled.div`
+   width: 90%; 
+    margin-left: auto; 
+    margin-right: auto; 
+
+`

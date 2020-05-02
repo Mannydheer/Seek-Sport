@@ -46,29 +46,27 @@ const Navbar = () => {
 
         </StyledLoginSignup>
       </StyledFlex>
-      <nav>
 
-        {/* <NavigationLink exact to='/sports'><h2>Find Games</h2></NavigationLink> */}
-
-
-        {/* Show User Name */}
-        {userLoggedIn.status === "authenticated" &&
-          <div>
-            {/* <StyledName>{userLoggedIn.user.toUpperCase().split('')[0]}</StyledName> */}
-            <ImageButton onMouseLeave={() => setHover(false)} onMouseOver={() => setHover(true)}> <UserImage src={`./${userLoggedIn.profileImage}`} />
-            </ImageButton>
-
-            <DropDown onMouseLeave={() => setHover(false)} onMouseOver={() => setHover(true)} style={{ visibility }}>
-              <StyledLoginButton onClick={handleLogout}>Logout</StyledLoginButton>
-              <StyledLoginButton >Edit Profile</StyledLoginButton>
-            </DropDown>
-
-          </div>
-        }
+      {/* <NavigationLink exact to='/sports'><h2>Find Games</h2></NavigationLink> */}
 
 
+      {/* Show User Name */}
+      {userLoggedIn.status === "authenticated" &&
+        <div>
+          {/* <StyledName>{userLoggedIn.user.toUpperCase().split('')[0]}</StyledName> */}
+          <ImageButton onMouseLeave={() => setHover(false)} onMouseOver={() => setHover(true)}> <UserImage src={`./${userLoggedIn.profileImage}`} />
+          </ImageButton>
 
-      </nav>
+          <DropDown onMouseLeave={() => setHover(false)} onMouseOver={() => setHover(true)} style={{ visibility }}>
+            <StyledLoginButton onClick={handleLogout}>Logout</StyledLoginButton>
+            <StyledLoginButton >Edit Profile</StyledLoginButton>
+          </DropDown>
+
+        </div>
+      }
+
+
+
 
 
     </Header>
@@ -126,16 +124,14 @@ nav{
 const NavigationLink = styled(NavLink)`
 
   background: none;
-  transition: 0.5s all ease;
   text-decoration: none;
-  transition-duration: 0.7s;
   color: white;
   text-transform: uppercase;
   position: relative;
   z-index: 102;
   display: inline;
 &:hover {
-  border-bottom: solid white 2px;
+  border-bottom: solid white 4px;
 
 }
   
