@@ -44,6 +44,10 @@ const ViewActivity = () => {
                     let eventResponse = await response.json();
                     if (eventResponse.status === 200) {
                         setHostedEvents(eventResponse.events)
+                        //setCanceled will be turned to true if a cancel occurs. 
+                        //this will cause useEffect to refetch event data.
+                        setCanceled(false)
+
                     } else {
                         setError(true)
                     }
@@ -56,7 +60,7 @@ const ViewActivity = () => {
         else {
             return
         }
-    }, [])
+    }, [canceled, setCanceled])
 
     console.log(hostedEvent, 'HOSTED EVENTS')
 

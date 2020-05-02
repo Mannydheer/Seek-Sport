@@ -6,6 +6,8 @@ import { selectPark, requestHosts, retrieveHosts, retrieveHostsError } from '../
 import ParkDetails from '../ParkDetails';
 import DatePicker from "react-datepicker";
 import { skillLevel, sports } from '../data';
+
+import EventDetails from '../EventDetails';
 //geometry
 
 
@@ -55,23 +57,31 @@ const Host = () => {
     const [success, setSuccess] = useState(false);
     const [startDate, setStartDate] = useState(new Date())
 
+    const [conflictEvent, setConflictEvent] = useState(null);
+
     const handleHostInformation = async (event) => {
         //add selected park.
         event.preventDefault();
+        //reset
+        setConflictEvent(null)
+        setSuccess(false)
         //---------------------TIME ----------------------------
-        console.log(startDate.getTime())
-        console.log(new Date().getTime())
-        console.log(startDate.getMinutes())
-        console.log(new Date().getMinutes())
 
+
+        let startTime = startDate.getHours() * 60 + startDate.getMinutes();
+        let currentTime = new Date().getHours() * 60 + new Date().getMinutes();
         //ONLY IF ALLOW FETCH IS TRUE.
+
+        console.log(startTime, currentTime)
         if (sportSelect !== "Choose sport" &&
             skillSelect !== "Choose skill level" &&
             selectedPark !== null &&
             //make sure the time is past the actual current time.
-            startDate.getTime() >= new Date().getTime()) {
+            startTime >= currentTime &&
 
-            console.log(startDate.getMinutes(), new Date().getMinutes())
+            currentTime <= 1368
+        ) {
+
 
 
             let hostingInformation = {
@@ -91,11 +101,13 @@ const Host = () => {
                 skill: skillSelect,
                 //replace witht he actual park. 
                 parkId: selectedPark.id,
+                placeId: selectedPark.place_id,
                 Registration: new Date(),
                 isBooked: true,
                 readTime: startDate.toLocaleTimeString(),
                 bookedDate: startDate.toLocaleDateString(),
                 time: startDate,
+
                 duration: parseInt(duration)
 
 
@@ -128,12 +140,19 @@ const Host = () => {
                     console.log(hostResponse.message)
                     setSuccess(hostResponse.message)
                 }
+                else if (hostResponse.status === 409) {
+                    setSuccess(hostResponse.message)
+                    console.log(hostResponse.timeConflictPark)
+                    setConflictEvent(hostResponse.timeConflictPark)
+
+                }
             }
             catch (err) {
                 console.log(err, "catch error inside handleHosting in Host component.")
             }
         }
         //if any of the cases fail. 
+
         else {
             setSuccess('Invalid time booking.')
         }
@@ -142,6 +161,7 @@ const Host = () => {
     const handleChange = (date) => {
         console.log(date)
         setStartDate(date)
+        setConflictEvent(null)
     };
 
     return (
@@ -174,9 +194,9 @@ const Host = () => {
                     placeholderText="Click to select a date"
                     minDate={new Date()}
                     minTime={(new Date().setHours(7))}
-                    maxTime={(new Date().setHours(22))}
+                    maxTime={(new Date().setHours(21))}
                     showTimeSelect
-                    timeIntervals={15}
+                    timeIntervals={30}
                     timeCaption="time"
                     dateFormat="MMMM d, yyyy h:mm aa"
                 />
@@ -188,6 +208,13 @@ const Host = () => {
                 </select>
                 <button type='submit'>Submit</button>
                 {success !== false && <div>{success}</div>}
+
+                {conflictEvent !== null &&
+                    <div>
+                        <div>CHANGE BOOKING?</div>
+                        <EventDetails event={conflictEvent} />
+                    </div>
+                }
 
 
             </form>

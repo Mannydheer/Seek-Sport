@@ -14,9 +14,7 @@ import Snackbars from '../SnackBar';
 const EventDetails = ({ event, canceled, setCanceled }) => {
 
     const userInfo = useSelector(state => state.userReducer)
-    const allEvents = useSelector(state => state.eventReducer)
-
-
+    const parkInfo = useSelector(state => state.parkReducer)
 
     //set state for the participants of that current event.
     const [currentEventParticipants, setCurrentEventParticipants] = useState(null)
@@ -85,6 +83,20 @@ const EventDetails = ({ event, canceled, setCanceled }) => {
                 <h2>Time: {event.readTime}</h2>
                 <h2>Date: {event.bookedDate}</h2>
                 <h2>Duration: {event.duration} hr</h2>
+
+                {
+                    parkInfo.parks.map(park => {
+                        if (park.id === event.parkId) {
+                            return <div>
+                                <h2>{park.formatted_address}</h2>
+                                <h2>{park.name}</h2>
+                            </div>
+                        }
+
+                    })
+                }
+
+
             </MainText>
 
             {location !== '/userEvents' ? <JoinLeave>
