@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { PageWrapper } from '../Constants/Constants'
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
@@ -53,9 +53,11 @@ const Host = () => {
     //
     const [sportSelect, setSportSelect] = useState("Choose sport");
     const [skillSelect, setSkillSelect] = useState("Choose skill level");
-    const [duration, setDuration] = useState(1);
+    const [duration, setDuration] = useState("Choose duration");
     const [success, setSuccess] = useState(false);
     const [startDate, setStartDate] = useState(new Date())
+    const [canceled, setCanceled] = useState(false)
+
 
     const [conflictEvent, setConflictEvent] = useState(null);
 
@@ -65,33 +67,31 @@ const Host = () => {
         //reset
         setConflictEvent(null)
         setSuccess(false)
+
+
         //---------------------TIME ----------------------------
 
 
         let startTime = startDate.getHours() * 60 + startDate.getMinutes();
         let currentTime = new Date().getHours() * 60 + new Date().getMinutes();
-        //ONLY IF ALLOW FETCH IS TRUE.
 
         console.log(startTime, currentTime)
+        //ONLY IF ALLOW FETCH IS TRUE.
+
         if (sportSelect !== "Choose sport" &&
             skillSelect !== "Choose skill level" &&
-            selectedPark !== null &&
-            //make sure the time is past the actual current time.
-            startTime >= currentTime &&
-
-            currentTime <= 1368
+            duration !== "Choose duration" &&
+            selectedPark !== null && startTime >= currentTime &&
+            startTime !== currentTime
         ) {
-
-
-
             let hostingInformation = {
                 name: userLoggedIn.user,
                 userId: userLoggedIn._id,
                 profileImage: userLoggedIn.profileImage,
                 // skillSelected: skillSelect,
                 // sportSelect: sportSelect,
-
             }
+
 
             let eventInformation = {
                 name: userLoggedIn.user,
@@ -107,10 +107,7 @@ const Host = () => {
                 readTime: startDate.toLocaleTimeString(),
                 bookedDate: startDate.toLocaleDateString(),
                 time: startDate,
-
                 duration: parseInt(duration)
-
-
             }
 
             //if token is undefined. will be handled in the back?
@@ -139,10 +136,16 @@ const Host = () => {
                 else if (hostResponse.status === 400) {
                     console.log(hostResponse.message)
                     setSuccess(hostResponse.message)
+
                 }
                 else if (hostResponse.status === 409) {
                     setSuccess(hostResponse.message)
                     console.log(hostResponse.timeConflictPark)
+                    setCanceled(false)
+
+                    //the backend should take care in that it will only send back 1 event
+                    //there should never be a case where you can book two events at the same time as a single user.
+
                     setConflictEvent(hostResponse.timeConflictPark)
 
                 }
@@ -154,15 +157,28 @@ const Host = () => {
         //if any of the cases fail. 
 
         else {
-            setSuccess('Invalid time booking.')
+            setSuccess('Make sure all fields have been selected.')
         }
     }
 
     const handleChange = (date) => {
         console.log(date)
+        setSuccess(null)
         setStartDate(date)
         setConflictEvent(null)
     };
+
+    // useEffect(() => {
+    //     setConflictEvent(null)
+    // }, [canceled, setCanceled])
+
+
+    //as cleanup for states?
+
+
+
+
+
 
     return (
 
@@ -212,7 +228,7 @@ const Host = () => {
                 {conflictEvent !== null &&
                     <div>
                         <div>CHANGE BOOKING?</div>
-                        <EventDetails event={conflictEvent} />
+                        <EventDetails canceled={canceled} setCanceled={setCanceled} event={conflictEvent} />
                     </div>
                 }
 

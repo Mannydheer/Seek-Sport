@@ -472,8 +472,8 @@ const handleHosting = async (req, res, next) => {
 
                     //second validation for events at the SAME park.
                     if (filteredEvents.length === 0) {
-                        console.log('inside 2 bool')
-                        validBooking = true;
+                        console.log('inside 1 bool')
+                        validBooking = true
                     }
                     //filtered events holds at least one park, by the same user, on the same day.
                     else {
@@ -508,14 +508,23 @@ const handleHosting = async (req, res, next) => {
                             //see if the start time is within the start-end time for the current booking.
                             if (startMinutes <= eventEndTime && startMinutes >= eventStartTime
                                 || endMinutes <= eventEndTime && endMinutes >= eventStartTime) {
+
                                 //also check if its the same day. becuase it it isnt
-                                validBooking = false;
-                                res.status(409).json({
-                                    status: 409,
-                                    message: "There is a time conflict. You have already booked at this park during this time range.",
-                                    timeConflictPark: event
-                                })
-                                return;
+                                if (event.bookedDate === eventInformation.bookedDate) {
+                                    // timeConflict = true;
+                                    validBooking = false;
+                                    res.status(409).json({
+                                        status: 409,
+                                        message: "There is a time conflict. You have already booked at this park during this time range.",
+                                        timeConflictPark: event
+                                    })
+                                    return;
+                                }
+                                else {
+                                    //if there are no time conflicts
+                                    validBooking = true;
+                                    return
+                                }
                             } else {
                                 validBooking = true;
                                 return
@@ -529,7 +538,6 @@ const handleHosting = async (req, res, next) => {
             }
 
             //HERE WILL BE THE FINAL TEST.
-
             if (validBooking && validBookingAllEvents) {
                 eventInformation.hostId = findhost._id
                 //meaning an event was successfully created.
@@ -558,7 +566,7 @@ const handleHosting = async (req, res, next) => {
                 })
 
             } else {
-                res.status(400).json({ status: 400, message: "Booking was not valid" })
+                res.status(400).json({ status: 400, message: "Booking was not valid - time conflicts." })
             }
             //if you do, success. 
         }
@@ -962,7 +970,6 @@ const handleCurrentEventParticipants = async (req, res, next) => {
             const db = client.db(dbName)
             //insert the hosting info into DB
             let participantData = await db.collection(collectionParticipants).findOne({ _id: ObjectId(participantId) })
-
             if (!participantData) {
                 res.status(400).json({ status: 400, message: "Currently no participants registered for this event." })
             }

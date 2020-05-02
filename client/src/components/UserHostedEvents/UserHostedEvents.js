@@ -53,9 +53,14 @@ const UserHostedEvents = () => {
 
     return (
         <Wrapper>
-            {events !== null && participants !== null && events.map(event => {
+            <Title>Hosted Events.
+            <TitleText>See details for all your events.</TitleText>
+            </Title>
+
+
+            {events !== null && participants !== null && events.map((event, index) => {
                 return (
-                    <EventDetails canceled={canceled} setCanceled={setCanceled} event={event} />
+                    <EventDetails index={index} canceled={canceled} setCanceled={setCanceled} event={event} />
                 )
             })}
             {error && <div>Error occured on the page.</div>}
@@ -72,4 +77,22 @@ const Wrapper = styled.div`
     grid-template-rows: repeat(auto-fit, minmax(100px, 1fr) );
     grid-column-gap: 10px;
     grid-row-gap: 10px;
+
+`
+
+const Title = styled.div`
+width: 90%;
+     font-weight: 900;
+    margin: 0 auto;
+    font-size: 3rem;
+    border-bottom: black solid 2px;
+
+
+`
+const TitleText = styled.div`
+
+    font-size: 1.4rem;
+    font-weight: 100;
+    
+
 `

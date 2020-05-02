@@ -11,7 +11,7 @@ import Snackbars from '../SnackBar';
 
 
 
-const EventDetails = ({ event, canceled, setCanceled }) => {
+const EventDetails = ({ index, event, canceled, setCanceled }) => {
 
     const userInfo = useSelector(state => state.userReducer)
     const parkInfo = useSelector(state => state.parkReducer)
@@ -74,6 +74,8 @@ const EventDetails = ({ event, canceled, setCanceled }) => {
 
     return (
         <Wrapper key={event._id}>
+            <Number>0{index + 1}.</Number>
+
             <MainText >
 
                 <h1>Host: {event.name}</h1>
@@ -88,8 +90,8 @@ const EventDetails = ({ event, canceled, setCanceled }) => {
                     parkInfo.parks.map(park => {
                         if (park.id === event.parkId) {
                             return <div>
-                                <h2>{park.formatted_address}</h2>
-                                <h2>{park.name}</h2>
+                                <h2>Address: {park.formatted_address}</h2>
+                                <h2>Park name: {park.name}</h2>
                             </div>
                         }
 
@@ -129,7 +131,11 @@ const EventDetails = ({ event, canceled, setCanceled }) => {
 export default EventDetails;
 const Wrapper = styled.div`
 display: flex;
-border: black 3px solid;
+width: 90%;
+margin: 0 auto;
+border-bottom: 2px solid black;
+
+
 
 `
 const JoinLeave = styled.div`
@@ -137,6 +143,7 @@ display: flex;
 flex-direction: column;
 justify-content: center;
 align-content: center;
+margin-right: 2rem;
 
 
 `
@@ -154,12 +161,31 @@ justify-content: space-evenly;
 `
 
 const MainText = styled.div`
-width: 10vw;
-h1, h2 {
 
+h2 {
+   
     width: 300px;
+    line-height: 1.5;
+
 
 }
+
+h1 {
+    font-weight: 900;
+    width: 300px;
+    line-height: 2;
+
+
+}
+`
+
+const Number = styled.div`
+font-weight: 600;
+font-size: 4rem;
+margin-right: 2rem;
+color: #FF4136;
+opacity: 0.7;
+
 `
 
 
