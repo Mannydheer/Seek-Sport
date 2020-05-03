@@ -12,6 +12,8 @@ import ViewActivity from '../ViewActivity';
 import UserHostedEvents from '../UserHostedEvents';
 import UserActivities from '../UserActivities';
 import Footer from '../Footer';
+import ChatJoin from '../ChatJoin';
+import Chat from '../Chat';
 
 
 
@@ -87,6 +89,12 @@ function App() {
           <Route exact path='/userActivities'>
             {userLoggedIn.isAuthenticated ? <UserActivities></UserActivities> :
               <h1 style={{ textAlign: 'center' }}>Must be logged in to view this page.</h1>}
+          </Route>
+          <Route exact path='/chat'>
+            <Chat></Chat>
+          </Route>
+          <Route exact path='/chatJoin'>
+            <ChatJoin></ChatJoin>
           </Route>
         </Switch>
         {/* footer */}

@@ -112,15 +112,6 @@ const EventDetails = ({ index, event, canceled, setCanceled }) => {
                 {getParticipantImages(currentEventParticipants)}
             </Images>}
 
-
-
-
-
-
-
-
-
-
         </Wrapper >
     )
 }

@@ -6,6 +6,13 @@ const morgan = require('morgan');
 //multer
 const multer = require('multer')
 
+
+//built in node module
+const http = require('http');
+const socketio = require('socket.io');
+
+
+
 // const upload = multer({ dest: 'uploads/' })
 
 const { handleSignUp, handleLogin,
@@ -24,7 +31,12 @@ const { handleSignUp, handleLogin,
     handleUserActivities
 } = require('./handlers')
 
+
+
+const { handleChat } = require('./chatHandlers');
+
 const { auth } = require('../server/middleware')
+
 require('dotenv').config();
 
 //data file for items
@@ -40,6 +52,26 @@ const PORT = 4000;
 
 
 var app = express()
+
+//set up socket io.
+const server = http.createServer(app);
+//socket io server.
+const io = socketio(server);
+
+//this wil run when we have a client connection on our ion instance.
+//this will be used to keep track of clients joining and leaving. (connect and disconnect0)
+io.on('connection', (socket) => {
+    console.log('we have a new connections!!!')
+
+
+    //now it is a socket.on, and not a io.on
+    socket.on('disconnect', () => {
+        console.log('USER HAS LEFT')
+
+    })
+})
+
+//const server
 app.use(function (req, res, next) {
     res.header(
         'Access-Control-Allow-Methods',
@@ -97,5 +129,10 @@ app.get('/userActivities/:userId', auth, handleUserActivities)
 
 
 
-    .listen(PORT, () => console.info(`Listening on port ${PORT}`));
+
+//CHAT
+// app.get('/chat', handleChat)
+
+
+server.listen(PORT, () => console.info(`Listening on port ${PORT}`));
 

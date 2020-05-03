@@ -10,6 +10,7 @@ const collectionHosts = 'Hosts'
 const collectionEvents = 'Events'
 const collectionParticipants = 'Participants'
 const collectionUserEvents = 'UserEvents'
+const collectionRooms = 'Rooms'
 
 const assert = require('assert')
 var ObjectId = require('mongodb').ObjectID;
@@ -356,9 +357,13 @@ const handleHosting = async (req, res, next) => {
                             assert(1, r.insertedCount)
                             //then assign the event with that participants Id object
                             let participantId = r.ops[0]._id;
-                            await db.collection(collectionEvents).updateOne({ _id: ObjectId(eventId) }, { $set: { participantId: participantId } })
-                            assert(1, r.modifiedCount)
-                            assert(1, r.matchedCount)
+                            let r2 = await db.collection(collectionEvents).updateOne({ _id: ObjectId(eventId) }, { $set: { participantId: participantId } })
+                            assert(1, r2.modifiedCount)
+                            assert(1, r2.matchedCount)
+
+                            let r3 = await db.collection(collectionRooms).insertOne({ _id: participantId })
+                            assert(1, r3.insertedCount)
+
 
                             res.status(200).json({
                                 status: 200,
@@ -544,8 +549,11 @@ const handleHosting = async (req, res, next) => {
                 let eventInfo = await db.collection(collectionEvents).insertOne(eventInformation)
                 //grab the id of that event.
                 let eventId = eventInfo.ops[0]._id;
-                //then we need to make the host a participant as well
+                //get the event info.
 
+
+
+                //then we need to make the host a participant as well
                 //also since this will only happen once, will add also the host information as a participant.
                 //push the details of the participant a document.
                 hostingInformation.parkId = eventInformation.parkId
@@ -553,10 +561,17 @@ const handleHosting = async (req, res, next) => {
                 assert(1, r.insertedCount)
                 //then assign the event with that participants Id object
                 let participantId = r.ops[0]._id;
-                await db.collection(collectionEvents).updateOne({ _id: ObjectId(eventId) }, { $set: { participantId: participantId } })
-                assert(1, r.modifiedCount)
-                assert(1, r.matchedCount)
+                let r2 = await db.collection(collectionEvents).updateOne({ _id: ObjectId(eventId) }, { $set: { participantId: participantId } })
+                assert(1, r2.modifiedCount)
+                assert(1, r2.matchedCount)
                 //also you need to add the event you joined into the userEvent collection.
+
+                //also need to reupdate the room.
+                //also if a there is a new reservation by the host, a room document needs to be recreated.
+                let r3 = await db.collection(collectionRooms).insertOne({ _id: participantId })
+                assert(1, r3.insertedCount)
+
+
 
                 console.log(validBooking)
                 res.status(200).json({
@@ -855,6 +870,9 @@ const handleCancelEvent = async (req, res, next) => {
             let eventInfo = await db.collection(collectionEvents).findOne({ _id: ObjectId(eventId) })
             let participantId = eventInfo.participantId;
 
+            //delete room.
+            let deleteRoom = await db.collection(collectionRooms).deleteOne({ _id: ObjectId(participantId) })
+            assert(1, deleteRoom.deletedCount)
 
             //delete event
             let deletedEvent = await db.collection(collectionEvents).deleteOne({ _id: ObjectId(eventId) })

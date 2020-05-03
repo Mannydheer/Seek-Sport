@@ -106,7 +106,7 @@ const Host = () => {
         if (sportSelect !== "Choose sport" &&
             skillSelect !== "Choose skill level" &&
             duration !== "Choose duration" &&
-            selectedPark !== null && startTime >= currentTime
+            selectedPark !== null && startTime > currentTime
         ) {
             let hostingInformation = {
                 name: userLoggedIn.user,
@@ -180,7 +180,7 @@ const Host = () => {
         //if any of the cases fail. 
 
         else {
-            setSuccess('Make sure all fields have been selected and that a valid time was selected.')
+            setError('Make sure all fields have been selected and that a valid time was selected.')
         }
     }
 

@@ -34,7 +34,9 @@ const Navbar = () => {
   return <>
     <Header>
       <StyledFlex>
+        {/* make ul and li */}
         <NavigationLink exact to='/'><h1>PIKUP</h1></NavigationLink>
+
         <StyledLoginSignup>
 
           <NavigationLink exact to='/'><h2>Home</h2></NavigationLink>
@@ -43,6 +45,8 @@ const Navbar = () => {
           {/* <NavigationLink exact to='/'><h2>Home</h2></NavigationLink> */}
           {!userLoggedIn.isAuthenticated && <Login></Login>}
           {!userLoggedIn.isAuthenticated && <Signup></Signup>}
+          <NavigationLink exact to='/chat'><h1>Chat</h1></NavigationLink>
+
 
         </StyledLoginSignup>
       </StyledFlex>
