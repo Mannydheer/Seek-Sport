@@ -85,35 +85,24 @@ client.connect(async (err) => {
 
             //see if the user is is allowed to join the chat.
             const db = client.db(dbName)
-            //find the participants array for that room
-            let checkForUser = await db.collection(collectionRooms).findOne({ _id: ObjectId(room) })
+            // let checkForUser = await db.collection(collectionRooms)
+            // .findOneAndUpdate({ _id: ObjectId(room) }, {$set: {messages: []}})
             //now check if current user is allowed to join by checking if he is a participant in the event.
-            let match = checkForUser.chatParticipants.find(user => {
-                if (user.userId === userId) {
-                    return user
-                }
-            })
-            console.log(match)
-            //if no match...
-            if (match) {
-                //FIX MESSAGE.
-                console.log('already in the room... cannot join')
+
+            let userChatDetails = {
+                socketId: socket.id,
+                userId: userId,
+                roomId: room,
+                name: name
             }
-            //if he not in the room, then he can join.
-            else {
-                let userChatDetails = {
-                    socketId: socket.id,
-                    userId: userId,
-                    roomId: room,
-                    name: name
-                }
-                let r = await db.collection(collectionChats).insertOne({ userChatDetails })
-                assert(1, r.insertedCount)
-                //then join the room with sockket.
-                socket.join(room)
-                io.to(room).emit('chat-message', 'JOINED')
-                socket.broadcast.emit('chat-message', `${name} has joined.`)
-            }
+            let r = await db.collection(collectionRooms)
+                .insertOne({ _id: ObjectId(room) }, { messages: [] }, { socketId: socket.id })
+            assert(1, r.insertedCount)
+            //then join the room with sockket.
+            socket.join(room)
+            io.to(room).emit('chat-message', 'JOINED')
+            socket.broadcast.emit('chat-message', `${name} has joined.`)
+
 
         })
 
