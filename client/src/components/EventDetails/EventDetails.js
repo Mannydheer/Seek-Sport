@@ -84,7 +84,7 @@ const EventDetails = ({ index, event, canceled, setCanceled }) => {
                 <h2>Date: {event.bookedDate}</h2>
                 <h2>Duration: {event.duration} hr</h2>
 
-                {
+                {parkInfo.parks !== null &&
                     parkInfo.parks.map(park => {
                         if (park.id === event.parkId) {
                             return <div>

@@ -17,8 +17,6 @@ var ObjectId = require('mongodb').ObjectID;
 //
 const multer = require('multer')
 const fileUpload = require('express-fileupload')
-
-
 //
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
@@ -364,6 +362,11 @@ const handleHosting = async (req, res, next) => {
                             let r3 = await db.collection(collectionRooms).insertOne({ _id: participantId })
                             assert(1, r3.insertedCount)
 
+                            let addUserEvent = await db.collection(collectionUserEvents).updateOne({ _id: ObjectId(hostingInformation.userId) }, { $push: { events: eventId } })
+                            assert(1, addUserEvent.matchedCount)
+                            assert(1, addUserEvent.modifiedCount)
+
+
 
                             res.status(200).json({
                                 status: 200,
@@ -570,6 +573,13 @@ const handleHosting = async (req, res, next) => {
                 //also if a there is a new reservation by the host, a room document needs to be recreated.
                 let r3 = await db.collection(collectionRooms).insertOne({ _id: participantId })
                 assert(1, r3.insertedCount)
+
+                //also a host should be registered in his own events.
+                //inside the collectionUserEvents.
+
+                let addUserEvent = await db.collection(collectionUserEvents).updateOne({ _id: ObjectId(hostingInformation.userId) }, { $push: { events: eventId } })
+                assert(1, addUserEvent.matchedCount)
+                assert(1, addUserEvent.modifiedCount)
 
 
 
@@ -888,8 +898,9 @@ const handleCancelEvent = async (req, res, next) => {
             //now we have the participants.
             let getParticipants = await db.collection(collectionParticipants).findOne({ _id: ObjectId(participantId) })
             //we get an array.
-            getParticipants.participants.forEach(async (participant) => {
-                let removeUserEvent = await db.collection(collectionUserEvents).findOneAndUpdate({ _id: ObjectId(participant.userId) }, { $pull: { events: eventId } })
+            await getParticipants.participants.forEach(async (participant) => {
+                let removeUserEvent = await db.collection(collectionUserEvents).findOneAndUpdate({ _id: ObjectId(participant.userId) }, { $pull: { events: ObjectId(eventId) } })
+                console.log(removeUserEvent)
             })
 
             //deleted participants.
@@ -1107,9 +1118,6 @@ const handleUserActivities = async (req, res, next) => {
                 }
                 //find all the events that you have registered for.
             }
-
-
-
         }
         catch (error) {
             console.log(error.stack, 'Catch Error in handleSelectedParkEvents')
@@ -1121,6 +1129,92 @@ const handleUserActivities = async (req, res, next) => {
         }
     })
 }
+
+//@endpoint GET /userRegisteredEvents/:_id
+//@desc get registered events associated with current user logged in.
+//@access PRIVATE - will need to validate token? YES
+const handleUserRegisteredEvents = async (req, res, next) => {
+
+    const id = req.params._id;
+    const client = new MongoClient(uri, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    });
+    //dsfsdfasddsa
+    //connect to db
+    client.connect(async (err) => {
+        if (err) throw { Error: err, message: "error occured connected to DB" }
+        console.log("Connected to DB in handleUserRegisteredEvents ")
+        try {
+            const db = client.db(dbName)
+            //insert the hosting info into DB
+            let allData = await db.collection(collectionUserEvents).findOne({ _id: ObjectId(id) })
+            console.log(allData)
+            if (!allData.events) {
+                res.status(404).json({ status: 404, message: 'There are no registered events under this user.' })
+            } else {
+                res.status(200).json({
+                    status: 200,
+                    message: "Success getting all registered events associated with the user!",
+                    userRegisteredEvents: allData.events,
+                })
+            }
+            //
+        }
+        catch (error) {
+            console.log(error.stack, 'Catch Error in handleUserRegisteredEvents ')
+            res.status(500).json({ status: 500, message: error.message })
+        }
+        finally {
+            console.log('disconnected')
+            client.close();
+        }
+    })
+}
+
+
+//@endpoint GET /getChatRoom
+//@desc get chat room ID for specified EVENT.
+//@access PRIVATE - will need to validate token? YES - add...
+const handleGetChatRoom = async (req, res, next) => {
+    const eventId = req.params.eventId;
+    const client = new MongoClient(uri, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    });
+    //dsfsdfasddsa
+    //connect to db
+    client.connect(async (err) => {
+        if (err) throw { Error: err, message: "error occured connected to DB" }
+        console.log("Connected to DB in handleGetChatRoom ")
+        try {
+            const db = client.db(dbName)
+            let eventData = await db.collection(collectionEvents).findOne({ _id: ObjectId(eventId) })
+            //since we are making a participant ID as soon as we host an event.
+            //so check if there is no event.
+            if (!eventData) {
+                res.status(404).json({ status: 404, message: 'There are no events.' })
+            } else {
+                //since the participantId is the room ID...
+                res.status(200).json({
+                    status: 200,
+                    message: "Success getting participantID events associated with the event.",
+                    participantId: eventData.participantId
+                })
+            }
+        }
+        catch (error) {
+            console.log(error.stack, 'Catch Error in handleGetChatRoom ')
+            res.status(500).json({ status: 500, message: error.message })
+        }
+        finally {
+            console.log('disconnected')
+            client.close();
+        }
+    })
+}
+
+
 
 
 
@@ -1141,5 +1235,6 @@ module.exports = {
     handleJoinEvent, handleViewActivityEvents,
     handleLeaveEvent, handleCurrentEventParticipants,
     handleCancelEvent, handleSelectedParkEvents,
-    handleUserActivities
+    handleUserActivities, handleUserRegisteredEvents,
+    handleGetChatRoom,
 }

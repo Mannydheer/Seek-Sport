@@ -93,7 +93,7 @@ function App() {
           <Route exact path='/chat'>
             <Chat></Chat>
           </Route>
-          <Route exact path='/chatJoin'>
+          <Route exact path='/chatJoin/:eventId'>
             <ChatJoin></ChatJoin>
           </Route>
         </Switch>

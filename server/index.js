@@ -6,13 +6,28 @@ const morgan = require('morgan');
 //multer
 const multer = require('multer')
 
+//mongo
+const MongoClient = require('mongodb').MongoClient;
+const uri = "mongodb+srv://dbUser:YOFwbi6x3P5o3H4d@cluster0-seh3x.mongodb.net/test?authSource=admin&replicaSet=Cluster0-shard-0&w=majority&readPreference=primary&retryWrites=true&ssl=true"
+
+const dbName = 'ParkGames';
+const collectionUsers = 'Users'
+const collectionHosts = 'Hosts'
+const collectionEvents = 'Events'
+const collectionParticipants = 'Participants'
+const collectionUserEvents = 'UserEvents'
+const collectionRooms = 'Rooms'
+const collectionChats = "Chats"
+
+const assert = require('assert')
+var ObjectId = require('mongodb').ObjectID;
+
 
 //built in node module
 const http = require('http');
 const socketio = require('socket.io');
 
-
-
+const users = [];
 // const upload = multer({ dest: 'uploads/' })
 
 const { handleSignUp, handleLogin,
@@ -28,29 +43,18 @@ const { handleSignUp, handleLogin,
     handleCurrentEventParticipants,
     handleCancelEvent,
     handleSelectedParkEvents,
-    handleUserActivities
+    handleUserActivities,
+    handleUserRegisteredEvents,
+    handleGetChatRoom
 } = require('./handlers')
 
-
-
-const { handleChat } = require('./chatHandlers');
+const { addUserChat, getUserChat, getUsersInRoom, addUser } = require('./chatHandlers');
 
 const { auth } = require('../server/middleware')
-
 require('dotenv').config();
-
 //data file for items
-
-
 const upload = multer({ dest: './public/uploads/' })
-
-
 const PORT = 4000;
-
-
-
-
-
 var app = express()
 
 //set up socket io.
@@ -60,16 +64,89 @@ const io = socketio(server);
 
 //this wil run when we have a client connection on our ion instance.
 //this will be used to keep track of clients joining and leaving. (connect and disconnect0)
-io.on('connection', (socket) => {
-    console.log('we have a new connections!!!')
 
 
-    //now it is a socket.on, and not a io.on
-    socket.on('disconnect', () => {
-        console.log('USER HAS LEFT')
+//connect to db
+const client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+});
+client.connect(async (err) => {
+    if (err) throw { Error: err, message: "error occured connected to DB" }
+    console.log("Connected to DB in addUserChat")
+
+
+    io.on('connection', (socket) => {
+        console.log('we have a new connections!!!')
+
+        socket.on('join', async ({ name, userId, room }, callback) => {
+
+            //room is the participant iD!
+
+            //see if the user is is allowed to join the chat.
+            const db = client.db(dbName)
+            //find the participants array for that room
+            let checkForUser = await db.collection(collectionRooms).findOne({ _id: ObjectId(room) })
+            //now check if current user is allowed to join by checking if he is a participant in the event.
+            let match = checkForUser.chatParticipants.find(user => {
+                if (user.userId === userId) {
+                    return user
+                }
+            })
+            console.log(match)
+            //if no match...
+            if (match) {
+                //FIX MESSAGE.
+                console.log('already in the room... cannot join')
+            }
+            //if he not in the room, then he can join.
+            else {
+                let userChatDetails = {
+                    socketId: socket.id,
+                    userId: userId,
+                    roomId: room,
+                    name: name
+                }
+                let r = await db.collection(collectionChats).insertOne({ userChatDetails })
+                assert(1, r.insertedCount)
+                //then join the room with sockket.
+                socket.join(room)
+                io.to(room).emit('chat-message', 'JOINED')
+                socket.broadcast.emit('chat-message', `${name} has joined.`)
+            }
+
+        })
+
+        //now it is a socket.on, and not a io.on
+        socket.on('disconnect', async () => {
+            const db = client.db(dbName)
+            console.log('USER HAS LEFT')
+
+        })
+
+        socket.on('sendMessage', (message, callback) => {
+
+
+
+            console.log(message)
+            socket.broadcast.emit('chat-message', message)
+        })
+
 
     })
 })
+
+
+
+
+
+
+
+
+
+
+
+
 
 //const server
 app.use(function (req, res, next) {
@@ -126,6 +203,13 @@ app.get('/currentEventParticipants/:participantId', auth, handleCurrentEventPart
 app.get('/selectedParkEvents/:parkId', auth, handleSelectedParkEvents)
 //user activities.
 app.get('/userActivities/:userId', auth, handleUserActivities)
+//gets all registered events for a user.
+//inside Chat component.
+app.get('/userRegisteredEvents/:_id', handleUserRegisteredEvents)
+//gets the room associated with a particular event.
+//inside ChatJoin component.
+app.get('/getChatRoom/:eventId', handleGetChatRoom)
+
 
 
 

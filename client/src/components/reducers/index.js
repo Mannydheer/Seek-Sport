@@ -4,6 +4,7 @@ import authReducer from './auth-reducer';
 import parkReducer from './park-reducer';
 import hostReducer from './hosting-reducer';
 import eventReducer from './event-reducer';
+import userRegisteredReducer from './UserRegistered-reducer'
 
 
 
@@ -12,6 +13,7 @@ export default combineReducers({
     parkReducer,
     hostReducer,
     eventReducer,
+    userRegisteredReducer,
     authReducer
 
 });

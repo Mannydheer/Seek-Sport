@@ -14,6 +14,17 @@ export const logOutUser = () => ({
     type: 'LOGOUT',
 })
 
+export const requestRegisteredUserEvents = () => ({
+    type: 'REQUEST_REGISTERED_USER_EVENTS',
+})
+export const retrieveRegisteredUserEvents = (payload) => ({
+    type: 'RETRIEVE_REGISTERED_USER_EVENTS',
+    payload
+})
+export const retrieveRegisteredUserEventsError = () => ({
+    type: 'RETRIEVE_REGISTERED_USER_EVENTS_ERROR',
+})
+
 
 
 // -----------LOGIN----------------
