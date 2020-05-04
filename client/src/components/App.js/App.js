@@ -91,10 +91,12 @@ function App() {
               <h1 style={{ textAlign: 'center' }}>Must be logged in to view this page.</h1>}
           </Route>
           <Route exact path='/chat'>
-            <Chat></Chat>
+            {userLoggedIn.isAuthenticated ? <Chat></Chat> :
+              <h1 style={{ textAlign: 'center' }}>Must be logged in to view this page.</h1>}
           </Route>
           <Route exact path='/chatJoin/:eventId'>
-            <ChatJoin></ChatJoin>
+            {userLoggedIn.isAuthenticated ? <ChatJoin></ChatJoin> :
+              <h1 style={{ textAlign: 'center' }}>Must be logged in to view this page.</h1>}
           </Route>
         </Switch>
         {/* footer */}

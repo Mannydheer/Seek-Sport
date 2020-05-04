@@ -18,12 +18,17 @@ const ChatJoin = () => {
     let eventId = useParams().eventId;
 
 
+
     const userInfo = useSelector(state => state.userReducer);
     const userRegisteredEvents = useSelector(state => state.userRegisteredReducer)
     const [name, setName] = useState('');
     const [room, setRoom] = useState(null);
     const [messages, setMessages] = useState([])
     const [message, setMessage] = useState(null)
+    const [join, setJoined] = useState(null)
+    const [leaveRoomMessage, setLeaveRoomMessage] = useState(null)
+
+    let userId = userInfo._id;
 
 
 
@@ -34,6 +39,7 @@ const ChatJoin = () => {
         const handleGetRoomId = async () => {
 
             try {
+                //EVENTID = PARTICIPANTID.
                 let response = await fetch(`/getChatRoom/${eventId}`);
                 let eventResponse = await response.json()
                 console.log(eventResponse)
@@ -58,42 +64,42 @@ const ChatJoin = () => {
     //once the room set.
     //useEffect will hit the socket and try to join the room. 
     useEffect(() => {
-        let userId = userInfo._id;
-        socket = io(ENDPOINT);
-        //now we can emit events from a socket.
-        socket.emit('join', { name: userInfo.user, userId: userId, room: room })
-
-        //useEffect cleanup.
-        return () => {
-            //this will occur when leaving the chat.
-            socket.emit('disconnect');
-            // //also need to turn off sokcet.
-            socket.off();
+        if (room !== null) {
+            socket = io(ENDPOINT);
+            //now we can emit events from a socket.
+            //change to dynamic room #, which you ask for in Chat component.
+            socket.emit('join', { name: userInfo.user, userId: userId, room: `${room}-Room-1` })
+            //useEffect cleanup.
+            return () => {
+                //this will occur when leaving the chat.
+                socket.emit('disconnect');
+                // //also need to turn off sokcet.
+                socket.off();
+            }
         }
         //once you get the room
         //or the value of the room changes. then a refetch occurs.
     }, [room])
 
-
-
-
     useEffect(() => {
-        let userId = userInfo._id;
         socket = io(ENDPOINT);
         //now we can emit events from a socket.
         socket.on('chat-message', (message) => {
             console.log(message)
-            setMessages([...messages, message])
+            setMessages([...messages, message.message])
 
         })
         //useEffect cleanup.
         return () => {
+            let dataDisconnect = {
+                room: `${room}-Room-1`,
+                userId: userId,
+            }
             //this will occur when leaving the chat.
-            socket.emit('disconnect');
+            socket.emit('disconnect', (dataDisconnect));
             // //also need to turn off sokcet.
             socket.off();
         }
-
     }, [message])
 
 
@@ -102,10 +108,31 @@ const ChatJoin = () => {
         console.log('inside handle submit')
         e.preventDefault();
         if (message) {
-            socket.emit('sendMessage', message, () =>
+            let data = {
+                message: message,
+                room: `${room}-Room-1`,
+                userId: userId,
+                sender: userInfo.user,
+                timeStamp: new Date(),
+            }
+            socket.emit('sendMessage', (data), () =>
                 setMessage('')
             )
         }
+    }
+
+    const handleLeaveRoom = (e) => {
+        e.preventDefault();
+        let leaveRoomData = {
+            room: `${room}-Room-1`,
+            userId: userId,
+            name: userInfo.user
+        }
+        socket.emit('leaveRoom', (leaveRoomData), () => {
+            setLeaveRoomMessage(message)
+
+        })
+
     }
 
     console.log(messages)
@@ -116,11 +143,13 @@ const ChatJoin = () => {
             <input placeholder="message" type="text" onChange={(e) => setMessage(e.target.value)}></input>
             <button type='submit'>send</button>
             <Link to={`/chat?name=${name}`}></Link>
+            <button onClick={handleLeaveRoom}>Leave Room</button>
         </StyledForm>
         {messages !== null && messages.length > 0 &&
             <div>
                 {messages.map(message => {
-                    return <div>
+                    //CHANGE KEY
+                    return <div key={message}>
                         {message}
                     </div>
                 })}
