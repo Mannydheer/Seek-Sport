@@ -20,22 +20,20 @@ export default function chatReducer(state = intitialState, action) {
         case "RETRIEVE_CHAT": {
             let stateCopy = { ...state }
 
+            //check if you can find the room.
             let findRoom = stateCopy.rooms.find(room => {
                 if (room._id === action.payload._id) {
                     return room;
                 }
             })
+
             if (!findRoom) {
                 stateCopy.rooms.push(action.payload)
-
             }
-
-
             return {
                 ...stateCopy,
                 status: 'retrieved',
                 isLoading: false,
-
             }
         }
         case "RETRIEVE_CHAT_ERROR": {
@@ -54,8 +52,18 @@ export default function chatReducer(state = intitialState, action) {
 
             let findRoom = stateCopy.rooms.find(room => {
                 if (room._id === action.message.room) {
+
+                    //if there are no room messages.
+                    //make them and then push the message that is coming...
+                    if (!room.messages) {
+                        room.messages = [];
+                        room.messages.push(action.message)
+                    }
+                    //if there are messages array.. push inc msg.
+                    else {
+                        room.messages.push(action.message)
+                    }
                     //once you find the room... push the new message.
-                    room.messages.push(action.message)
                 }
                 else {
                     console.log('room was not found..')

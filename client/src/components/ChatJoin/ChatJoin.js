@@ -14,7 +14,6 @@ import {
 
 let socket;
 
-
 const ChatJoin = () => {
     let ENDPOINT = 'localhost:4000';
 
@@ -96,6 +95,8 @@ const ChatJoin = () => {
                     dispatch(retrieveChatsError())
                 }
             })
+
+
             //useEffect cleanup.
             return () => {
                 //this will occur when leaving the chat.
@@ -120,8 +121,10 @@ const ChatJoin = () => {
         socket = io(ENDPOINT);
         //now we can emit events from a socket.
         socket.on('chat-message', (message) => {
-            console.log(message)
             dispatch(addMessage(message))
+        })
+
+        socket.on('users-join-leave', (message) => {
             setMessages([message.message])
         })
 
@@ -165,8 +168,6 @@ const ChatJoin = () => {
 
     //useEffect that will get all messages related to that room.
     useEffect(() => {
-
-
         if (userChats.status === 'retrieved' && room !== null) {
 
             let currentRoom = userChats.rooms.find(eachRoom => {
@@ -175,46 +176,50 @@ const ChatJoin = () => {
                     return room;
                 }
             })
-            setAllMessages(currentRoom.messages)
+            if (currentRoom.messages) {
+                setAllMessages(currentRoom.messages)
+            }
+
         }
-
-
     }, [userChats])
 
     console.log(allMessages, 'ALL MESSAGES')
 
-    return <div>
-        <StyledTitle>Welcome to the chat!</StyledTitle>
-        {messages !== null && messages.length > 0 &&
-            <div>
-                {messages.map(message => {
-                    //CHANGE KEY
-                    return <div >
-                        {message}
-                    </div>
-                })}
-            </div>
-        }
+    return <ChatWrapper>
+        <div>
+            <StyledTitle>Welcome to the chat!</StyledTitle>
+            {messages !== null && messages.length > 0 &&
+                <div>
+                    {messages.map(message => {
+                        //CHANGE KEY
+                        return <div >
+                            {message}
+                        </div>
+                    })}
+                </div>
+            }
 
-        {/* ALL MESSAGES FROM THE FRONT END. */}
-        {
-            allMessages !== null && <div>
-                {allMessages.map(message => {
-                    //CHANGE KEY
-                    return <div >
-                        {message.sender} - {message.message}
-                    </div>
-                })}
-            </div>
-        }
-        <StyledForm onSubmit={handleSubmit}>
-            <input placeholder="message" type="text" onChange={(e) => setMessage(e.target.value)}></input>
-            <button type='submit'>send</button>
-            <Link to={`/chat?name=${name}`}></Link>
-            <button onClick={handleLeaveRoom}>Leave Room</button>
-        </StyledForm>
+            {/* ALL MESSAGES FROM THE FRONT END. */}
 
-    </div>
+            {
+                allMessages !== null && <ChatBox>
+                    {allMessages.map(message => {
+                        //CHANGE KEY
+                        return <div >
+                            {message.sender} - {message.message}
+                        </div>
+                    })}
+                </ChatBox>
+            }
+
+            <StyledForm onSubmit={handleSubmit}>
+                <input placeholder="message" type="text" onChange={(e) => setMessage(e.target.value)}></input>
+                <button type='submit'>send</button>
+                <Link to={`/chat?name=${name}`}></Link>
+                <button onClick={handleLeaveRoom}>Leave Room</button>
+            </StyledForm>
+        </div>
+    </ChatWrapper>
 }
 
 export default ChatJoin;
@@ -229,4 +234,16 @@ const StyledTitle = styled.h1`
     width: 40%;
     margin: 0 auto;
 
+`
+
+const ChatBox = styled.div`
+width: 30rem;
+height: 30rem;
+overflow: scroll;
+
+`
+
+const ChatWrapper = styled.div`
+display: flex;
+justify-content: center;
 `

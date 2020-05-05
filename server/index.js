@@ -108,6 +108,7 @@ client.connect(async (err) => {
             //if he is not existing. Then he can join
             else if (!existingUser) {
                 await db.collection(collectionRooms).updateOne({ _id: room }, { $push: { chatParticipants: chatMemberDetails } })
+
                 //if hes not already in the room...
                 //we need to send back the data regarding that room. 
                 let getRoom = await db.collection(collectionRooms).findOne({ _id: room })
@@ -119,7 +120,7 @@ client.connect(async (err) => {
                 let messageInfo = {
                     message: `${name} has joined ${room}.`,
                 }
-                socket.broadcast.emit('chat-message', messageInfo)
+                socket.broadcast.emit('users-join-leave', messageInfo)
             }
         })
 
@@ -166,7 +167,7 @@ client.connect(async (err) => {
             let messageInfo = {
                 message: `${data.name} has left the room. Reload to join`
             }
-            socket.broadcast.emit('chat-message', messageInfo)
+            socket.broadcast.emit('users-join-leave', messageInfo)
         })
 
 
