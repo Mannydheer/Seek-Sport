@@ -14,6 +14,8 @@ import UserActivities from '../UserActivities';
 import Footer from '../Footer';
 import ChatJoin from '../ChatJoin';
 import Chat from '../Chat';
+import ChatSystem from '../ChatSystem';
+import ChatModal from '../ChatModal';
 
 
 
@@ -65,8 +67,11 @@ function App() {
   return (
     <>
       <GlobalStyles></GlobalStyles>
+
       <Router>
         <Navbar></Navbar>
+
+
         <Switch>
           <Route exact path='/'>
             <Home></Home>
@@ -91,7 +96,11 @@ function App() {
               <h1 style={{ textAlign: 'center' }}>Must be logged in to view this page.</h1>}
           </Route>
           <Route exact path='/chat'>
-            {userLoggedIn.isAuthenticated ? <Chat></Chat> :
+            {userLoggedIn.isAuthenticated ?
+              <div>
+                <Chat></Chat>
+              </div>
+              :
               <h1 style={{ textAlign: 'center' }}>Must be logged in to view this page.</h1>}
           </Route>
           <Route exact path='/chatJoin/:eventId'>
@@ -99,6 +108,10 @@ function App() {
               <h1 style={{ textAlign: 'center' }}>Must be logged in to view this page.</h1>}
           </Route>
         </Switch>
+        {/* {userLoggedIn.isAuthenticated ? <ChatModal></ChatModal> :
+          <h1 style={{ textAlign: 'center' }}>Must be logged in to view this page.</h1>} */}
+
+
         {/* footer */}
         <Footer></Footer>
       </Router>

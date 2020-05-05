@@ -80,6 +80,8 @@ client.connect(async (err) => {
 
 
     io.on('connection', (socket) => {
+
+
         console.log('we have a new connections!!!')
 
         socket.on('join', async ({ name, userId, room }, callback) => {
@@ -94,75 +96,88 @@ client.connect(async (err) => {
             //before inserting someone in room...
             //check that he is not already there.
             let getRoom = await db.collection(collectionRooms).findOne({ _id: room })
-            //now we check if the participant is not already a member.
-            let existingUser = getRoom.chatParticipants.find(user => {
-                if (user.userId === userId) {
-                    return user
-                }
-            })
-            console.log(existingUser)
-            if (existingUser) {
-                console.log('exisitng user')
-                let error = "existing user"
-            }
-            //if he is not existing. Then he can join
-            else if (!existingUser) {
-                await db.collection(collectionRooms).updateOne({ _id: room }, { $push: { chatParticipants: chatMemberDetails } })
 
-                //if hes not already in the room...
-                //we need to send back the data regarding that room. 
+            //if no participants
+            //then we can create one... move to the else.
+
+            if (getRoom.chatParticipants !== null) {
+                let existingUser = getRoom.chatParticipants.find(user => {
+                    if (user.userId === userId) {
+                        return user
+                    }
+                })
+
+                //if there are participants, check if there is the person trying to join isn't 
+                //already joined.
+                if (existingUser) {
+
+                    let getRoom = await db.collection(collectionRooms).findOne({ _id: room })
+                    //then send back the room message hisotry.
+                    socket.emit('room-message-history', getRoom)
+                    console.log('Existing User')
+                    callback("Existing User")
+                }
+                //If he is not an existing user...
+                //allow to join.
+                else if (!existingUser) {
+
+                    await db.collection(collectionRooms).updateOne({ _id: room }, { $push: { chatParticipants: chatMemberDetails } })
+                    //if hes not already in the room...
+                    //we need to send back the data regarding that room. 
+                    let getRoom = await db.collection(collectionRooms).findOne({ _id: room })
+                    //then join the room with sockket.
+                    //room is the eventId-First-Room.
+                    socket.join(room)
+                    socket.emit('room-message-history', getRoom)
+                    // io.to(room).emit('chat-message', 'JOINED') //useless - change.
+
+                    let messageInfo = {
+                        message: `${name} has joined ${room}.`,
+                    }
+                    socket.broadcast.emit('users-join-leave', messageInfo)
+                    callback(messageInfo.message)
+
+                }
+            }
+            //we will now add the person to the room.
+            else {
+                await db.collection(collectionRooms).updateOne({ _id: room }, { $push: { chatParticipants: chatMemberDetails } })
                 let getRoom = await db.collection(collectionRooms).findOne({ _id: room })
-                //then join the room with sockket.
                 //room is the eventId-First-Room.
+                //user will join room.
                 socket.join(room)
+
+                //send back room message history.
                 socket.emit('room-message-history', getRoom)
-                io.to(room).emit('chat-message', 'JOINED')
                 let messageInfo = {
                     message: `${name} has joined ${room}.`,
                 }
+                //send back the join and leaver.
                 socket.broadcast.emit('users-join-leave', messageInfo)
+                callback('success')
             }
         })
 
-        // //now it is a socket.on, and not a io.on
-        // socket.on('disconnect', async (dataDisconnect) => {
-        //     console.log(dataDisconnect)
-        //     // let updateChatMember = await db.collection(collectionRooms).updateOne({ _id: dataDisconnect.room }, { $pull: { chatParticipants: { userId: dataDisconnect.userId } } })
-        //     // assert(1, updateChatMember.matchedCount)
-        //     // assert(1, updateChatMember.modifiedCount)
-        //     console.log('USER HAS LEFT')
-        // })
-
-        //listening for an emit... in this case, front end socket...
-        //socket.emit('sendMessage)
         socket.on('sendMessage', async (data, callback) => {
             //now that we have the message...
             //get particular room 
+            console.log(data)
             let getRoom = await db.collection(collectionRooms).findOne({ _id: data.room });
-
-            // //then there are no documents.
-            // if (!getRoom.messages || getRoom.messages == undefined) {
-            //     data["_id"] = `${1}`
-            // }
-            // //then...
-            // else {
-            //     data["_id"] = `${getRoom.messages.length + 1}`
-            // }
-            //once 
             await db.collection(collectionRooms).updateOne({ _id: data.room }, { $push: { messages: data } })
-            //send back the sender of the emssage.
-            // let messageInfo = {
-            //     sender: data.sender,
-            //     message: data.message,
-            // }
+            // io.in(data.room).emit('chat-message', data)
             socket.broadcast.emit('chat-message', data)
         })
+
         socket.on('leaveRoom', async (data, callback) => {
+            console.log(data.room)
+            socket.leave(data.room)
             console.log('left room')
             //now that we have the message...
             let updateChatMember = await db.collection(collectionRooms).updateOne({ _id: data.room }, { $pull: { chatParticipants: { userId: data.userId } } })
             assert(1, updateChatMember.matchedCount)
             assert(1, updateChatMember.modifiedCount)
+
+
 
             let messageInfo = {
                 message: `${data.name} has left the room. Reload to join`

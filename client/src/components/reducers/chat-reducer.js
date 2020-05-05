@@ -48,7 +48,7 @@ export default function chatReducer(state = intitialState, action) {
         case "ADD_MESSAGE": {
             let stateCopy = { ...state }
 
-            console.log(action, 'INSIDE ADD MESSAGE')
+            console.log('HIT ADD MESSAGE.')
 
             let findRoom = stateCopy.rooms.find(room => {
                 if (room._id === action.message.room) {

@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { requestRegisteredUserEvents, retrieveRegisteredUserEvents, retrieveRegisteredUserEventsError } from '../actions/userActions';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import ChatJoin from '../ChatJoin';
+import styled from 'styled-components';
 
 const Chat = () => {
     //pseudocode.
@@ -34,6 +37,7 @@ const Chat = () => {
 
                 console.log(userResponse)
                 if (userResponse.status === 200) {
+
                     dispatch(retrieveRegisteredUserEvents(
                         userResponse.userRegisteredEvents
                     ))
@@ -53,35 +57,53 @@ const Chat = () => {
     console.log(userRegisteredEvents.registeredEvents)
 
 
-
-
-
-
-
-    //form submit function.
-
-    const handleSubmit = () => {
-
-
-    }
-
-
-
-
-
-    return <div>
+    return <Wrapper>
         {userRegisteredEvents.status !== "retrieved..." ? <div>Seems like you havn't registered for any events!</div> :
             // each of these each represents each chat.
             userRegisteredEvents.registeredEvents.map(event => {
-                return <Link to={`/chatJoin/${event}`} key={event}>
+                return <div><Link to={`/chatJoin/${event}`} key={event}>
                     {event}
-                </Link>
+                </Link></div>
             })
-
-
         }
+        {/* <Tabs>
 
-    </div>
+            {userRegisteredEvents.status !== "retrieved..." ? <div>Seems like you havn't registered for any events!</div> :
+                // each of these each represents each chat.
+                userRegisteredEvents.registeredEvents.map(event => {
+                    return (<div style={{ display: 'flex' }}><TabList>
+                        <Tab>{event} - Room</Tab>
+                    </TabList>
+                        <TabPanel>
+                            <ChatJoin eventId={event}></ChatJoin>
+                        </TabPanel></div>)
+
+
+
+
+
+                })
+
+
+            }
+
+        </Tabs> */}
+
+
+    </Wrapper>
 }
 
 export default Chat;
+
+const Wrapper = styled.div`
+width: 1000px;
+height: 1000px;
+
+
+`
+
+
+
+
+
+

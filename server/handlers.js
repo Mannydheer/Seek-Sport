@@ -37,6 +37,9 @@ const handleSignUp = async (req, res) => {
     let filePath = req.file.path;
     let name = req.body.name;
     let pass = req.body.pass;
+
+
+
     let signUpInfo = {
         user: name,
         pass: pass
@@ -360,7 +363,7 @@ const handleHosting = async (req, res, next) => {
                             assert(1, r2.matchedCount)
 
                             let r3 = await db.collection(collectionRooms)
-                                .insertOne({ _id: `${participantId}-Room-1`, participantId: participantId, chatParticipants: [] })
+                                .insertOne({ _id: `${eventId}-Room-1`, participantId: participantId, chatParticipants: [] })
                             assert(1, r3.insertedCount)
 
                             let addUserEvent = await db.collection(collectionUserEvents).updateOne({ _id: ObjectId(hostingInformation.userId) }, { $push: { events: eventId } })
@@ -572,7 +575,7 @@ const handleHosting = async (req, res, next) => {
                 //also if a there is a new reservation by the host, a room document needs to be recreated.
 
                 let r3 = await db.collection(collectionRooms)
-                    .insertOne({ _id: `${participantId}-Room-1`, participantId: participantId, chatParticipants: [] })
+                    .insertOne({ _id: `${eventId}-Room-1`, participantId: participantId, chatParticipants: [] })
                 assert(1, r3.insertedCount)
 
                 //also a host should be registered in his own events.
@@ -882,7 +885,7 @@ const handleCancelEvent = async (req, res, next) => {
             let participantId = eventInfo.participantId;
 
             //delete room.
-            let deleteRoom = await db.collection(collectionRooms).deleteOne({ _id: `${participantId}-Room-1` })
+            let deleteRoom = await db.collection(collectionRooms).deleteOne({ _id: `${eventId}-Room-1` })
             assert(1, deleteRoom.deletedCount)
 
             //delete event
