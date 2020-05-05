@@ -27,7 +27,34 @@ export const retrieveRegisteredUserEventsError = () => ({
 
 
 
-// -----------LOGIN----------------
+// -----------chat---------------
+
+
+export const requestChats = () => ({
+    type: 'REQUEST_CHAT',
+})
+export const retrieveChats = (payload) => ({
+    type: 'RETRIEVE_CHAT',
+    payload
+})
+export const retrieveChatsError = () => ({
+    type: 'RETRIEVE_CHAT_ERROR',
+})
+export const addMessage = (message) => ({
+    type: 'ADD_MESSAGE',
+    message
+})
+export const leaveRoom = (data) => ({
+    type: 'LEAVE_ROOM',
+    data
+})
+
+
+
+
+
+
+
 
 // export const loginSuccess = () => ({
 //     type: "LOGIN_SUCCESS"

@@ -162,11 +162,9 @@ const Map = ({ coordinates, parkMenu, setParkMenu }) => {
                             onClick={() => handleParkSelect(park)} />
                     )
                 })} */}
-
                 {/* CURRENT POSITION - HOME. */}
                 <Marker position={coordinates}
                     icon={{ url: '/home.png' }}
-
                 ></Marker>
 
                 {/* TIPPY/INFO ON CLICK OF A MARKER.  */}

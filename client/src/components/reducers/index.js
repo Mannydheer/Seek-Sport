@@ -5,6 +5,7 @@ import parkReducer from './park-reducer';
 import hostReducer from './hosting-reducer';
 import eventReducer from './event-reducer';
 import userRegisteredReducer from './UserRegistered-reducer'
+import chatReducer from './chat-reducer';
 
 
 
@@ -14,6 +15,7 @@ export default combineReducers({
     hostReducer,
     eventReducer,
     userRegisteredReducer,
+    chatReducer,
     authReducer
 
 });

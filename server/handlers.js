@@ -360,7 +360,7 @@ const handleHosting = async (req, res, next) => {
                             assert(1, r2.matchedCount)
 
                             let r3 = await db.collection(collectionRooms)
-                                .insertOne({ _id: `${participantId}-Room-1`, participantId: participantId })
+                                .insertOne({ _id: `${participantId}-Room-1`, participantId: participantId, chatParticipants: [] })
                             assert(1, r3.insertedCount)
 
                             let addUserEvent = await db.collection(collectionUserEvents).updateOne({ _id: ObjectId(hostingInformation.userId) }, { $push: { events: eventId } })
@@ -555,8 +555,6 @@ const handleHosting = async (req, res, next) => {
                 let eventId = eventInfo.ops[0]._id;
                 //get the event info.
 
-
-
                 //then we need to make the host a participant as well
                 //also since this will only happen once, will add also the host information as a participant.
                 //push the details of the participant a document.
@@ -574,7 +572,7 @@ const handleHosting = async (req, res, next) => {
                 //also if a there is a new reservation by the host, a room document needs to be recreated.
 
                 let r3 = await db.collection(collectionRooms)
-                    .insertOne({ _id: `${participantId}-Room-1`, participantId: participantId })
+                    .insertOne({ _id: `${participantId}-Room-1`, participantId: participantId, chatParticipants: [] })
                 assert(1, r3.insertedCount)
 
                 //also a host should be registered in his own events.

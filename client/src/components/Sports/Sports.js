@@ -123,7 +123,6 @@ const Sports = () => {
                                 </h2>
                             <GoogleAddress setParkMenu={setParkMenu} setCoordinates={setCoordinates}></GoogleAddress>
                         </div>
-
                         {/* //call component to find games. */}
                         <StyledMap style={{ width: '100vw', height: '80vh' }}>
                             {coordinates.lat !== null && <WrappedMap
