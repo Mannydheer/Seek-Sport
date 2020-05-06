@@ -76,7 +76,7 @@ export default function chatReducer(state = intitialState, action) {
             let stateCopy = { ...state }
 
             let findRoom = stateCopy.rooms.find((room, index) => {
-                if (room._id === action.data.room) {
+                if (room._id === action.data.room && room.chatParticipants) {
                     //once you find the room... push the new message.
                     room.chatParticipants.find((participant, index) => {
                         if (participant.userId === action.data.userId) {
@@ -87,6 +87,30 @@ export default function chatReducer(state = intitialState, action) {
                     })
                 }
             })
+
+
+            return {
+                ...stateCopy,
+            }
+        }
+        case "ADD_CHAT_PARTICIPANT": {
+            console.log(action, 'adding chat participants')
+            let stateCopy = { ...state }
+
+            stateCopy.rooms.find((room, index) => {
+                if (room._id === action.data.room) {
+                    //check was done in the back end whether or not he is allowed to join.
+                    room.chatParticipants.push(action.data.memberDetails)
+                }
+            })
+
+            return {
+                ...stateCopy,
+            }
+        }
+
+        case "REMOVE_CHAT_PARTICIPANT": {
+            let stateCopy = { ...state }
 
 
             return {

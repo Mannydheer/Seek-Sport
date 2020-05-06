@@ -107,13 +107,13 @@ function App() {
           </Route>
           <Route exact path='/chatJoin/:eventId'>
             {userLoggedIn.isAuthenticated ?
-              <div>
+              <BigWrapper>
                 <StyledTitle>Pick-Up Chat</StyledTitle>
                 <ChatWrapper>
                   <Chat></Chat>
                   <ChatJoin></ChatJoin>
                 </ChatWrapper>
-              </div>
+              </BigWrapper>
               :
               <h1 style={{ textAlign: 'center' }}>Must be logged in to view this page.</h1>}
           </Route>
@@ -149,5 +149,10 @@ const StyledTitle = styled.h1`
     text-align: center;
     
   
+
+`
+const BigWrapper = styled.div`
+	        background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+
 
 `

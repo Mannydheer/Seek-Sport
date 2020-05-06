@@ -9,6 +9,9 @@ import {
     addMessage, leaveRoom
 } from '../actions/userActions';
 
+import { IoMdSend } from 'react-icons/io';
+
+
 
 
 
@@ -18,7 +21,6 @@ let ENDPOINT = 'localhost:4000';
 socket = io(ENDPOINT);
 
 
-
 const ChatJoin = () => {
 
 
@@ -26,6 +28,7 @@ const ChatJoin = () => {
     //now we have the eventId of which we want to join the chat
     //we have access to the participant ID which will be the room.
     let eventId = useParams().eventId;
+
 
 
 
@@ -200,18 +203,41 @@ const ChatJoin = () => {
                 allMessages && <ChatBox>
                     {allMessages.map(message => {
                         //CHANGE KEY
-                        return <div >
-                            {message.sender} - {message.message}
+                        return <div>
+                            {message.sender === userInfo.user ?
+                                <SenderText>
+                                    <SenderMessage>
+                                        {message.message}
+                                    </SenderMessage>
+                                    <div>
+                                        {message.sender}
+                                    </div>
+
+
+                                </SenderText>
+                                :
+                                <ReceiverText>
+
+                                    <div>
+                                        {message.sender}
+                                    </div>
+                                    <ReceiverMessage>
+                                        {message.message}
+                                    </ReceiverMessage>
+
+                                </ReceiverText>
+
+                            }
                         </div>
                     })}
                 </ChatBox>
             }
 
         </ChatWrapper>
-        <StyledForm onSubmit={handleSubmit}>
+        <StyledForm>
             <Send>
-                <input placeholder="message" type="text" onChange={(e) => setMessage(e.target.value)}></input>
-                <button type='submit'>send</button>
+                <textarea placeholder="message" type="text" onChange={(e) => setMessage(e.target.value)}></textarea>
+                <StyledSendButton onClick={handleSubmit}></StyledSendButton>
             </Send>
             <Link to={`/chat?name=${name}`}></Link>
         </StyledForm>
@@ -220,15 +246,54 @@ const ChatJoin = () => {
 
 export default ChatJoin;
 
+const SenderText = styled.div`
+display: flex;
+justify-content: flex-end;
+margin: 0 1.2rem;
+/* text-align: right; */
+
+
+`
+const ReceiverText = styled.div`
+display: flex;
+justify-content: flex-start;
+text-align: left;
+margin: 0 1.2rem;
+`
+const ReceiverMessage = styled.div`
+background-color: rgb(130,204,221);
+border-radius: 25px;
+padding: 10px;
+
+`
+const SenderMessage = styled.div`
+background-color: rgb(120,224,143);
+border-radius: 25px;
+padding: 10px;
+`
 
 const StyledForm = styled.form`
-height: 100%;
+height: 5%;
 width: 100%;
 
 
 
-input {
+textarea {
+    width: 100%;
+    resize: none;
+    background-image: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);
+    color: white;
+    height: 10%;
 }
+
+`
+const StyledSendButton = styled(IoMdSend)`
+background-image: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);
+cursor: pointer;
+width: 2rem;
+height: 2rem;
+color: white;
+
 `
 
 const Send = styled.div`
@@ -242,9 +307,11 @@ button {
 }
 input {
     width: 100%;
-    height: 20%;
+
 }
 `
+
+
 
 
 const ChatBox = styled.div`
@@ -252,9 +319,11 @@ const ChatBox = styled.div`
 `
 
 const ChatWrapper = styled.div`
-background-color: yellow;
-height: 97%;
+background-color: rgb(82,97,144);
+position: relative;
+
 width: 100%;
+height: 95%;
 overflow-y: scroll;
 scroll-behavior: smooth;
 

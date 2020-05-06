@@ -48,3 +48,11 @@ export const leaveRoom = (data) => ({
     type: 'LEAVE_ROOM',
     data
 })
+export const addChatParticipants = (data) => ({
+    type: 'ADD_CHAT_PARTICIPANTS',
+    data
+})
+export const removeChatParticipants = (data) => ({
+    type: 'REMOVE_CHAT_PARTICIPANTS',
+    data
+})

@@ -98,7 +98,9 @@ client.connect(async (err) => {
             //if no participants
             //then we can create one... move to the else.
 
-            if (!getRoom.chatParticipants) {
+            if (getRoom.chatParticipants.length > 0) {
+                console.log('there are chat participants.')
+
                 let existingUser = getRoom.chatParticipants.find(user => {
                     if (user.userId === userId) {
                         return user
@@ -139,6 +141,9 @@ client.connect(async (err) => {
             }
             //we will now add the person to the room.
             else {
+
+                console.log('chat participants null is not null')
+
                 await db.collection(collectionRooms).updateOne({ _id: room }, { $push: { chatParticipants: chatMemberDetails } })
                 let getRoom = await db.collection(collectionRooms).findOne({ _id: room })
                 //room is the eventId-First-Room.
