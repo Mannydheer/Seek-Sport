@@ -41,14 +41,11 @@ const Chat = () => {
             try {
                 let response = await fetch(`/userRegisteredEvents/${userId}`);
                 let userResponse = await response.json()
-
                 console.log(userResponse)
                 if (userResponse.status === 200) {
-
                     dispatch(retrieveRegisteredUserEvents(
                         userResponse.eventInfo
                     ))
-
                 }
                 else {
                     dispatch(retrieveRegisteredUserEventsError())
@@ -62,6 +59,38 @@ const Chat = () => {
     //we have the user Id.
 
     const checkOnlineParticipant = (id) => {
+        //first we find the room from the chat participants
+        //use actualChatParticipants.room
+
+
+        if (chatInfo.status === "retrieved" && chatInfo.selectedRoom) {
+
+
+
+            let currentRoom = chatInfo.rooms.find(room => {
+                if (room._id === chatInfo.selectedRoom) {
+                    return room;
+                }
+            })
+            if (currentRoom) {
+                let activeParticipant = currentRoom.chatParticipants.find(participant => {
+                    if (participant.userId === id) {
+                        return participant;
+                    }
+                })
+                if (activeParticipant) {
+                    return <div>ACTIVE</div>
+                }
+
+            }
+            else {
+                console.log('NO CURRENTROOM')
+            }
+
+
+
+
+        }
     }
 
     return <Wrapper >
@@ -71,7 +100,6 @@ const Chat = () => {
             // each of these each represents each chat.
             userRegisteredEvents.registeredEvents.map(event => {
                 return <Link to={`/chatJoin/${event._id}`} key={event._id}>
-
                     <Rooms event={event}></Rooms>
                 </Link>
             })
@@ -79,9 +107,10 @@ const Chat = () => {
         }
 
         {/* ------------------------------GETTING PARTICIPANTS CURRENTLY INSIDE CHAT ROOM.-------------------------- */}
-        {actualChatParticipants && <div>
+        {actualChatParticipants && chatInfo.status === "retrieved" && <div>
             {Object.values(actualChatParticipants).map(participant => {
                 return <div>
+
                     {checkOnlineParticipant(participant.userId)}
                     <Image src={`/${participant.profileImage}`} />
                 </div>

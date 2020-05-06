@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import {
     requestChats,
     retrieveChats, retrieveChatsError,
-    addMessage, leaveRoom, actualChatParticipants, addChatParticipants
+    addMessage, leaveRoom, actualChatParticipants, addChatParticipants, selectedRoom
 } from '../actions/userActions';
 
 import { IoMdSend } from 'react-icons/io';
@@ -120,8 +120,10 @@ const ChatJoin = () => {
                     participantResponse.eventParticipants.forEach(user => {
                         userObject[user.userId] = user;
                     })
+                    //also keep track of which room the participants are from.
                     // setChatMembers(userObject)
                     dispatch(actualChatParticipants(userObject))
+                    dispatch(selectedRoom(`${eventId}-Room-1`))
                 }
             }
             catch (err) {

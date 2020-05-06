@@ -127,6 +127,14 @@ export default function chatReducer(state = intitialState, action) {
                 ...stateCopy,
             }
         }
+        case "CURRENT_ROOM": {
+            let stateCopy = { ...state }
+            stateCopy.selectedRoom = action.room;
+            return {
+                ...stateCopy,
+            }
+        }
+
 
         default:
             return state;

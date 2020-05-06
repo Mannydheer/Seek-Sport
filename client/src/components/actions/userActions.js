@@ -61,3 +61,9 @@ export const actualChatParticipants = (data) => ({
     type: 'ACTUAL_CHAT_PARTICIPANTS',
     data
 })
+
+export const selectedRoom = (room) => ({
+    type: "CURRENT_ROOM",
+    room
+
+})
