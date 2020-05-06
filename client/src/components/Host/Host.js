@@ -93,7 +93,7 @@ const validateDateBooking = (startDate) => {
 
 
 
-
+//-----------------------------------COMPONENT---------------------------------
 const Host = () => {
 
     //for modal class.
