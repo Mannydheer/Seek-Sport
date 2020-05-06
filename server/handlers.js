@@ -1164,7 +1164,6 @@ const handleUserRegisteredEvents = async (req, res, next) => {
                 })
                 let getEvents = await db.collection(collectionEvents).find({ _id: { $in: allEvents } }).toArray();
 
-
                 res.status(200).json({
                     status: 200,
                     message: "Success getting all registered events associated with the user!",
@@ -1207,11 +1206,14 @@ const handleGetChatRoom = async (req, res, next) => {
             if (!eventData) {
                 res.status(404).json({ status: 404, message: 'There are no events.' })
             } else {
+                let participantData = await db.collection(collectionParticipants).findOne({ _id: ObjectId(eventData.participantId) })
                 //since the participantId is the room ID...
                 res.status(200).json({
                     status: 200,
                     message: "Success getting participantID events associated with the event.",
-                    participantId: eventData.participantId
+                    participantId: eventData.participantId,
+                    eventParticipants: participantData.participants,
+
                 })
             }
         }

@@ -45,7 +45,8 @@ const { handleSignUp, handleLogin,
     handleSelectedParkEvents,
     handleUserActivities,
     handleUserRegisteredEvents,
-    handleGetChatRoom
+    handleGetChatRoom,
+
 } = require('./handlers')
 
 const { addUserChat, getUserChat, getUsersInRoom, addUser } = require('./chatHandlers');
@@ -95,6 +96,7 @@ client.connect(async (err) => {
             //check that he is not already there.
             let getRoom = await db.collection(collectionRooms).findOne({ _id: room })
 
+            console.log(getRoom)
             //if no participants
             //then we can create one... move to the else.
 

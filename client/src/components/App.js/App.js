@@ -98,10 +98,13 @@ function App() {
           </Route>
           <Route exact path='/chat'>
             {userLoggedIn.isAuthenticated ?
-              <ChatWrapper>
-                <Chat></Chat>
-                <ChatJoin></ChatJoin>
-              </ChatWrapper>
+              <BigWrapper>
+                <StyledTitle>Pick-Up Chat</StyledTitle>
+                <ChatWrapper>
+                  <Chat></Chat>
+                  <ChatJoin></ChatJoin>
+                </ChatWrapper>
+              </BigWrapper>
               :
               <h1 style={{ textAlign: 'center' }}>Must be logged in to view this page.</h1>}
           </Route>
@@ -152,7 +155,8 @@ const StyledTitle = styled.h1`
 
 `
 const BigWrapper = styled.div`
-	        background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+/* background-color: rgb(82,97,144); */
+
 
 
 `

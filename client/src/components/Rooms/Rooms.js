@@ -7,8 +7,8 @@ const Rooms = ({ event }) => {
 
     return <>
         <Wrapper>
-            ROOM
-    </Wrapper>
+            {event._id}
+        </Wrapper>
     </>
 
 }

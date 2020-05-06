@@ -80,8 +80,9 @@ const Chat = () => {
 export default Chat;
 
 const Wrapper = styled.div`
-background-image: linear-gradient(15deg, #13547a 0%, #80d0c7 100%);
 padding: 0 5rem;
+background-image: linear-gradient(15deg, #13547a 0%, #80d0c7 100%);
+
 
 
 a {

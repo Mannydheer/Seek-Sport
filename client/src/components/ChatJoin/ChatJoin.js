@@ -23,6 +23,8 @@ socket = io(ENDPOINT);
 
 const ChatJoin = () => {
 
+    //
+
 
 
     //now we have the eventId of which we want to join the chat
@@ -50,6 +52,27 @@ const ChatJoin = () => {
 
     }
 
+    const dateConverter = (timeData) => {
+        let d = new Date(timeData);
+
+        let todayDate = new Date().toLocaleDateString().split('/')[1]
+        let messageDate = d.toLocaleDateString().split('/')[1]
+
+        let removeSecondsTime = d.toLocaleTimeString().split(':')
+        let AMPM = removeSecondsTime[2].split(' ')[1]
+        let time = removeSecondsTime.splice(0, 2).join(':')
+        let finalTime;
+        if (todayDate === messageDate) {
+            finalTime = time + ', ' + AMPM + ', ' + "Today"
+        }
+        else {
+            finalTime = time + ', ' + AMPM
+        }
+
+        return finalTime;
+
+    }
+
 
 
     //----------------------SELECTORS------------------
@@ -64,10 +87,66 @@ const ChatJoin = () => {
     const [message, setMessage] = useState(null)
     const [leaveRoomMessage, setLeaveRoomMessage] = useState(null)
     const [allMessages, setAllMessages] = useState(null);
+    const [chatMembers, setChatMembers] = useState(null)
 
 
+    //---------------------FUNCTIONS------------------
+    const handleKeypress = (e) => {
+        console.log(e)
+        if (e.keyCode === 13) {
+            handleSubmit(e)
+        }
+
+    }
 
     //---------------------USE-EFFECTS.------------------
+
+    //--------------ENTER KEYPRESS AND SEDN MESSAGE..---------------
+    useEffect(() => {
+        window.addEventListener("keydown", handleKeypress)
+
+        return () => window.addEventListener("keydown", handleKeypress);
+
+    }, [])
+
+    //--------------FETCH ALL PARTICIPANTS OF THAT ROOM...---------------
+
+    useEffect(() => {
+        const handleGetChatRoom = async () => {
+            let token = localStorage.getItem('accesstoken')
+            try {
+                let response = await fetch(`/getChatRoom/${eventId}`, {
+                    method: "GET",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        'Authorization': `${token}`
+                    },
+                })
+                if (response.status === 200) {
+                    let participantResponse = await response.json();
+                    let userObject = {}
+
+                    participantResponse.eventParticipants.forEach(user => {
+                        userObject[user.userId] = user;
+                    })
+                    setChatMembers(userObject)
+
+                }
+            }
+            catch (err) {
+                console.log(err, 'error occured inside catch for handler user events.')
+            }
+        }
+        handleGetChatRoom();
+    }, [eventId])
+
+    console.log(chatMembers, 'CHAT MEMBERS')
+
+
+
+
+
     useEffect(() => {
         socket.emit('join', { name: userInfo.user, userId: userId, room: `${eventId}-Room-1` }, (message) => {
             if (message === "Existing User") {
@@ -194,39 +273,35 @@ const ChatJoin = () => {
 
     return <MainWrapper>
         {/* <button onClick={handleLeaveRoom}>Leave Room</button> */}
+        <h2>{messages}</h2>
 
         <ChatWrapper>
-            <h2>{messages}</h2>
 
             {/* ALL MESSAGES FROM THE FRONT END. */}
             {
-                allMessages && <ChatBox>
+                allMessages && chatMembers && <ChatBox>
                     {allMessages.map(message => {
                         //CHANGE KEY
                         return <div>
                             {message.sender === userInfo.user ?
-                                <SenderText>
-                                    <SenderMessage>
-                                        {message.message}
-                                    </SenderMessage>
-                                    <div>
-                                        {message.sender}
-                                    </div>
+                                <div>
+                                    <SenderText>
+                                        <div>
+                                            <SenderMessage>{message.message}</SenderMessage>
+                                            <TimeWrapper>{dateConverter(message.timeStamp)}</TimeWrapper>
+                                        </div>
+                                        <Image src={`/${chatMembers[message.userId].profileImage}`} />
+                                    </SenderText>
 
-
-                                </SenderText>
+                                </div>
                                 :
                                 <ReceiverText>
-
+                                    <Image src={`/${chatMembers[message.userId].profileImage}`} />
                                     <div>
-                                        {message.sender}
+                                        <ReceiverMessage>{message.message}</ReceiverMessage>
+                                        <ReceiveTimeWrapper>{dateConverter(message.timeStamp)}</ReceiveTimeWrapper>
                                     </div>
-                                    <ReceiverMessage>
-                                        {message.message}
-                                    </ReceiverMessage>
-
                                 </ReceiverText>
-
                             }
                         </div>
                     })}
@@ -249,21 +324,41 @@ export default ChatJoin;
 const SenderText = styled.div`
 display: flex;
 justify-content: flex-end;
-margin: 0 1.2rem;
+margin: 0 1.1rem;
 /* text-align: right; */
+`
+const TimeWrapper = styled.div`
+margin: 8px 1.1rem;
+color: white;
+text-align: right;
+font-size: 0.8rem;
+/* text-align: right; */
+`
+const ReceiveTimeWrapper = styled.div`
+margin: 8px 1.1rem;
+color: white;
+text-align: left;
+font-size: 0.8rem;
+/* text-align: right; */
+`
 
-
+const Image = styled.img`
+width: 50px;
+height: 50px;
+border-radius: 50%;
+margin:0 10px;
+border: solid 2.5px white;
 `
 const ReceiverText = styled.div`
 display: flex;
 justify-content: flex-start;
 text-align: left;
-margin: 0 1.2rem;
+margin: 0 1.1rem;
 `
 const ReceiverMessage = styled.div`
 background-color: rgb(130,204,221);
 border-radius: 25px;
-padding: 10px;
+padding: 7px;
 
 `
 const SenderMessage = styled.div`
@@ -283,7 +378,7 @@ textarea {
     resize: none;
     background-image: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);
     color: white;
-    height: 10%;
+  
 }
 
 `
@@ -319,8 +414,9 @@ const ChatBox = styled.div`
 `
 
 const ChatWrapper = styled.div`
-background-color: rgb(82,97,144);
 position: relative;
+background-color: rgb(82,97,144);
+
 
 width: 100%;
 height: 95%;
