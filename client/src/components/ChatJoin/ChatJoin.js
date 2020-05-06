@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import {
     requestChats,
     retrieveChats, retrieveChatsError,
-    addMessage, leaveRoom
+    addMessage, leaveRoom, actualChatParticipants
 } from '../actions/userActions';
 
 import { IoMdSend } from 'react-icons/io';
@@ -87,7 +87,7 @@ const ChatJoin = () => {
     const [message, setMessage] = useState(null)
     const [leaveRoomMessage, setLeaveRoomMessage] = useState(null)
     const [allMessages, setAllMessages] = useState(null);
-    const [chatMembers, setChatMembers] = useState(null)
+    // const [chatMembers, setChatMembers] = useState(null)
 
 
     //---------------------FUNCTIONS------------------
@@ -130,7 +130,9 @@ const ChatJoin = () => {
                     participantResponse.eventParticipants.forEach(user => {
                         userObject[user.userId] = user;
                     })
-                    setChatMembers(userObject)
+
+                    // setChatMembers(userObject)
+                    dispatch(actualChatParticipants(userObject))
 
                 }
             }
@@ -141,7 +143,6 @@ const ChatJoin = () => {
         handleGetChatRoom();
     }, [eventId])
 
-    console.log(chatMembers, 'CHAT MEMBERS')
 
 
 
@@ -279,7 +280,7 @@ const ChatJoin = () => {
 
             {/* ALL MESSAGES FROM THE FRONT END. */}
             {
-                allMessages && chatMembers && <ChatBox>
+                allMessages && userChats.actualParticipants && <ChatBox>
                     {allMessages.map(message => {
                         //CHANGE KEY
                         return <div>
@@ -290,13 +291,13 @@ const ChatJoin = () => {
                                             <SenderMessage>{message.message}</SenderMessage>
                                             <TimeWrapper>{dateConverter(message.timeStamp)}</TimeWrapper>
                                         </div>
-                                        <Image src={`/${chatMembers[message.userId].profileImage}`} />
+                                        <Image src={`/${userChats.actualParticipants[message.userId].profileImage}`} />
                                     </SenderText>
 
                                 </div>
                                 :
                                 <ReceiverText>
-                                    <Image src={`/${chatMembers[message.userId].profileImage}`} />
+                                    <Image src={`/${userChats.actualParticipants[message.userId].profileImage}`} />
                                     <div>
                                         <ReceiverMessage>{message.message}</ReceiverMessage>
                                         <ReceiveTimeWrapper>{dateConverter(message.timeStamp)}</ReceiveTimeWrapper>

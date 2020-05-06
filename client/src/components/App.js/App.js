@@ -139,10 +139,11 @@ export default App;
 const ChatWrapper = styled.div`
 display : flex;
 align-content: center;
-border: solid black 3px;
 width: 50%;
 height: 40rem;
 margin: 0 auto;
+
+
 
 
 `
@@ -155,6 +156,7 @@ const StyledTitle = styled.h1`
 
 `
 const BigWrapper = styled.div`
+
 /* background-color: rgb(82,97,144); */
 
 

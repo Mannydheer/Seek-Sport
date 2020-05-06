@@ -18,6 +18,10 @@ const Chat = () => {
 
     const userInfo = useSelector(state => state.userReducer);
     const userRegisteredEvents = useSelector(state => state.userRegisteredReducer)
+    const actualChatParticipants = useSelector(state => state.chatReducer.actualParticipants)
+    const chatInfo = useSelector(state => state.chatReducer)
+
+
 
     // const [eventInfo, setEventInfo] = useState(null);
 
@@ -57,9 +61,11 @@ const Chat = () => {
     }, [])
     //we have the user Id.
 
+    const checkOnlineParticipant = (id) => {
 
-    console.log(userRegisteredEvents.registeredEvents)
 
+
+    }
 
     return <Wrapper >
         {userRegisteredEvents.status !== "retrieved..." ? <div>Seems like you havn't registered for any events!</div> :
@@ -69,6 +75,17 @@ const Chat = () => {
                     <Rooms event={event}></Rooms>
                 </Link>
             })
+
+        }
+        {actualChatParticipants && <div>
+            {Object.values(actualChatParticipants).map(participant => {
+                return <div>
+                    {checkOnlineParticipant(participant.userId)}
+                    <Image src={`/${participant.profileImage}`} />
+                </div>
+            })}
+        </div>
+
         }
 
 
@@ -92,7 +109,13 @@ a {
 
 }
 `
-
+const Image = styled.img`
+width: 50px;
+height: 50px;
+border-radius: 50%;
+margin:0 10px;
+border: solid 2.5px white;
+`
 
 
 

@@ -94,6 +94,7 @@ export default function chatReducer(state = intitialState, action) {
             }
         }
         case "ADD_CHAT_PARTICIPANT": {
+            //FIX
             console.log(action, 'adding chat participants')
             let stateCopy = { ...state }
 
@@ -103,7 +104,6 @@ export default function chatReducer(state = intitialState, action) {
                     room.chatParticipants.push(action.data.memberDetails)
                 }
             })
-
             return {
                 ...stateCopy,
             }
@@ -113,6 +113,14 @@ export default function chatReducer(state = intitialState, action) {
             let stateCopy = { ...state }
 
 
+            return {
+                ...stateCopy,
+            }
+        }
+        case "ACTUAL_CHAT_PARTICIPANTS": {
+            console.log(action)
+            let stateCopy = { ...state }
+            stateCopy.actualParticipants = action.data;
             return {
                 ...stateCopy,
             }

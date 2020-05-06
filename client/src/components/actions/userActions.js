@@ -56,3 +56,8 @@ export const removeChatParticipants = (data) => ({
     type: 'REMOVE_CHAT_PARTICIPANTS',
     data
 })
+
+export const actualChatParticipants = (data) => ({
+    type: 'ACTUAL_CHAT_PARTICIPANTS',
+    data
+})
