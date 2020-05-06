@@ -455,6 +455,7 @@ const handleHosting = async (req, res, next) => {
                             //we will check for each of the events.
                             let eventStartTime = new Date(event.time).getHours() * 60 + (new Date(event.time).getMinutes());
                             let eventEndTime = event.duration * 60 + eventStartTime;
+                            console.log('NEWWWWWWWW TIMEEEE************************')
                             console.log('inside foreachjhgjhgjh')
                             console.log(currentMinutes, 'current minutes')
                             console.log(eventEndTime, 'event duration time')

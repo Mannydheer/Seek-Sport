@@ -24,8 +24,6 @@ const Navbar = () => {
   const [hover, setHover] = useState(false);
   const visibility = hover ? "visible" : "hidden";
 
-
-
   const handleLogout = () => {
     localStorage.removeItem('accesstoken')
     dispatch(logOutUser())

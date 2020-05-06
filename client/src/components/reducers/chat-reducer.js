@@ -19,17 +19,21 @@ export default function chatReducer(state = intitialState, action) {
         }
         case "RETRIEVE_CHAT": {
             let stateCopy = { ...state }
-
+            console.log(action)
             //check if you can find the room.
             let findRoom = stateCopy.rooms.find(room => {
-                if (room._id === action.payload._id) {
-                    return room;
+                if (room._id === action.payload.roomData._id) {
+
+
+                    room.chatParticipants = (action.payload.updateChatParticipants)
+                    return room
                 }
             })
-
             if (!findRoom) {
-                stateCopy.rooms.push(action.payload)
+                console.log('DIDNT IFND')
+                stateCopy.rooms.push(action.payload.roomData)
             }
+
             return {
                 ...stateCopy,
                 status: 'retrieved',
@@ -80,14 +84,9 @@ export default function chatReducer(state = intitialState, action) {
 
             let findRoom = stateCopy.rooms.find((room, index) => {
                 if (room._id === action.data.room && room.chatParticipants) {
-                    //once you find the room... push the new message.
-                    room.chatParticipants.find((participant, index) => {
-                        if (participant.userId === action.data.userId) {
-                            console.log('splicing')
-                            //remove that participant.
-                            room.chatParticipants.splice(index, 1)
-                        }
-                    })
+                    //replace with new chat participants.
+                    room.chatParticipants = action.data.data;
+
                 }
             })
 
@@ -104,7 +103,7 @@ export default function chatReducer(state = intitialState, action) {
             stateCopy.rooms.find((room, index) => {
                 if (room._id === action.data.room) {
                     //check was done in the back end whether or not he is allowed to join.
-                    room.chatParticipants.push(action.data.memberDetails)
+                    room.chatParticipants = action.data.updatedChatParticipants
                 }
             })
             return {

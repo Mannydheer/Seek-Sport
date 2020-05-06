@@ -85,7 +85,6 @@ export default function SignUp() {
     })
     const [file, setFile] = useState(null)
 
-    console.log(formRef)
 
 
 
@@ -109,15 +108,9 @@ export default function SignUp() {
         files.append('file', file)
         files.append('name', userInfo.user)
         files.append('pass', userInfo.pass)
-
-        console.log(files, 'this is filedata')
-
-
         const handleSignup = async () => {
 
             if (userInfo.user !== '' && userInfo.pass !== '' && file !== null) {
-
-
 
                 //remove previous token since there is a new user.
                 localStorage.removeItem('accesstoken')
@@ -130,9 +123,6 @@ export default function SignUp() {
                     })
                     let userResponse = await response.json();
                     if (response.status === 200) {
-                        console.log(userResponse, 'INSIDE SIGNUP')
-                        //add token here.
-                        //set new token...
 
                         localStorage.setItem('accesstoken', userResponse.accessToken)
                         //dispatch action.
@@ -172,11 +162,6 @@ export default function SignUp() {
         }
         else return;
     }
-
-    console.log(file, 'this file')
-
-
-
 
     return (<>
         <StyledButton onClick={handleClickOpen}>

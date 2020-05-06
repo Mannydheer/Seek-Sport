@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import {
     requestChats,
     retrieveChats, retrieveChatsError,
-    addMessage, leaveRoom, actualChatParticipants
+    addMessage, leaveRoom, actualChatParticipants, addChatParticipants
 } from '../actions/userActions';
 
 import { IoMdSend } from 'react-icons/io';
@@ -25,7 +25,7 @@ let ENDPOINT = 'localhost:4000';
 
 
 const ChatJoin = () => {
-    // socket = io(ENDPOINT);
+    socket = io(ENDPOINT);
 
 
 
@@ -90,7 +90,6 @@ const ChatJoin = () => {
 
     //---------------------FUNCTIONS------------------
     const handleKeypress = (e) => {
-        console.log(e)
         if (e.keyCode === 13) {
             handleSubmit(e)
         }
@@ -110,9 +109,6 @@ const ChatJoin = () => {
     //--------------FETCH ALL PARTICIPANTS OF THAT ROOM...---------------
 
     useEffect(() => {
-
-
-
         const handleGetChatRoom = async () => {
             let token = localStorage.getItem('accesstoken')
             try {
@@ -131,10 +127,8 @@ const ChatJoin = () => {
                     participantResponse.eventParticipants.forEach(user => {
                         userObject[user.userId] = user;
                     })
-
                     // setChatMembers(userObject)
                     dispatch(actualChatParticipants(userObject))
-
                 }
             }
             catch (err) {
@@ -147,21 +141,26 @@ const ChatJoin = () => {
 
 
 
+    //--------------JOIN A ROOM...---------------
 
 
     useEffect(() => {
-        socket = io(ENDPOINT);
-        socket.emit('join', { name: userInfo.user, userId: userId, room: `${eventId}-Room-1` }, (message) => {
-            if (message === "Existing User") {
-                socket.on('room-message-history', (messageHistoryForRoom) => {
-                    dispatch(requestChats())
-                    if (messageHistoryForRoom) {
-                        dispatch(retrieveChats(messageHistoryForRoom))
-                    }
-                    else {
-                        dispatch(retrieveChatsError())
-                    }
-                })
+        socket.emit('join', { name: userInfo.user, userId: userId, room: `${eventId}-Room-1` }, (messageInfo) => {
+            console.log('component MOUNT', messageInfo)
+            if (messageInfo.existingUser) {
+                console.log('existing user.')
+                dispatch(addChatParticipants(messageInfo))
+            }
+            else if (messageInfo.joined) {
+                //
+                console.log('successful join')
+                dispatch(requestChats())
+                if (messageInfo.roomData) {
+                    dispatch(retrieveChats(messageInfo))
+                }
+                else {
+                    dispatch(retrieveChatsError())
+                }
             }
         })
         //useEffect cleanup. - DISCONNECT EVENT.
@@ -173,12 +172,11 @@ const ChatJoin = () => {
                 name: userInfo.user
             }
             //leaeve the room.
-            socket.emit('leaveRoom', (leaveRoomData), () => {
-                console.log('inside socket leave room.')
+            socket.emit('leaveRoom', (leaveRoomData), (data) => {
+                console.log('COMPONENT UNMOUNT')
                 setLeaveRoomMessage(message)
-                dispatch(leaveRoom(leaveRoomData))
+                dispatch(leaveRoom(data))
                 //also redirect to room page.
-
             })
             socket.off();
         }
@@ -186,18 +184,17 @@ const ChatJoin = () => {
 
     //--------------GET ALL ROOM MESSAGE HISTORY.---------------
 
-    useEffect(() => {
-        socket.on('room-message-history', (messageHistoryForRoom) => {
-            dispatch(requestChats())
-            if (messageHistoryForRoom) {
-                dispatch(retrieveChats(messageHistoryForRoom))
-            }
-            else {
-                dispatch(retrieveChatsError())
-            }
-        })
-
-    }, [eventId, userChats])
+    // useEffect(() => {
+    //     socket.on('room-message-history', (messageHistoryForRoom) => {
+    //         dispatch(requestChats())
+    //         if (messageHistoryForRoom) {
+    //             dispatch(retrieveChats(messageHistoryForRoom))
+    //         }
+    //         else {
+    //             dispatch(retrieveChatsError())
+    //         }
+    //     })
+    // }, [eventId, userChats])
 
 
     //--------------SOCKET WILL LISTEN FOR CHAT-MESSAGE---------------
@@ -209,16 +206,15 @@ const ChatJoin = () => {
     }, [])
 
     //--------------JOIN OR LEAVE GROUP MESSAGE!---------------
-    useEffect(() => {
+    // useEffect(() => {
 
-        socket.on('users-join-leave', (message) => {
-            console.log(message, 'message inside join or leave')
-            setMessages(message.message)
-        })
-    }, [message])
+    //     socket.on('users-join-leave', (message) => {
+    //         console.log(message, 'message inside join or leave')
+    //         setMessages(message.message)
+    //     })
+    // }, [message])
 
     //--------------SUBMIT A MESAGE---------------
-
     const handleSubmit = (e) => {
         console.log('inside handle submit')
         e.preventDefault();
@@ -231,7 +227,7 @@ const ChatJoin = () => {
                 sender: userInfo.user,
                 timeStamp: new Date(),
             }
-            dispatch(addMessage(data))
+            // dispatch(addMessage(data))
             socket.emit('sendMessage', (data), () =>
                 setMessage('')
             )
@@ -250,15 +246,11 @@ const ChatJoin = () => {
             setLeaveRoomMessage(message)
         })
     }
-
-
     //--------------GET ALL MESSAGES FOR THE ROOM.---------------
     useEffect(() => {
         if (userChats.status === 'retrieved' && eventId !== null) {
-            console.log('inside useffect*******')
             let currentRoom = userChats.rooms.find(eachRoom => {
                 if (eachRoom._id === `${eventId}-Room-1`) {
-                    console.log(eventId, 'THIS IS ROOM.')
                     setAllMessages(eachRoom.messages)
                 }
             })

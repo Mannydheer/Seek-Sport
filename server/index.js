@@ -111,9 +111,13 @@ client.connect(async (err) => {
 
                     let getRoom = await db.collection(collectionRooms).findOne({ _id: room })
                     //then send back the room message hisotry.
-                    socket.emit('room-message-history', getRoom)
-                    console.log('Existing User')
-                    callback("Existing User")
+                    // socket.emit('room-message-history', getRoom)
+                    // console.log('Existing User')
+                    let messageInfo = {
+                        existingUser: true,
+                        roomData: getRoom,
+                    }
+                    callback(messageInfo)
                 }
                 //If he is not an existing user...
                 //allow to join.
@@ -126,13 +130,20 @@ client.connect(async (err) => {
                     //then join the room with sockket.
                     //room is the eventId-First-Room.
                     socket.join(room)
-                    socket.emit('room-message-history', getRoom)
+                    // socket.emit('room-message-history', getRoom)
                     // io.to(room).emit('chat-message', 'JOINED') //useless - change.
 
                     let messageInfo = {
+                        joined: true,
                         message: `${name} has joined ${room}.`,
+                        updateChatParticipants: getRoom.chatParticipants,
+                        room: room,
+                        roomData: getRoom,
+
                     }
-                    socket.broadcast.emit('users-join-leave', messageInfo)
+
+                    callback(messageInfo)
+                    // socket.broadcast.emit('users-join-leave', messageInfo)
                     callback(messageInfo.message)
 
                 }
@@ -149,13 +160,19 @@ client.connect(async (err) => {
                 socket.join(room)
 
                 //send back room message history.
-                socket.emit('room-message-history', getRoom)
+                // socket.emit('room-message-history', getRoom)
                 let messageInfo = {
+                    joined: true,
                     message: `${name} has joined ${room}.`,
+                    updateChatParticipants: getRoom.chatParticipants,
+                    room: room,
+                    roomData: getRoom,
+
                 }
+                callback(messageInfo)
                 //send back the join and leaver.
-                socket.broadcast.emit('users-join-leave', messageInfo)
-                callback('success')
+                // socket.broadcast.emit('users-join-leave', messageInfo)
+
             }
         })
 
@@ -176,19 +193,17 @@ client.connect(async (err) => {
             let updateChatMember = await db.collection(collectionRooms).updateOne({ _id: data.room }, { $pull: { chatParticipants: { userId: data.userId } } })
             assert(1, updateChatMember.matchedCount)
             assert(1, updateChatMember.modifiedCount)
-
+            let findChatMembers = await db.collection(collectionRooms).findOne({ _id: data.room })
 
 
             let messageInfo = {
-                message: `${data.name} has left the room. Reload to join`
+                message: `${data.name} has left the room. Reload to join`,
+                data: findChatMembers.chatParticipants,
+                room: findChatMembers._id,
             }
+            callback(messageInfo)
             socket.broadcast.emit('users-join-leave', messageInfo)
         })
-
-
-        socket.removeAllListeners();
-
-
 
     })
 })

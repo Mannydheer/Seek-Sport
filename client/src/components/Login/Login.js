@@ -105,7 +105,6 @@ export default function SignIn() {
                 })
                 let userResponse = await response.json();
                 if (response.status === 200) {
-                    console.log(userResponse, 'INSIDE LOGIN')
                     let name = userResponse.username.split('@')[0]
                     localStorage.setItem('accesstoken', userResponse.accessToken)
                     //dispatch to make userState

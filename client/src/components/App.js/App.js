@@ -36,7 +36,6 @@ function App() {
       dispatch(loginRequest())
       try {
         let response = await fetchUserProfile();
-        console.log(response, 'inside app token')
         let userResponse = await response.json()
         if (response.status === 200) {
           let name = userResponse.username.split('@')[0]
