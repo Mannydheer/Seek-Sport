@@ -116,6 +116,12 @@ export default function SignUp() {
         const handleSignup = async () => {
 
             if (userInfo.user !== '' && userInfo.pass !== '' && file !== null) {
+
+
+
+                //remove previous token since there is a new user.
+                localStorage.removeItem('accesstoken')
+
                 dispatch(loginRequest())
                 try {
                     let response = await fetch('/SignUp', {
@@ -124,6 +130,11 @@ export default function SignUp() {
                     })
                     let userResponse = await response.json();
                     if (response.status === 200) {
+                        console.log(userResponse, 'INSIDE SIGNUP')
+                        //add token here.
+                        //set new token...
+
+                        localStorage.setItem('accesstoken', userResponse.accessToken)
                         //dispatch action.
                         let name = userResponse.username.split('@')[0]
                         dispatch(loginSuccess({

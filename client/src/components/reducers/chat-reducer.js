@@ -73,6 +73,9 @@ export default function chatReducer(state = intitialState, action) {
             }
         }
         case "LEAVE_ROOM": {
+
+            console.log('WE ARE IN LEAVE ROOM.')
+            console.log(action)
             let stateCopy = { ...state }
 
             let findRoom = stateCopy.rooms.find((room, index) => {

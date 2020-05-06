@@ -93,14 +93,14 @@ const Host = () => {
         //---------------------TIME ----------------------------
 
 
-        // let startTime = startDate.getHours() * 60 + startDate.getMinutes();
-        // let currentTime = new Date().getHours() * 60 + new Date().getMinutes();
+        let begTime = startDate.getHours() * 60 + startDate.getMinutes();
+        let endTime = new Date().getHours() * 60 + new Date().getMinutes();
 
         let startTime = Math.round(((startDate.getTime() / 1000) / 60))
         let currentTime = Math.round(((new Date().getTime() / 1000) / 60))
 
 
-        console.log(startTime, currentTime)
+        console.log(begTime, endTime)
         //ONLY IF ALLOW FETCH IS TRUE.
 
         if (sportSelect !== "Choose sport" &&

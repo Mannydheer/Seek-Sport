@@ -82,9 +82,8 @@ client.connect(async (err) => {
 
     io.on('connection', (socket) => {
         console.log('we have a new connections!!!')
-
+        console.log(socket.id, 'SOCKETID')
         socket.on('join', async ({ name, userId, room }, callback) => {
-
             console.log('inside join socket.')
             let chatMemberDetails = {
                 socketId: socket.id,
@@ -95,13 +94,10 @@ client.connect(async (err) => {
             //before inserting someone in room...
             //check that he is not already there.
             let getRoom = await db.collection(collectionRooms).findOne({ _id: room })
-
-            console.log(getRoom)
             //if no participants
             //then we can create one... move to the else.
 
             if (getRoom.chatParticipants.length > 0) {
-                console.log('there are chat participants.')
 
                 let existingUser = getRoom.chatParticipants.find(user => {
                     if (user.userId === userId) {
@@ -174,7 +170,6 @@ client.connect(async (err) => {
         })
 
         socket.on('leaveRoom', async (data, callback) => {
-            console.log(data.room)
             socket.leave(data.room)
             console.log('left room')
             //now that we have the message...
@@ -189,6 +184,10 @@ client.connect(async (err) => {
             }
             socket.broadcast.emit('users-join-leave', messageInfo)
         })
+
+
+        socket.removeAllListeners();
+
 
 
     })

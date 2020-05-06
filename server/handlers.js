@@ -99,7 +99,8 @@ const handleSignUp = async (req, res) => {
                             res.status(200).json({
                                 status: 200,
                                 message: "Success. Thanks for signing up.",
-                                username: getUser.username, accessToken,
+                                username: getUser.username,
+                                accessToken: accessToken,
                                 _id: getUser._id,
                                 profileImage: getUser.profileImage
                             })
@@ -166,7 +167,7 @@ const handleLogin = async (req, res) => {
                                 status: 200,
                                 message: "Success. Thanks for logging in.",
                                 username: checkForUser.username,
-                                accessToken,
+                                accessToken: accessToken,
                                 _id: checkForUser._id,
                                 profileImage: checkForUser.profileImage
                             })

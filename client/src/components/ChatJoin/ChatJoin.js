@@ -18,21 +18,21 @@ import { IoMdSend } from 'react-icons/io';
 
 let socket;
 let ENDPOINT = 'localhost:4000';
-socket = io(ENDPOINT);
+
+
+
+
 
 
 const ChatJoin = () => {
+    // socket = io(ENDPOINT);
+
+
 
     //
-
-
-
     //now we have the eventId of which we want to join the chat
     //we have access to the participant ID which will be the room.
     let eventId = useParams().eventId;
-
-
-
 
     const dispatch = useDispatch();
 
@@ -73,8 +73,6 @@ const ChatJoin = () => {
 
     }
 
-
-
     //----------------------SELECTORS------------------
     const userInfo = useSelector(state => state.userReducer);
     const userChats = useSelector(state => state.chatReducer)
@@ -112,6 +110,9 @@ const ChatJoin = () => {
     //--------------FETCH ALL PARTICIPANTS OF THAT ROOM...---------------
 
     useEffect(() => {
+
+
+
         const handleGetChatRoom = async () => {
             let token = localStorage.getItem('accesstoken')
             try {
@@ -149,6 +150,7 @@ const ChatJoin = () => {
 
 
     useEffect(() => {
+        socket = io(ENDPOINT);
         socket.emit('join', { name: userInfo.user, userId: userId, room: `${eventId}-Room-1` }, (message) => {
             if (message === "Existing User") {
                 socket.on('room-message-history', (messageHistoryForRoom) => {
@@ -172,6 +174,7 @@ const ChatJoin = () => {
             }
             //leaeve the room.
             socket.emit('leaveRoom', (leaveRoomData), () => {
+                console.log('inside socket leave room.')
                 setLeaveRoomMessage(message)
                 dispatch(leaveRoom(leaveRoomData))
                 //also redirect to room page.
@@ -193,6 +196,7 @@ const ChatJoin = () => {
                 dispatch(retrieveChatsError())
             }
         })
+
     }, [eventId, userChats])
 
 
@@ -212,8 +216,6 @@ const ChatJoin = () => {
             setMessages(message.message)
         })
     }, [message])
-
-
 
     //--------------SUBMIT A MESAGE---------------
 
@@ -267,14 +269,12 @@ const ChatJoin = () => {
         }
     }, [userChats, allMessages])
 
-    console.log(allMessages, 'ALL MESSAGES')
 
 
 
 
     return <MainWrapper>
         {/* <button onClick={handleLeaveRoom}>Leave Room</button> */}
-        <h2>{messages}</h2>
 
         <ChatWrapper>
 
@@ -291,13 +291,15 @@ const ChatJoin = () => {
                                             <SenderMessage>{message.message}</SenderMessage>
                                             <TimeWrapper>{dateConverter(message.timeStamp)}</TimeWrapper>
                                         </div>
-                                        <Image src={`/${userChats.actualParticipants[message.userId].profileImage}`} />
+                                        {userChats.actualParticipants[message.userId] ? <Image src={`/${userChats.actualParticipants[message.userId].profileImage}`} /> : <div>LOADING</div>}
                                     </SenderText>
 
                                 </div>
                                 :
                                 <ReceiverText>
-                                    <Image src={`/${userChats.actualParticipants[message.userId].profileImage}`} />
+                                    {/* THIS ONE */}
+
+                                    {userChats.actualParticipants[message.userId] ? <Image src={`/${userChats.actualParticipants[message.userId].profileImage}`} /> : <div>LOADING</div>}
                                     <div>
                                         <ReceiverMessage>{message.message}</ReceiverMessage>
                                         <ReceiveTimeWrapper>{dateConverter(message.timeStamp)}</ReceiveTimeWrapper>
@@ -376,6 +378,7 @@ width: 100%;
 
 textarea {
     width: 100%;
+    height: 2rem;
     resize: none;
     background-image: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);
     color: white;

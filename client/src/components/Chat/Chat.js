@@ -62,21 +62,23 @@ const Chat = () => {
     //we have the user Id.
 
     const checkOnlineParticipant = (id) => {
-
-
-
     }
 
     return <Wrapper >
+
+        {/* ------------------------------MAP THROUGH ALL EVENTS(ROOMS).-------------------------- */}
         {userRegisteredEvents.status !== "retrieved..." ? <div>Seems like you havn't registered for any events!</div> :
             // each of these each represents each chat.
             userRegisteredEvents.registeredEvents.map(event => {
                 return <Link to={`/chatJoin/${event._id}`} key={event._id}>
+
                     <Rooms event={event}></Rooms>
                 </Link>
             })
 
         }
+
+        {/* ------------------------------GETTING PARTICIPANTS CURRENTLY INSIDE CHAT ROOM.-------------------------- */}
         {actualChatParticipants && <div>
             {Object.values(actualChatParticipants).map(participant => {
                 return <div>
@@ -85,7 +87,6 @@ const Chat = () => {
                 </div>
             })}
         </div>
-
         }
 
 

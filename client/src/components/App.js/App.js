@@ -29,11 +29,6 @@ function App() {
   const userLoggedIn = useSelector(state => state.userReducer)
   const hostsInfo = useSelector(state => state.hostReducer)
 
-
-
-
-
-
   //validate if a user token still available in browser.
   //keep user logged in.
   useEffect(() => {
