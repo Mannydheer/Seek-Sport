@@ -20,15 +20,8 @@ let socket;
 let ENDPOINT = 'localhost:4000';
 
 
-
-
-
-
 const ChatJoin = () => {
     socket = io(ENDPOINT);
-
-
-
     //
     //now we have the eventId of which we want to join the chat
     //we have access to the participant ID which will be the room.
@@ -142,17 +135,20 @@ const ChatJoin = () => {
 
 
     //--------------JOIN A ROOM...---------------
+    //first time someone join... they will not be an existing user...
+    //so the BE and FE both get updated with the participant and room data.
+    //
 
 
     useEffect(() => {
         socket.emit('join', { name: userInfo.user, userId: userId, room: `${eventId}-Room-1` }, (messageInfo) => {
             console.log('component MOUNT', messageInfo)
             if (messageInfo.existingUser) {
-                console.log('existing user.')
                 dispatch(addChatParticipants(messageInfo))
             }
-            else if (messageInfo.joined) {
-                //
+            else if
+                (messageInfo.joined) {
+
                 console.log('successful join')
                 dispatch(requestChats())
                 if (messageInfo.roomData) {
@@ -206,13 +202,13 @@ const ChatJoin = () => {
     }, [])
 
     //--------------JOIN OR LEAVE GROUP MESSAGE!---------------
-    // useEffect(() => {
-
-    //     socket.on('users-join-leave', (message) => {
-    //         console.log(message, 'message inside join or leave')
-    //         setMessages(message.message)
-    //     })
-    // }, [message])
+    useEffect(() => {
+        socket.on('users-join-leave', (message) => {
+            console.log(message, 'message inside join or leave')
+            setMessages(message.message)
+            dispatch(addChatParticipants(message))
+        })
+    }, [message])
 
     //--------------SUBMIT A MESAGE---------------
     const handleSubmit = (e) => {

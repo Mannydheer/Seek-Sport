@@ -116,6 +116,8 @@ client.connect(async (err) => {
                     let messageInfo = {
                         existingUser: true,
                         roomData: getRoom,
+                        room: room,
+                        updateChatParticipants: getRoom.chatParticipants
                     }
                     callback(messageInfo)
                 }
@@ -132,7 +134,6 @@ client.connect(async (err) => {
                     socket.join(room)
                     // socket.emit('room-message-history', getRoom)
                     // io.to(room).emit('chat-message', 'JOINED') //useless - change.
-
                     let messageInfo = {
                         joined: true,
                         message: `${name} has joined ${room}.`,
@@ -141,18 +142,16 @@ client.connect(async (err) => {
                         roomData: getRoom,
 
                     }
-
                     callback(messageInfo)
-                    // socket.broadcast.emit('users-join-leave', messageInfo)
-                    callback(messageInfo.message)
+
+                    //to show which other users have joined or left.
+                    socket.broadcast.emit('users-join-leave', messageInfo)
+                    // callback(messageInfo.message)
 
                 }
             }
             //we will now add the person to the room.
             else {
-
-                console.log('chat participants null is not null')
-
                 await db.collection(collectionRooms).updateOne({ _id: room }, { $push: { chatParticipants: chatMemberDetails } })
                 let getRoom = await db.collection(collectionRooms).findOne({ _id: room })
                 //room is the eventId-First-Room.
@@ -171,7 +170,7 @@ client.connect(async (err) => {
                 }
                 callback(messageInfo)
                 //send back the join and leaver.
-                // socket.broadcast.emit('users-join-leave', messageInfo)
+                socket.broadcast.emit('users-join-leave', messageInfo)
 
             }
         })
@@ -198,8 +197,8 @@ client.connect(async (err) => {
 
             let messageInfo = {
                 message: `${data.name} has left the room. Reload to join`,
-                data: findChatMembers.chatParticipants,
-                room: findChatMembers._id,
+                updateChatParticipants: findChatMembers.chatParticipants,
+                room: data.room
             }
             callback(messageInfo)
             socket.broadcast.emit('users-join-leave', messageInfo)

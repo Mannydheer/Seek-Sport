@@ -49,7 +49,7 @@ export const leaveRoom = (data) => ({
     data
 })
 export const addChatParticipants = (data) => ({
-    type: 'ADD_CHAT_PARTICIPANTS',
+    type: 'ADD_CHAT_PARTICIPANT',
     data
 })
 export const removeChatParticipants = (data) => ({
