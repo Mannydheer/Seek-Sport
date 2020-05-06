@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { requestRegisteredUserEvents, retrieveRegisteredUserEvents, retrieveRegisteredUserEventsError } from '../actions/userActions';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+
 import ChatJoin from '../ChatJoin';
+import Rooms from '../Rooms';
 import styled from 'styled-components';
 
 const Chat = () => {
@@ -17,6 +18,8 @@ const Chat = () => {
 
     const userInfo = useSelector(state => state.userReducer);
     const userRegisteredEvents = useSelector(state => state.userRegisteredReducer)
+
+    // const [eventInfo, setEventInfo] = useState(null);
 
 
     //on mount of this chat component...
@@ -39,8 +42,9 @@ const Chat = () => {
                 if (userResponse.status === 200) {
 
                     dispatch(retrieveRegisteredUserEvents(
-                        userResponse.userRegisteredEvents
+                        userResponse.eventInfo
                     ))
+
                 }
                 else {
                     dispatch(retrieveRegisteredUserEventsError())
@@ -57,37 +61,17 @@ const Chat = () => {
     console.log(userRegisteredEvents.registeredEvents)
 
 
-    return <Wrapper>
+    return <Wrapper >
         {userRegisteredEvents.status !== "retrieved..." ? <div>Seems like you havn't registered for any events!</div> :
             // each of these each represents each chat.
             userRegisteredEvents.registeredEvents.map(event => {
-                return <div><Link to={`/chatJoin/${event}`} key={event}>
-                    {event}
-                </Link></div>
+                return <Link to={`/chatJoin/${event._id}`} key={event._id}>
+                    <Rooms event={event}></Rooms>
+                </Link>
             })
         }
-        {/* <Tabs>
-
-            {userRegisteredEvents.status !== "retrieved..." ? <div>Seems like you havn't registered for any events!</div> :
-                // each of these each represents each chat.
-                userRegisteredEvents.registeredEvents.map(event => {
-                    return (<div style={{ display: 'flex' }}><TabList>
-                        <Tab>{event} - Room</Tab>
-                    </TabList>
-                        <TabPanel>
-                            <ChatJoin eventId={event}></ChatJoin>
-                        </TabPanel></div>)
 
 
-
-
-
-                })
-
-
-            }
-
-        </Tabs> */}
 
 
     </Wrapper>
@@ -96,11 +80,19 @@ const Chat = () => {
 export default Chat;
 
 const Wrapper = styled.div`
-width: 1000px;
-height: 1000px;
+background-image: linear-gradient(15deg, #13547a 0%, #80d0c7 100%);
+padding: 0 5rem;
 
 
+a {
+    text-decoration: none;
+    color: black;
+    border-radius: 10px;
+
+}
 `
+
+
 
 
 

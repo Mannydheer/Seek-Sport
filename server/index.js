@@ -80,8 +80,6 @@ client.connect(async (err) => {
 
 
     io.on('connection', (socket) => {
-
-
         console.log('we have a new connections!!!')
 
         socket.on('join', async ({ name, userId, room }, callback) => {
@@ -100,7 +98,7 @@ client.connect(async (err) => {
             //if no participants
             //then we can create one... move to the else.
 
-            if (getRoom.chatParticipants !== null) {
+            if (!getRoom.chatParticipants) {
                 let existingUser = getRoom.chatParticipants.find(user => {
                     if (user.userId === userId) {
                         return user

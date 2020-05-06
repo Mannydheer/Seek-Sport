@@ -16,6 +16,7 @@ import ChatJoin from '../ChatJoin';
 import Chat from '../Chat';
 import ChatSystem from '../ChatSystem';
 import ChatModal from '../ChatModal';
+import styled from 'styled-components';
 
 
 
@@ -97,14 +98,23 @@ function App() {
           </Route>
           <Route exact path='/chat'>
             {userLoggedIn.isAuthenticated ?
-              <div>
+              <ChatWrapper>
                 <Chat></Chat>
-              </div>
+                <ChatJoin></ChatJoin>
+              </ChatWrapper>
               :
               <h1 style={{ textAlign: 'center' }}>Must be logged in to view this page.</h1>}
           </Route>
           <Route exact path='/chatJoin/:eventId'>
-            {userLoggedIn.isAuthenticated ? <ChatJoin></ChatJoin> :
+            {userLoggedIn.isAuthenticated ?
+              <div>
+                <StyledTitle>Pick-Up Chat</StyledTitle>
+                <ChatWrapper>
+                  <Chat></Chat>
+                  <ChatJoin></ChatJoin>
+                </ChatWrapper>
+              </div>
+              :
               <h1 style={{ textAlign: 'center' }}>Must be logged in to view this page.</h1>}
           </Route>
         </Switch>
@@ -122,3 +132,22 @@ function App() {
 }
 
 export default App;
+
+const ChatWrapper = styled.div`
+display : flex;
+align-content: center;
+border: solid black 3px;
+width: 50%;
+height: 40rem;
+margin: 0 auto;
+
+
+`
+
+const StyledTitle = styled.h1`
+    font-size: 2rem;
+    text-align: center;
+    
+  
+
+`

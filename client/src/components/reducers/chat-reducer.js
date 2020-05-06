@@ -52,7 +52,6 @@ export default function chatReducer(state = intitialState, action) {
 
             let findRoom = stateCopy.rooms.find(room => {
                 if (room._id === action.message.room) {
-
                     //if there are no room messages.
                     //make them and then push the message that is coming...
                     if (!room.messages) {
@@ -69,8 +68,6 @@ export default function chatReducer(state = intitialState, action) {
                     console.log('room was not found..')
                 }
             })
-
-
             return {
                 ...stateCopy,
             }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useHistory } from 'react-router-dom';
 import io from 'socket.io-client';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -12,16 +12,14 @@ import {
 
 
 
+
 let socket;
 let ENDPOINT = 'localhost:4000';
 socket = io(ENDPOINT);
 
 
 
-const ChatJoin = ({ }) => {
-
-
-
+const ChatJoin = () => {
 
 
 
@@ -93,6 +91,8 @@ const ChatJoin = ({ }) => {
             socket.emit('leaveRoom', (leaveRoomData), () => {
                 setLeaveRoomMessage(message)
                 dispatch(leaveRoom(leaveRoomData))
+                //also redirect to room page.
+
             })
             socket.off();
         }
@@ -110,29 +110,15 @@ const ChatJoin = ({ }) => {
                 dispatch(retrieveChatsError())
             }
         })
-        // return () => {
-        //     socket.off();
-        //     socket.removeAllListeners();
-        // }
-
     }, [eventId, userChats])
 
 
     //--------------SOCKET WILL LISTEN FOR CHAT-MESSAGE---------------
     useEffect(() => {
-
-
         socket.on('chat-message', (message) => {
             console.log(message, 'INSIDE CHAT-MESSAGE BEFORE DISPATCH')
             dispatch(addMessage(message))
         })
-        // return () => {
-        //     socket.off()
-        //     socket.removeAllListeners();
-
-        // }
-
-        //every time the reducer changes.
     }, [])
 
     //--------------JOIN OR LEAVE GROUP MESSAGE!---------------
@@ -142,12 +128,6 @@ const ChatJoin = ({ }) => {
             console.log(message, 'message inside join or leave')
             setMessages(message.message)
         })
-        // return () => {
-        //     socket.off();
-        //     socket.removeAllListeners();
-
-        // }
-
     }, [message])
 
 
@@ -167,14 +147,11 @@ const ChatJoin = ({ }) => {
                 timeStamp: new Date(),
             }
             dispatch(addMessage(data))
-
             socket.emit('sendMessage', (data), () =>
                 setMessage('')
-
             )
         }
     }
-
     //--------------LEAVE ROOM---------------
     const handleLeaveRoom = (e) => {
         e.preventDefault();
@@ -212,9 +189,10 @@ const ChatJoin = ({ }) => {
 
 
 
-    return <ChatWrapper>
-        <div>
-            <StyledTitle>Welcome to the chat!</StyledTitle>
+    return <MainWrapper>
+        {/* <button onClick={handleLeaveRoom}>Leave Room</button> */}
+
+        <ChatWrapper>
             <h2>{messages}</h2>
 
             {/* ALL MESSAGES FROM THE FRONT END. */}
@@ -228,39 +206,67 @@ const ChatJoin = ({ }) => {
                     })}
                 </ChatBox>
             }
-            <StyledForm onSubmit={handleSubmit}>
+
+        </ChatWrapper>
+        <StyledForm onSubmit={handleSubmit}>
+            <Send>
                 <input placeholder="message" type="text" onChange={(e) => setMessage(e.target.value)}></input>
                 <button type='submit'>send</button>
-                <Link to={`/chat?name=${name}`}></Link>
-                <button onClick={handleLeaveRoom}>Leave Room</button>
-            </StyledForm>
-        </div>
-    </ChatWrapper>
+            </Send>
+            <Link to={`/chat?name=${name}`}></Link>
+        </StyledForm>
+    </MainWrapper>
 }
 
 export default ChatJoin;
 
 
 const StyledForm = styled.form`
-width: 300px;
-height: 300px;
-overflow-y: scroll;
+height: 100%;
+width: 100%;
 
-`
-const StyledTitle = styled.h1`
-    font-size: 1.1rem;
-    text-align: center;
-    border-bottom: solid black 2px;
-    width: 30%;
-    margin: 0 auto;
 
+
+input {
+}
 `
+
+const Send = styled.div`
+display: flex;
+
+button {
+    border-radius: 25px;
+    color: black;
+    background-color: red;
+    
+}
+input {
+    width: 100%;
+    height: 20%;
+}
+`
+
 
 const ChatBox = styled.div`
 
 `
 
 const ChatWrapper = styled.div`
+background-color: yellow;
+height: 97%;
+width: 100%;
+overflow-y: scroll;
+scroll-behavior: smooth;
+
+
 /* display: flex;
 justify-content: center; */
+`
+
+
+const MainWrapper = styled.div`
+height: 100%;
+width: 100%;
+
+
 `

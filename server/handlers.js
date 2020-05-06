@@ -1153,17 +1153,25 @@ const handleUserRegisteredEvents = async (req, res, next) => {
             const db = client.db(dbName)
             //insert the hosting info into DB
             let allData = await db.collection(collectionUserEvents).findOne({ _id: ObjectId(id) })
-            console.log(allData)
             if (!allData.events) {
                 res.status(404).json({ status: 404, message: 'There are no registered events under this user.' })
             } else {
+
+                //now we have array of event Ids... we can get back all ids.
+                let allEvents = [];
+                allData.events.forEach(data => {
+                    allEvents.push(ObjectId(data))
+                })
+                let getEvents = await db.collection(collectionEvents).find({ _id: { $in: allEvents } }).toArray();
+
+
                 res.status(200).json({
                     status: 200,
                     message: "Success getting all registered events associated with the user!",
                     userRegisteredEvents: allData.events,
+                    eventInfo: getEvents,
                 })
             }
-            //
         }
         catch (error) {
             console.log(error.stack, 'Catch Error in handleUserRegisteredEvents ')
