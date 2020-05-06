@@ -49,6 +49,47 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
+const validateDateBooking = (startDate) => {
+
+    //Todays day and month.
+    let currentDate = new Date().toLocaleDateString().split('/');
+    let currentMonth = currentDate[0]
+    let currentDay = currentDate[1]
+
+    //booking date.
+    let bookingDate = new Date(startDate).toLocaleDateString().split('/');
+    let bookingMonth = bookingDate[0]
+    let bookingDay = bookingDate[1]
+
+    //compare month and day of booking.
+    //year CHECKING NOT DONE.
+    //if its any day past today... no problems trying to book.
+    //backend will handle conflicts if there are any.
+    if (bookingMonth > currentMonth && bookingDay > currentDay) {
+        return true;
+    }
+    //if its the same day... then check for time.
+    else if (bookingMonth === currentMonth && bookingDay === currentDay) {
+        //convert everything to minutes for the specific day.
+        let currentTime = new Date().getHours() * 60 + new Date().getMinutes();
+        let selectedTime = new Date(startDate).getHours() * 60 + new Date(startDate).getMinutes();
+
+        //if the total minutes selected is greater or equal to the current minutes...
+        //these means that we are either at the same time or past the time...
+        //thne we are allowed to book.
+        if (selectedTime >= currentTime) {
+            return true;
+        }
+        //if not.... cannot book
+        else {
+            return false;
+        }
+    }
+    //if its past the date.
+    else return false
+
+}
+
 
 
 
@@ -57,13 +98,6 @@ const Host = () => {
 
     //for modal class.
     const classes = useStyles();
-
-
-
-
-
-
-
     const userLoggedIn = useSelector(state => state.userReducer);
     //use this for real.
     const selectedPark = useSelector(state => state.parkReducer.selectedPark);
@@ -93,88 +127,97 @@ const Host = () => {
         //---------------------TIME ----------------------------
 
 
-        let begTime = startDate.getHours() * 60 + startDate.getMinutes();
-        let endTime = new Date().getHours() * 60 + new Date().getMinutes();
 
         let startTime = Math.round(((startDate.getTime() / 1000) / 60))
         let currentTime = Math.round(((new Date().getTime() / 1000) / 60))
 
-
-        console.log(begTime, endTime)
+        //if selected date < todays day - throw err
+        //2nd if selected date ==== todays date => make sure time in minutes
+        //3rd if selected date > today date then any time is valid.
         //ONLY IF ALLOW FETCH IS TRUE.
 
         if (sportSelect !== "Choose sport" &&
             skillSelect !== "Choose skill level" &&
             duration !== "Choose duration" &&
-            selectedPark !== null && startTime > currentTime
-        ) {
-            let hostingInformation = {
-                name: userLoggedIn.user,
-                userId: userLoggedIn._id,
-                profileImage: userLoggedIn.profileImage,
-                // skillSelected: skillSelect,
-                // sportSelect: sportSelect,
-            }
+            selectedPark !== null) {
+            //now check if it is the same date first....
+            let validDate = validateDateBooking(startDate)
+            //if a valid date is chosen.
+            if (validDate) {
+
+                //next check if its the same day...
+                let hostingInformation = {
+                    name: userLoggedIn.user,
+                    userId: userLoggedIn._id,
+                    profileImage: userLoggedIn.profileImage,
+                    // skillSelected: skillSelect,
+                    // sportSelect: sportSelect,
+                }
 
 
-            let eventInformation = {
-                name: userLoggedIn.user,
-                //whoever is currently logged in.
-                userId: userLoggedIn._id,
-                sport: sportSelect,
-                skill: skillSelect,
-                //replace witht he actual park. 
-                parkId: selectedPark.id,
-                placeId: selectedPark.place_id,
-                Registration: new Date(),
-                isBooked: true,
-                readTime: startDate.toLocaleTimeString(),
-                bookedDate: startDate.toLocaleDateString(),
-                time: startDate,
-                duration: parseInt(duration)
-            }
+                let eventInformation = {
+                    name: userLoggedIn.user,
+                    //whoever is currently logged in.
+                    userId: userLoggedIn._id,
+                    sport: sportSelect,
+                    skill: skillSelect,
+                    //replace witht he actual park. 
+                    parkId: selectedPark.id,
+                    placeId: selectedPark.place_id,
+                    Registration: new Date(),
+                    isBooked: true,
+                    readTime: startDate.toLocaleTimeString(),
+                    bookedDate: startDate.toLocaleDateString(),
+                    time: startDate,
+                    duration: parseInt(duration)
+                }
 
-            //if token is undefined. will be handled in the back?
-            let token = localStorage.getItem('accesstoken')
-            //
-            try {
-                let response = await fetch("/hostingInformation", {
-                    method: "POST",
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json',
-                        'Authorization': `${token}`
-                    },
-                    body: JSON.stringify({
-                        eventInformation: eventInformation,
-                        hostingInformation: hostingInformation
+                //if token is undefined. will be handled in the back?
+                let token = localStorage.getItem('accesstoken')
+                //
+                try {
+                    let response = await fetch("/hostingInformation", {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Accept: 'application/json',
+                            'Authorization': `${token}`
+                        },
+                        body: JSON.stringify({
+                            eventInformation: eventInformation,
+                            hostingInformation: hostingInformation
+                        })
                     })
-                })
-                let hostResponse = await response.json()
-                console.log(hostResponse)
-                //ADD DISPATCHED?
-                if (hostResponse.status === 200) {
+                    let hostResponse = await response.json()
+                    console.log(hostResponse)
+                    //ADD DISPATCHED?
+                    if (hostResponse.status === 200) {
 
-                    setSuccess(hostResponse.message)
-                    setError(null)
-                }
-                else if (hostResponse.status === 400) {
-                    console.log(hostResponse.message)
+                        setSuccess(hostResponse.message)
+                        setError(null)
+                    }
+                    else if (hostResponse.status === 400) {
+                        console.log(hostResponse.message)
 
-                    setError(hostResponse.message)
+                        setError(hostResponse.message)
 
+                    }
+                    else if (hostResponse.status === 409) {
+                        setError(hostResponse.message)
+                        console.log(hostResponse.timeConflictPark)
+                        setCanceled(false)
+                        //the backend should take care in that it will only send back 1 event
+                        //there should never be a case where you can book two events at the same time as a single user.
+                        setConflictEvent(hostResponse.timeConflictPark)
+                    }
                 }
-                else if (hostResponse.status === 409) {
-                    setError(hostResponse.message)
-                    console.log(hostResponse.timeConflictPark)
-                    setCanceled(false)
-                    //the backend should take care in that it will only send back 1 event
-                    //there should never be a case where you can book two events at the same time as a single user.
-                    setConflictEvent(hostResponse.timeConflictPark)
+                catch (err) {
+                    console.log(err, "catch error inside handleHosting in Host component.")
                 }
+
             }
-            catch (err) {
-                console.log(err, "catch error inside handleHosting in Host component.")
+            else {
+                setError('Make sure you pick a valid day and time!')
             }
         }
         //if any of the cases fail. 
