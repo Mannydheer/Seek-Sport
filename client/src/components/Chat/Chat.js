@@ -79,16 +79,14 @@ const Chat = () => {
                     }
                 })
                 if (activeParticipant) {
-                    return <div>ACTIVE</div>
+                    return <StyledActive />
+                }
+                else {
+                    return <StyledInactive />
+
                 }
 
             }
-            else {
-                console.log('NO CURRENTROOM')
-            }
-
-
-
 
         }
     }
@@ -109,10 +107,11 @@ const Chat = () => {
         {/* ------------------------------GETTING PARTICIPANTS CURRENTLY INSIDE CHAT ROOM.-------------------------- */}
         {actualChatParticipants && chatInfo.status === "retrieved" && <div>
             {Object.values(actualChatParticipants).map(participant => {
-                return <div>
-
+                return <div style={{ position: 'relative', display: 'flex' }}>
                     {checkOnlineParticipant(participant.userId)}
                     <Image src={`/${participant.profileImage}`} />
+                    <Name>{participant.name}</Name>
+
                 </div>
             })}
         </div>
@@ -128,24 +127,52 @@ export default Chat;
 
 const Wrapper = styled.div`
 padding: 0 5rem;
-background-image: linear-gradient(15deg, #13547a 0%, #80d0c7 100%);
-
-
-
+background-color: rgb(82,97,144);
+margin-right: 1.2rem;
+opacity: 0.9;
 a {
     text-decoration: none;
     color: black;
     border-radius: 10px;
-
 }
+
+border-radius: 25px;
 `
+
+
 const Image = styled.img`
 width: 50px;
 height: 50px;
 border-radius: 50%;
 margin:0 10px;
 border: solid 2.5px white;
+position: relative;
 `
+const StyledActive = styled.div`
+width: 15px;
+height: 15px;
+background-color: green;
+position: absolute;
+border-radius: 50%;
+border: solid 1px white;
+z-index: 1000;
+`
+const StyledInactive = styled.div`
+width: 15px;
+height: 15px;
+background-color: red;
+position: absolute;
+border-radius: 50%;
+border: solid 1px white;
+z-index: 1000;
+`
+const Name = styled.div`
+margin-top: 10px;
+color: white;
+font-size: 1.1rem
+
+`
+
 
 
 

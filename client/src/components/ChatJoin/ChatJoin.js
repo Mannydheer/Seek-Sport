@@ -10,6 +10,8 @@ import {
 } from '../actions/userActions';
 
 import { IoMdSend } from 'react-icons/io';
+import ClipLoader from "react-spinners/ClipLoader";
+
 
 
 
@@ -81,23 +83,10 @@ const ChatJoin = () => {
     // const [chatMembers, setChatMembers] = useState(null)
 
 
-    //---------------------FUNCTIONS------------------
-    const handleKeypress = (e) => {
-        if (e.keyCode === 13) {
-            handleSubmit(e)
-        }
-
-    }
 
     //---------------------USE-EFFECTS.------------------
 
-    //--------------ENTER KEYPRESS AND SEDN MESSAGE..---------------
-    useEffect(() => {
-        window.addEventListener("keydown", handleKeypress)
 
-        return () => window.addEventListener("keydown", handleKeypress);
-
-    }, [])
 
     //--------------FETCH ALL PARTICIPANTS OF THAT ROOM...---------------
 
@@ -212,25 +201,7 @@ const ChatJoin = () => {
         })
     }, [message])
 
-    //--------------SUBMIT A MESAGE---------------
-    const handleSubmit = (e) => {
-        console.log('inside handle submit')
-        e.preventDefault();
-        if (message) {
-            //dispatch action to add the message.
-            let data = {
-                message: message,
-                room: `${eventId}-Room-1`,
-                userId: userId,
-                sender: userInfo.user,
-                timeStamp: new Date(),
-            }
-            // dispatch(addMessage(data))
-            socket.emit('sendMessage', (data), () =>
-                setMessage('')
-            )
-        }
-    }
+
     //--------------LEAVE ROOM---------------
     const handleLeaveRoom = (e) => {
         e.preventDefault();
@@ -259,6 +230,43 @@ const ChatJoin = () => {
         }
     }, [userChats, allMessages])
 
+    //--------------ENTER KEYPRESS AND SEDN MESSAGE..---------------
+    useEffect(() => {
+        window.addEventListener("keydown", handleKeypress)
+
+        return () => window.addEventListener("keydown", handleKeypress);
+
+    }, [])
+
+    //---------------------FUNCTIONS------------------
+    const handleKeypress = (e) => {
+
+        if (e.keyCode === 13) {
+            handleSubmit(e)
+        }
+
+    }
+    //--------------SUBMIT A MESAGE---------------
+    const handleSubmit = (e) => {
+        console.log('inside handle submit')
+        console.log('enter', message)
+        e.preventDefault();
+        if (message) {
+            //dispatch action to add the message.
+            let data = {
+                message: message,
+                room: `${eventId}-Room-1`,
+                userId: userId,
+                sender: userInfo.user,
+                timeStamp: new Date(),
+            }
+            // dispatch(addMessage(data))
+            socket.emit('sendMessage', (data), () =>
+                setMessage('')
+            )
+        }
+    }
+
 
 
 
@@ -281,7 +289,9 @@ const ChatJoin = () => {
                                             <SenderMessage>{message.message}</SenderMessage>
                                             <TimeWrapper>{dateConverter(message.timeStamp)}</TimeWrapper>
                                         </div>
-                                        {userChats.actualParticipants[message.userId] ? <Image src={`/${userChats.actualParticipants[message.userId].profileImage}`} /> : <div>LOADING</div>}
+                                        {userChats.actualParticipants[message.userId] ? <Image src={`/${userChats.actualParticipants[message.userId].profileImage}`} />
+                                            :
+                                            <ClipLoader size={50} color={"white"} />}
                                     </SenderText>
 
                                 </div>
@@ -289,7 +299,9 @@ const ChatJoin = () => {
                                 <ReceiverText>
                                     {/* THIS ONE */}
 
-                                    {userChats.actualParticipants[message.userId] ? <Image src={`/${userChats.actualParticipants[message.userId].profileImage}`} /> : <div>LOADING</div>}
+                                    {userChats.actualParticipants[message.userId] ? <Image src={`/${userChats.actualParticipants[message.userId].profileImage}`} />
+                                        :
+                                        <ClipLoader size={50} color={"white"} />}
                                     <div>
                                         <ReceiverMessage>{message.message}</ReceiverMessage>
                                         <ReceiveTimeWrapper>{dateConverter(message.timeStamp)}</ReceiveTimeWrapper>
@@ -301,14 +313,23 @@ const ChatJoin = () => {
                 </ChatBox>
             }
 
+
         </ChatWrapper>
         <StyledForm>
             <Send>
-                <textarea placeholder="message" type="text" onChange={(e) => setMessage(e.target.value)}></textarea>
+                <textarea
+                    autoFocus
+                    cols="33"
+
+                    placeholder="Type your message..." type="text" onChange={(e) => setMessage(e.target.value)}>
+
+                </textarea>
                 <StyledSendButton onClick={handleSubmit}></StyledSendButton>
+
             </Send>
             <Link to={`/chat?name=${name}`}></Link>
         </StyledForm>
+
     </MainWrapper>
 }
 
@@ -361,43 +382,41 @@ padding: 10px;
 `
 
 const StyledForm = styled.form`
-height: 5%;
+height: 100%;
 width: 100%;
-
-
+position: relative;
+bottom: 3.2rem;
 
 textarea {
     width: 100%;
-    height: 2rem;
     resize: none;
     background-image: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);
+    border-radius: 0 0 25px 25px;
+    outline: none;
+    border: solid white 1px;
+    font-size:1.1rem;
     color: white;
+
+    
   
 }
 
 `
 const StyledSendButton = styled(IoMdSend)`
-background-image: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);
+background-image: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);width: 2rem;
+height: 3.2rem;
+border-radius: 0 0px 25px 0;
+border-top: white solid 1px;
+border-left: white solid 1px;
 cursor: pointer;
-width: 2rem;
-height: 2rem;
 color: white;
+position: absolute;
+right: 0;
 
 `
 
 const Send = styled.div`
 display: flex;
-
-button {
-    border-radius: 25px;
-    color: black;
-    background-color: red;
-    
-}
-input {
-    width: 100%;
-
-}
 `
 
 
@@ -410,10 +429,9 @@ const ChatBox = styled.div`
 const ChatWrapper = styled.div`
 position: relative;
 background-color: rgb(82,97,144);
-
-
+border-radius: 25px;
 width: 100%;
-height: 95%;
+height: 100%;
 overflow-y: scroll;
 scroll-behavior: smooth;
 
@@ -424,8 +442,10 @@ justify-content: center; */
 
 
 const MainWrapper = styled.div`
-height: 100%;
 width: 100%;
+opacity: 0.9;
+margin-left: 1.1rem;
+
 
 
 `
