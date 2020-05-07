@@ -67,6 +67,7 @@ export default Home;
 
 const StyledHomeImg = styled.div`
 
+
 background-image: linear-gradient(15deg, #13547a 0%, #80d0c7 100%);
     height: 50rem; 
     position: relative; 
@@ -127,6 +128,8 @@ const NavigationLink = styled(NavLink)`
 
 
 const Wrapper = styled.div`
+    width: 100%;
+
 h3 {
     text-transform: uppercase;
     text-align: center;

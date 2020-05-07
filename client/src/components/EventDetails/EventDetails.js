@@ -123,6 +123,7 @@ display: flex;
 width: 100%;
 margin: 0 auto;
 border-bottom: 2px solid black;
+font-size: 14px;
 
 @media screen and (max-width: 768px) {
 display: block;

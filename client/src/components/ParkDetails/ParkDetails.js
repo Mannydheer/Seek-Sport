@@ -75,6 +75,12 @@ const Wrapper = styled.div`
         padding: 1rem;
     }
 
+    img {
+       width: 100%;
+       height: 5rem;
+
+    }
+
 
 @media screen and (max-width: 420px) {
     text-align: center;
@@ -85,8 +91,6 @@ const Wrapper = styled.div`
 const Name = styled.div`
 
 font-size: 2rem;`
-
-
 const Title = styled.div`
 
 img {
