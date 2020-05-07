@@ -14,6 +14,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Dialog from '@material-ui/core/Dialog';
 import styled from "styled-components";
+import { NavLink } from 'react-router-dom';
+
 
 //
 import ImageUploader from 'react-images-upload';
@@ -164,9 +166,9 @@ export default function SignUp() {
     }
 
     return (<>
-        <StyledButton onClick={handleClickOpen}>
+        <List onClick={handleClickOpen}>
             Sign up
-      </StyledButton>
+      </List>
         <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
@@ -256,21 +258,33 @@ export default function SignUp() {
     </>);
 }
 
-const StyledButton = styled.div`
 
-background: none;
+const List = styled.li`
+
+  background: none;
   text-decoration: none;
-
   color: white;
   text-transform: uppercase;
-  padding: 0 20px 0 20px;
-
-&:hover {
-  border-bottom: solid white 4px;
+  position: relative;
+  list-style: none;
   cursor: pointer;
 
+ 
+  &:after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 2px;
+    background: white;
 
-}
+    
+  }
+  /* on hover over ... give it 100% width so we see it. */
+  &:hover::after {
+    width: 100%;
+    transition: width .3s;
 
-
+  }
+  
+ 
 `

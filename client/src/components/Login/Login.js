@@ -135,9 +135,12 @@ export default function SignIn() {
 
 
     return (<>
-        <StyledLoginButton onClick={handleClickOpen}>
+
+        <List onClick={handleClickOpen}>
             Login
-</StyledLoginButton>
+        </List>
+
+
 
         <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
             <Container component="main" maxWidth="xs">
@@ -223,19 +226,32 @@ export default function SignIn() {
     </>);
 }
 
-const StyledLoginButton = styled.div`
 
-background: none;
+const List = styled.li`
+
   text-decoration: none;
-
   color: white;
   text-transform: uppercase;
-
-&:hover {
-  border-bottom: solid white 4px;
+  position: relative;
   cursor: pointer;
+ 
+/* inserts content after it is selected. */
+/* like having a div under it. */
+&:after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 2px;
+    background: white;
 
-}
+    
+  }
+  /* on hover over ... give it 100% width so we see it. */
+  &:hover::after {
+    width: 100%;
+    transition: width .3s;
+
+  }
   
-   
+ 
 `
