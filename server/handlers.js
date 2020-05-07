@@ -261,7 +261,6 @@ const handleNearbySearch = async (req, res) => {
         console.log(err)
     }
 }
-
 //@endpoint POST /parkPhoto
 //@desc send back selected park picture.
 //@access PRIVATE - will need to validate token?

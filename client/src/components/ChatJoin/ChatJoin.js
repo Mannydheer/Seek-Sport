@@ -315,6 +315,8 @@ const ChatJoin = () => {
 
 
         </ChatWrapper>
+
+
         <StyledForm>
             <Send>
                 <textarea
@@ -385,7 +387,7 @@ const StyledForm = styled.form`
 height: 100%;
 width: 100%;
 position: relative;
-bottom: 3.2rem;
+bottom: 0;
 
 textarea {
     width: 100%;
@@ -394,17 +396,16 @@ textarea {
     border-radius: 0 0 25px 25px;
     outline: none;
     border: solid white 1px;
-    font-size:1.1rem;
+    font-size:1rem;
+    padding-bottom: 5px;
     color: white;
 
-    
-  
 }
 
 `
 const StyledSendButton = styled(IoMdSend)`
 background-image: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);width: 2rem;
-height: 3.2rem;
+height: 3rem;
 border-radius: 0 0px 25px 0;
 border-top: white solid 1px;
 border-left: white solid 1px;
@@ -423,15 +424,17 @@ display: flex;
 
 
 const ChatBox = styled.div`
+width: 100%;
+height: 20px;
 
 `
 
 const ChatWrapper = styled.div`
 position: relative;
 background-color: rgb(82,97,144);
-border-radius: 25px;
+border-radius: 25px 25px 0 0;
 width: 100%;
-height: 100%;
+height: 92%;
 overflow-y: scroll;
 scroll-behavior: smooth;
 

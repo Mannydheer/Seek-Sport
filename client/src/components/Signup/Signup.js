@@ -36,7 +36,7 @@ function Copyright() {
         <Typography variant="body2" color="textSecondary" align="center">
             {'Copyright © '}
             <Link color="inherit" href="/">
-                Tech6Gear.com
+                Pick-Up.com
       </Link>{' '}
             {new Date().getFullYear()}
             {'.'}
@@ -218,13 +218,13 @@ export default function SignUp() {
                         />
                         <ImageUploader
                             name='file'
-                            withIcon={true}
+
                             buttonText='Upload Profile Picture!'
                             onChange={onDrop}
                             imgExtension={['.jpg', '.gif', '.png', '.gif']}
                             maxFileSize={5242880}
                             withPreview={true}
-                            withIcon={true}
+
                         />
 
                         <Button

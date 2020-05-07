@@ -91,52 +91,77 @@ const Chat = () => {
         }
     }
 
-    return <Wrapper >
+    return <div style={{ display: 'flex' }}>
+        <Wrapper>
+            {/* ------------------------------MAP THROUGH ALL EVENTS(ROOMS).-------------------------- */}
+            <h1 style={{ textAlign: 'center', color: 'white' }}>Rooms</h1>
 
-        {/* ------------------------------MAP THROUGH ALL EVENTS(ROOMS).-------------------------- */}
-        {userRegisteredEvents.status !== "retrieved..." ? <div>Seems like you havn't registered for any events!</div> :
-            // each of these each represents each chat.
-            userRegisteredEvents.registeredEvents.map(event => {
-                return <Link to={`/chatJoin/${event._id}`} key={event._id}>
-                    <Rooms event={event}></Rooms>
-                </Link>
-            })
-
-        }
-
-        {/* ------------------------------GETTING PARTICIPANTS CURRENTLY INSIDE CHAT ROOM.-------------------------- */}
-        {actualChatParticipants && chatInfo.status === "retrieved" && <div>
-            {Object.values(actualChatParticipants).map(participant => {
-                return <div style={{ position: 'relative', display: 'flex' }}>
-                    {checkOnlineParticipant(participant.userId)}
-                    <Image src={`/${participant.profileImage}`} />
-                    <Name>{participant.name}</Name>
-
-                </div>
-            })}
-        </div>
-        }
+            {userRegisteredEvents.status !== "retrieved..." ? <div>Seems like you havn't registered for any events!</div> :
+                // each of these each represents each chat.
+                <RoomWrapper>
+                    {
+                        userRegisteredEvents.registeredEvents.map(event => {
+                            return <Link to={`/chatJoin/${event._id}`} key={event._id}>
+                                <Rooms event={event}></Rooms>
+                            </Link>
+                        })
+                    }
+                </RoomWrapper>
 
 
+            }
+        </Wrapper>
+        <Wrapper >
 
 
-    </Wrapper>
+            <h1 style={{ textAlign: 'center', color: 'white' }}>Participants</h1>
+
+            {/* ------------------------------GETTING PARTICIPANTS CURRENTLY INSIDE CHAT ROOM.-------------------------- */}
+            {actualChatParticipants && chatInfo.status === "retrieved" && <div>
+                {Object.values(actualChatParticipants).map(participant => {
+                    return <div style={{ position: 'relative', display: 'flex' }}>
+                        {checkOnlineParticipant(participant.userId)}
+                        <Image src={`/${participant.profileImage}`} />
+                        <Name>{participant.name}</Name>
+
+                    </div>
+                })}
+            </div>
+            }
+
+
+
+
+        </Wrapper>
+    </div>
 }
 
 export default Chat;
 
 const Wrapper = styled.div`
-padding: 0 5rem;
+padding: 0 2rem;
 background-color: rgb(82,97,144);
-margin-right: 1.2rem;
 opacity: 0.9;
+margin-left: 1.1rem;
+width: 15rem;
 a {
     text-decoration: none;
     color: black;
     border-radius: 10px;
 }
-
 border-radius: 25px;
+
+h1 {
+    text-align: center;
+    color: white;
+    margin-bottom: 8px;
+    border-bottom: 2px solid white;
+}
+`
+
+const RoomWrapper = styled.div`
+ 
+
 `
 
 
@@ -153,9 +178,12 @@ width: 15px;
 height: 15px;
 background-color: green;
 position: absolute;
+right: 70%;
+z-index: 1000;
+bottom: 0%;
 border-radius: 50%;
 border: solid 1px white;
-z-index: 1000;
+
 `
 const StyledInactive = styled.div`
 width: 15px;
@@ -164,6 +192,10 @@ background-color: red;
 position: absolute;
 border-radius: 50%;
 border: solid 1px white;
+position: absolute;
+right: 70%;
+bottom: 0%;
+
 z-index: 1000;
 `
 const Name = styled.div`

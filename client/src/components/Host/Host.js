@@ -55,17 +55,16 @@ const validateDateBooking = (startDate) => {
     let currentDate = new Date().toLocaleDateString().split('/');
     let currentMonth = currentDate[0]
     let currentDay = currentDate[1]
-
     //booking date.
     let bookingDate = new Date(startDate).toLocaleDateString().split('/');
     let bookingMonth = bookingDate[0]
     let bookingDay = bookingDate[1]
-
+    console.log(bookingMonth, currentMonth, bookingDay, currentDay)
     //compare month and day of booking.
     //year CHECKING NOT DONE.
     //if its any day past today... no problems trying to book.
     //backend will handle conflicts if there are any.
-    if (bookingMonth > currentMonth && bookingDay > currentDay) {
+    if (bookingMonth >= currentMonth && bookingDay > currentDay) {
         return true;
     }
     //if its the same day... then check for time.
@@ -112,6 +111,7 @@ const Host = () => {
 
     const [startDate, setStartDate] = useState(new Date())
     const [canceled, setCanceled] = useState(false)
+    const [groupName, setGroupName] = useState(null)
 
 
     const [conflictEvent, setConflictEvent] = useState(null);
@@ -138,11 +138,12 @@ const Host = () => {
 
         if (sportSelect !== "Choose sport" &&
             skillSelect !== "Choose skill level" &&
-            duration !== "Choose duration" &&
+            duration !== "Choose duration" && groupName !== null &&
             selectedPark !== null) {
             //now check if it is the same date first....
             let validDate = validateDateBooking(startDate)
             //if a valid date is chosen.
+            console.log(validDate)
             if (validDate) {
 
                 //next check if its the same day...
@@ -163,6 +164,9 @@ const Host = () => {
                     skill: skillSelect,
                     //replace witht he actual park. 
                     parkId: selectedPark.id,
+                    parkName: selectedPark.name,
+                    groupName: groupName,
+
                     placeId: selectedPark.place_id,
                     Registration: new Date(),
                     isBooked: true,
@@ -248,7 +252,7 @@ const Host = () => {
 
 
 
-
+    console.log(groupName, 'GROUPNAME')
 
 
 
@@ -301,6 +305,9 @@ const Host = () => {
                         <MenuItem value={3}>3</MenuItem>
                     </Select>
                 </SelectDiv>
+                <div>
+                    <textarea placeholder="Enter a group name..." id="Group Name" onChange={(e) => setGroupName(e.target.value)}></textarea>
+                </div>
                 {/* DATES */}
                 <StyledDate>
                     <DatePicker

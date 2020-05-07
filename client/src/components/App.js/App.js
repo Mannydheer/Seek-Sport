@@ -133,7 +133,7 @@ export default App;
 const ChatWrapper = styled.div`
 display : flex;
 align-content: center;
-width: 50%;
+width: 80%;
 height: 40rem;
 margin: 0 auto;
 
