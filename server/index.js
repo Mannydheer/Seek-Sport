@@ -97,7 +97,9 @@ client.connect(async (err) => {
             //if no participants
             //then we can create one... move to the else.
 
-            if (getRoom.chatParticipants.length > 0) {
+
+            //ORDER MATTERS OF THE IF.
+            if (getRoom && getRoom.chatParticipants.length > 0) {
 
                 let existingUser = getRoom.chatParticipants.find(user => {
                     if (user.userId === userId) {
@@ -109,10 +111,6 @@ client.connect(async (err) => {
                 //already joined.
                 if (existingUser) {
 
-                    let getRoom = await db.collection(collectionRooms).findOne({ _id: room })
-                    //then send back the room message hisotry.
-                    // socket.emit('room-message-history', getRoom)
-                    // console.log('Existing User')
                     let messageInfo = {
                         existingUser: true,
                         roomData: getRoom,
@@ -152,6 +150,8 @@ client.connect(async (err) => {
             }
             //we will now add the person to the room.
             else {
+
+                console.log('HERE IS THE ERROR')
                 await db.collection(collectionRooms).updateOne({ _id: room }, { $push: { chatParticipants: chatMemberDetails } })
                 let getRoom = await db.collection(collectionRooms).findOne({ _id: room })
                 //room is the eventId-First-Room.

@@ -10,25 +10,24 @@ import { useDispatch, useSelector } from 'react-redux';
 
 
 const RightNav = ({ open }) => {
-    console.log(open, 'INSIDE RIGHTNAV')
+  console.log(open, 'INSIDE RIGHTNAV')
 
-    const userLoggedIn = useSelector(state => state.userReducer)
+  const userLoggedIn = useSelector(state => state.userReducer)
 
-    return (<>
-        <div>
-            <Ul open={open}>
-                <NavigationLink exact to='/'><li>Seek&Sport</li></NavigationLink>
-                <NavigationLink exact to='/'><li>Home</li></NavigationLink>
-                {userLoggedIn.isAuthenticated && <NavigationLink exact to='/userEvents'><li>My Events</li></NavigationLink>}
-                {userLoggedIn.isAuthenticated && <NavigationLink exact to='/userActivities'><li>My Activities</li></NavigationLink>}
-                {/* <NavigationLink exact to='/'><h2>Home</h2></NavigationLink> */}
-                {!userLoggedIn.isAuthenticated && <Login></Login>}
-                {!userLoggedIn.isAuthenticated && <Signup></Signup>}
-                <NavigationLink exact to='/chat'><li>Chat</li></NavigationLink>
-            </Ul>
-        </div>
-    </>
-    )
+  return (<>
+    <div>
+      <Ul open={open}>
+        <NavigationLink exact to='/'><li style={{ textAlign: 'center' }}>Seek&Sport</li></NavigationLink>
+        <NavigationLink exact to='/'><li>Home</li></NavigationLink>
+        {userLoggedIn.isAuthenticated && <NavigationLink exact to='/userEvents'><li>My Events</li></NavigationLink>}
+        {userLoggedIn.isAuthenticated && <NavigationLink exact to='/userActivities'><li>My Activities</li></NavigationLink>}
+        {userLoggedIn.isAuthenticated && <NavigationLink exact to='/chat'><li>Chat</li></NavigationLink>}
+        {!userLoggedIn.isAuthenticated && <Login></Login>}
+        {!userLoggedIn.isAuthenticated && <Signup></Signup>}
+      </Ul>
+    </div>
+  </>
+  )
 }
 
 export default RightNav;
@@ -75,13 +74,16 @@ const NavigationLink = styled(NavLink)`
   text-transform: uppercase;
   position: relative;
   cursor: pointer;
+  
+  @media screen and (min-width: 768px) {
+    &:nth-child(1) {
+    position: absolute;
+    left: 2rem;
+    
+    }                   
+  }
 
-
-  &:nth-child(1) {
-        position: absolute;
-        left: 2rem;
-     
-    }
+  
 
 /* inserts content after it is selected. */
 /* like having a div under it. */

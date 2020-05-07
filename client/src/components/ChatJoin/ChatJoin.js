@@ -96,35 +96,40 @@ const ChatJoin = () => {
     //--------------FETCH ALL PARTICIPANTS OF THAT ROOM...---------------
 
     useEffect(() => {
-        const handleGetChatRoom = async () => {
-            let token = localStorage.getItem('accesstoken')
-            try {
-                let response = await fetch(`/getChatRoom/${eventId}`, {
-                    method: "GET",
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json',
-                        'Authorization': `${token}`
-                    },
-                })
-                if (response.status === 200) {
-                    let participantResponse = await response.json();
-                    let userObject = {}
 
-                    participantResponse.eventParticipants.forEach(user => {
-                        userObject[user.userId] = user;
+        if (eventId) {
+
+
+            const handleGetChatRoom = async () => {
+                let token = localStorage.getItem('accesstoken')
+                try {
+                    let response = await fetch(`/getChatRoom/${eventId}`, {
+                        method: "GET",
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Accept: 'application/json',
+                            'Authorization': `${token}`
+                        },
                     })
-                    //also keep track of which room the participants are from.
-                    // setChatMembers(userObject)
-                    dispatch(actualChatParticipants(userObject))
-                    dispatch(selectedRoom(`${eventId}-Room-1`))
+                    if (response.status === 200) {
+                        let participantResponse = await response.json();
+                        let userObject = {}
+
+                        participantResponse.eventParticipants.forEach(user => {
+                            userObject[user.userId] = user;
+                        })
+                        //also keep track of which room the participants are from.
+                        // setChatMembers(userObject)
+                        dispatch(actualChatParticipants(userObject))
+                        dispatch(selectedRoom(`${eventId}-Room-1`))
+                    }
+                }
+                catch (err) {
+                    console.log(err, 'error occured inside catch for handler user events.')
                 }
             }
-            catch (err) {
-                console.log(err, 'error occured inside catch for handler user events.')
-            }
+            handleGetChatRoom();
         }
-        handleGetChatRoom();
     }, [eventId])
 
 
@@ -137,40 +142,45 @@ const ChatJoin = () => {
 
 
     useEffect(() => {
-        socket.emit('join', { name: userInfo.user, userId: userId, room: `${eventId}-Room-1` }, (messageInfo) => {
-            console.log('component MOUNT', messageInfo)
-            if (messageInfo.existingUser) {
-                dispatch(addChatParticipants(messageInfo))
-            }
-            else if
-                (messageInfo.joined) {
 
-                console.log('successful join')
-                dispatch(requestChats())
-                if (messageInfo.roomData) {
-                    dispatch(retrieveChats(messageInfo))
+        console.log(eventId, '************************')
+
+        if (eventId) {
+            socket.emit('join', { name: userInfo.user, userId: userId, room: `${eventId}-Room-1` }, (messageInfo) => {
+                console.log('component MOUNT', messageInfo)
+                if (messageInfo.existingUser) {
+                    dispatch(addChatParticipants(messageInfo))
                 }
-                else {
-                    dispatch(retrieveChatsError())
+                else if
+                    (messageInfo.joined) {
+
+                    console.log('successful join')
+                    dispatch(requestChats())
+                    if (messageInfo.roomData) {
+                        dispatch(retrieveChats(messageInfo))
+                    }
+                    else {
+                        dispatch(retrieveChatsError())
+                    }
                 }
-            }
-        })
-        //useEffect cleanup. - DISCONNECT EVENT.
-        return () => {
-            //this will occur when leaving the chat.
-            let leaveRoomData = {
-                room: `${eventId}-Room-1`,
-                userId: userId,
-                name: userInfo.user
-            }
-            //leaeve the room.
-            socket.emit('leaveRoom', (leaveRoomData), (data) => {
-                console.log('COMPONENT UNMOUNT')
-                setLeaveRoomMessage(message)
-                dispatch(leaveRoom(data))
-                //also redirect to room page.
             })
-            socket.off();
+            //useEffect cleanup. - DISCONNECT EVENT.
+            return () => {
+                //this will occur when leaving the chat.
+                let leaveRoomData = {
+                    room: `${eventId}-Room-1`,
+                    userId: userId,
+                    name: userInfo.user
+                }
+                //leaeve the room.
+                socket.emit('leaveRoom', (leaveRoomData), (data) => {
+                    console.log('COMPONENT UNMOUNT')
+                    setLeaveRoomMessage(message)
+                    dispatch(leaveRoom(data))
+                    //also redirect to room page.
+                })
+                socket.off();
+            }
         }
     }, [eventId, ENDPOINT])
 

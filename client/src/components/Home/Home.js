@@ -65,13 +65,28 @@ const Home = () => {
 
 export default Home;
 
+
+
+const Wrapper = styled.div`
+    width: 100vw;
+
+h3 {
+    text-transform: uppercase;
+    text-align: center;
+    padding: 1rem;
+    border-bottom: lightgray 2px solid;  
+    /* margin: 0 auto;
+    width: 80%; */
+}
+`
+
 const StyledHomeImg = styled.div`
-
-
+    width: 100vw;
+    height: 80vh;
+    
 background-image: linear-gradient(15deg, #13547a 0%, #80d0c7 100%);
-    height: 50rem; 
     position: relative; 
-    bottom: 5rem;
+    bottom: 1rem;
     background-position: right; 
     color: white;
     z-index: 100;
@@ -88,8 +103,8 @@ background-image: linear-gradient(15deg, #13547a 0%, #80d0c7 100%);
 h1 {
     text-align: center;
     position:relative;
-    top: 22rem;
-    font-size: 4rem;
+    top: 25rem;
+    font-size: 2.5rem;
 }
 div {
     display: flex;
@@ -98,6 +113,16 @@ div {
     top: 50%;
     transform: translate(-50%, 150%);
 }
+
+@media screen and (max-width: 768px) {
+h1 {
+    font-size: 2rem;
+    top: 27rem;
+}                   
+ }
+ @media screen and (max-width: 420px) {
+                   
+ }
 
 `
 
@@ -126,44 +151,56 @@ const NavigationLink = styled(NavLink)`
  
 `
 
+// -----------------------------INFOSECTION----------------------
+const InfoSection = styled.div`
+display: flex;
+justify-content: space-evenly;
+margin: 4rem;
 
-const Wrapper = styled.div`
-    width: 100%;
 
-h3 {
-    text-transform: uppercase;
+@media screen and (max-width: 768px) {
+    display: block;
     text-align: center;
-    padding: 2rem;
-    border-bottom: lightgray 2px solid;  
-    margin: 0 auto;
-    width: 80%;
-}
-`
 
+    h1 {
+         font-size: 2rem,;
+
+     }              
+ }
+ @media screen and (max-width: 420px) {
+     h1 {
+         font-size: 1.5rem;
+     }                
+ }
+`
 const BasketBall = styled.img`
 width: 30rem;
 height: 25rem;
-`
-const Field = styled.img`
-width: 30rem;
-height: 25rem;
-border-radius: 25px;
-`
+
+@media screen and (max-width: 768px) {
+    width: 25rem;
+height: 20rem;
+}         
+ 
+ @media screen and (max-width: 420px) {
+    width: 27rem;
+height: 22rem;
+              
+ }
 
 
+`
 const Rules = styled.div`
-
 h1 {
-    font-size: 3.5rem;
+    font-size: 3rem;
+    word-wrap: none;
 }
-
 
 div {
     text-transform: uppercase;
     margin: 2rem;
     font-size: 1.5rem;
 }
-
 button {
     text-transform: uppercase;
     background-color: black;
@@ -180,15 +217,48 @@ button {
         opacity: 0.8;
     }
 }
+@media screen and (max-width: 768px) {
+    display: block;
+
+    h1 {
+    font-size: 2.5rem;
+}
+
+div {
+    text-transform: uppercase;
+    margin: 1.2rem;
+    font-size: 1.4rem;
+}
+
+    button {
+    font-size: 1.5rem;
+    left: 0;
+
+}
 
 
-`
+ }
+ @media screen and (max-width: 420px) {
+    display: block;
 
-const InfoSection = styled.div`
-display: flex;
-justify-content: space-evenly;
-margin: 4rem;
+    h1 {
+         font-size: 2rem;
+         text-align: center;
+         margin-top: 1.1rem;
+     }     
+     div {
+    margin: 1.2rem 0;
+    font-size: 1.2rem;
+    text-align: center;
+}         
+button {
+    font-size: 1.5rem;
+    left: 0;
 
+
+}
+                
+ }
 `
 
 
@@ -223,4 +293,10 @@ background-image: linear-gradient(15deg, #13547a 0%, #80d0c7 100%);
 const Image = styled.img`
 width: 250px;
 height: 200px;
+`
+
+const Field = styled.img`
+width: 30rem;
+height: 25rem;
+border-radius: 25px;
 `

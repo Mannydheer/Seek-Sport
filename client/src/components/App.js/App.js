@@ -131,18 +131,18 @@ export default App;
 const ChatWrapper = styled.div`
 display : flex;
 align-content: center;
-width: 80%;
+/* width: 80%;
 height: 40rem;
 margin: 0 auto;
-margin-top: 4rem;
+margin-top: 4rem; */
 
 @media screen and (max-width: 768px) {
         
 display: block;
 align-content: center;
-width: 80%;
+/* width: 80%;
 height: 40rem;
-margin-top: 4rem;
+margin-top: 4rem; */
 
             
     }

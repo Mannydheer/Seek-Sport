@@ -4,8 +4,7 @@ const GlobalStyles = createGlobalStyle`
 
   html {
     font-size: 16px;
-    font-family: 'Inter', sans-serif;    scroll-behavior: smooth; 
-
+    font-family: 'Comfortaa', cursive;
   
     @media screen and (max-width: 1200px) {
       font-size: 15px

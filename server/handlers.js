@@ -1190,6 +1190,7 @@ const handleUserRegisteredEvents = async (req, res, next) => {
 //@access PRIVATE - will need to validate token? YES - add...
 const handleGetChatRoom = async (req, res, next) => {
     const eventId = req.params.eventId;
+
     const client = new MongoClient(uri, {
         useNewUrlParser: true,
         useUnifiedTopology: true,

@@ -76,7 +76,7 @@ right: 2%;
 
 const Header = styled.header`
 
-/* background-image: linear-gradient(15deg, #13547a 0%, #80d0c7 100%); */
+background-image: linear-gradient(15deg, #13547a 0%, #80d0c7 100%);
 
     height: 5rem; 
     position: relative; 
