@@ -3,13 +3,27 @@ import styled from 'styled-components';
 import { PageWrapper } from '../Constants/Constants'
 import mainImage from '../../Images/SportHome.jpg'
 import { NavLink, useHistory } from 'react-router-dom';
+import Slider from "react-slick";
+
+
+
 
 
 
 
 const Home = () => {
 
+    var settings = {
+        infinite: false,
+        dots: true,
+        speed: 1000,
+        arrow: true,
+        slidesToShow: 4,
+        slidesToScroll: 4
+    };
+
     const history = useHistory();
+
 
     return (
         <Wrapper>
@@ -36,14 +50,19 @@ const Home = () => {
                 </Rules>
             </InfoSection>
             {/* IMAGES */}
-            <ImagesWrapper>
+            <Slider {...settings}>
+
                 <Image src={'./Tennis.jpg'}></Image>
                 <Image src={'./Tennis.jpg'}></Image>
                 <Image src={'./Tennis.jpg'}></Image>
                 <Image src={'./Tennis.jpg'}></Image>
                 <Image src={'./Tennis.jpg'}></Image>
                 <Image src={'./Tennis.jpg'}></Image>
-            </ImagesWrapper>
+
+            </Slider>
+
+
+
 
             {/* PURPOSE */}
             <PurposeWrapper>
