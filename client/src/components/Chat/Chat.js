@@ -61,12 +61,7 @@ const Chat = () => {
     const checkOnlineParticipant = (id) => {
         //first we find the room from the chat participants
         //use actualChatParticipants.room
-
-
         if (chatInfo.status === "retrieved" && chatInfo.selectedRoom) {
-
-
-
             let currentRoom = chatInfo.rooms.find(room => {
                 if (room._id === chatInfo.selectedRoom) {
                     return room;
@@ -83,15 +78,12 @@ const Chat = () => {
                 }
                 else {
                     return <StyledInactive />
-
                 }
-
             }
-
         }
     }
 
-    return <div style={{ display: 'flex' }}>
+    return <BigWrapper>
         <Wrapper>
             {/* ------------------------------MAP THROUGH ALL EVENTS(ROOMS).-------------------------- */}
             <h1 style={{ textAlign: 'center', color: 'white' }}>Rooms</h1>
@@ -100,9 +92,9 @@ const Chat = () => {
                 // each of these each represents each chat.
                 <RoomWrapper>
                     {
-                        userRegisteredEvents.registeredEvents.map(event => {
-                            return <Link to={`/chatJoin/${event._id}`} key={event._id}>
-                                <Rooms event={event}></Rooms>
+                        userRegisteredEvents.registeredEvents.map((event, index) => {
+                            return <Link to={`/chatJoin/${event._id}/${event.groupName}`} key={event._id}>
+                                <Rooms index={index} event={event}></Rooms>
                             </Link>
                         })
                     }
@@ -133,7 +125,7 @@ const Chat = () => {
 
 
         </Wrapper>
-    </div>
+    </BigWrapper>
 }
 
 export default Chat;
@@ -143,7 +135,7 @@ padding: 0 2rem;
 background-color: rgb(82,97,144);
 opacity: 0.9;
 margin-left: 1.1rem;
-width: 15rem;
+width: 100%;
 a {
     text-decoration: none;
     color: black;
@@ -157,6 +149,29 @@ h1 {
     margin-bottom: 8px;
     border-bottom: 2px solid white;
 }
+
+@media screen and (max-width: 768px) {
+    margin-bottom: 20px;
+    width: 100%;
+    overflow-y: scroll;
+scroll-behavior: smooth;
+height: 10rem;
+font-size: 10px;
+    
+            }
+
+
+`
+
+const BigWrapper = styled.div`
+display: flex;
+width: 100%;
+
+@media screen and (max-width: 420px) {
+    display: block;
+
+font-size: 8px;
+            }
 `
 
 const RoomWrapper = styled.div`

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useParams, useHistory } from 'react-router-dom';
 import io from 'socket.io-client';
 import { useSelector, useDispatch } from 'react-redux';
@@ -11,6 +11,7 @@ import {
 
 import { IoMdSend } from 'react-icons/io';
 import ClipLoader from "react-spinners/ClipLoader";
+import ReactEmoji from 'react-emoji';
 
 
 
@@ -28,6 +29,10 @@ const ChatJoin = () => {
     //now we have the eventId of which we want to join the chat
     //we have access to the participant ID which will be the room.
     let eventId = useParams().eventId;
+    let groupName = useParams().groupName;
+
+    const scrollRef = useRef(null);
+
 
     const dispatch = useDispatch();
 
@@ -201,20 +206,6 @@ const ChatJoin = () => {
         })
     }, [message])
 
-
-    //--------------LEAVE ROOM---------------
-    const handleLeaveRoom = (e) => {
-        e.preventDefault();
-        let leaveRoomData = {
-            room: `${eventId}-Room-1`,
-            userId: userId,
-            name: userInfo.user
-        }
-        dispatch(leaveRoom(leaveRoomData))
-        socket.emit('leaveRoom', (leaveRoomData), () => {
-            setLeaveRoomMessage(message)
-        })
-    }
     //--------------GET ALL MESSAGES FOR THE ROOM.---------------
     useEffect(() => {
         if (userChats.status === 'retrieved' && eventId !== null) {
@@ -226,25 +217,23 @@ const ChatJoin = () => {
             // if (!currentRoom.messages) {
             //     setAllMessages(currentRoom.messages)
             // }
-
         }
     }, [userChats, allMessages])
+
 
     //--------------ENTER KEYPRESS AND SEDN MESSAGE..---------------
     useEffect(() => {
         window.addEventListener("keydown", handleKeypress)
-
-        return () => window.addEventListener("keydown", handleKeypress);
-
-    }, [])
+        //need to remove event listnner.
+        return () => window.removeEventListener("keydown", handleKeypress);
+    }, [message])
 
     //---------------------FUNCTIONS------------------
-    const handleKeypress = (e) => {
 
+    const handleKeypress = (e) => {
         if (e.keyCode === 13) {
             handleSubmit(e)
         }
-
     }
     //--------------SUBMIT A MESAGE---------------
     const handleSubmit = (e) => {
@@ -264,6 +253,7 @@ const ChatJoin = () => {
             socket.emit('sendMessage', (data), () =>
                 setMessage('')
             )
+
         }
     }
 
@@ -272,10 +262,10 @@ const ChatJoin = () => {
 
 
     return <MainWrapper>
-        {/* <button onClick={handleLeaveRoom}>Leave Room</button> */}
-
-        <ChatWrapper>
-
+        {groupName ? <GroupName>{groupName}</GroupName> :
+            <GroupName>Chat Room</GroupName>
+        }
+        <ChatWrapper useRef={scrollRef}>
             {/* ALL MESSAGES FROM THE FRONT END. */}
             {
                 allMessages && userChats.actualParticipants && <ChatBox>
@@ -286,7 +276,7 @@ const ChatJoin = () => {
                                 <div>
                                     <SenderText>
                                         <div>
-                                            <SenderMessage>{message.message}</SenderMessage>
+                                            <SenderMessage>{ReactEmoji.emojify(message.message)}</SenderMessage>
                                             <TimeWrapper>{dateConverter(message.timeStamp)}</TimeWrapper>
                                         </div>
                                         {userChats.actualParticipants[message.userId] ? <Image src={`/${userChats.actualParticipants[message.userId].profileImage}`} />
@@ -303,7 +293,7 @@ const ChatJoin = () => {
                                         :
                                         <ClipLoader size={50} color={"white"} />}
                                     <div>
-                                        <ReceiverMessage>{message.message}</ReceiverMessage>
+                                        <ReceiverMessage>{ReactEmoji.emojify(message.message)}</ReceiverMessage>
                                         <ReceiveTimeWrapper>{dateConverter(message.timeStamp)}</ReceiveTimeWrapper>
                                     </div>
                                 </ReceiverText>
@@ -322,6 +312,7 @@ const ChatJoin = () => {
                 <textarea
                     autoFocus
                     cols="33"
+                    value={message}
 
                     placeholder="Type your message..." type="text" onChange={(e) => setMessage(e.target.value)}>
 
@@ -425,22 +416,32 @@ display: flex;
 
 const ChatBox = styled.div`
 width: 100%;
-height: 20px;
+height: 25rem;
+
+
 
 `
 
 const ChatWrapper = styled.div`
 position: relative;
 background-color: rgb(82,97,144);
-border-radius: 25px 25px 0 0;
 width: 100%;
-height: 92%;
+height: 85%;
 overflow-y: scroll;
 scroll-behavior: smooth;
+@media screen and (max-width: 768px) {
+width: 100%;
+height: 20rem                    
+ }
+ @media screen and (max-width: 420px) {
+width: 100%;
+height: 10rem                    
+ }
+            
 
 
-/* display: flex;
-justify-content: center; */
+
+
 `
 
 
@@ -448,7 +449,16 @@ const MainWrapper = styled.div`
 width: 100%;
 opacity: 0.9;
 margin-left: 1.1rem;
+`
 
+//APP component has the h1
+const GroupName = styled.h1`
+text-align: center;
+height: 7%;
+background-color: rgb(82,97,144);
+border-radius: 25px 25px 0 0;
+color: white;
+border-bottom: 2px solid white;
 
 
 `

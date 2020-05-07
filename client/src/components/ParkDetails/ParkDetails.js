@@ -74,6 +74,12 @@ const Wrapper = styled.div`
         font-size: 1.1rem;
         padding: 1rem;
     }
+
+
+@media screen and (max-width: 420px) {
+    text-align: center;
+            }
+    
 `
 
 const Name = styled.div`
@@ -88,6 +94,10 @@ img {
     height: 5rem;
 
                 }
+
+    @media screen and (max-width: 420px) {
+
+            }
 
 
 `

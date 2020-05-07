@@ -124,6 +124,12 @@ width: 100%;
 margin: 0 auto;
 border-bottom: 2px solid black;
 
+@media screen and (max-width: 768px) {
+display: block;
+text-align: center;
+width: 100%;
+            }
+
 
 
 `
@@ -141,31 +147,40 @@ width: 150px;
 height: 150px;
 border-radius: 50%;
 margin-top: 20px;
+
+@media screen and (max-width: 420px) {
+    width: 100px;
+height: 100px;
+
+            }
 `
 
 const Images = styled.div`
 display: flex;
 justify-content: space-evenly;
+@media screen and (max-width: 420px) {
+display: block;
+
+            }
 
 `
 
 const MainText = styled.div`
-
 h2 {
-   
     width: 300px;
     line-height: 1.5;
-
-
 }
-
 h1 {
     font-weight: 900;
     width: 300px;
     line-height: 2;
-
-
 }
+
+@media screen and (max-width: 768px) {
+h1, h2 {
+    width: 100%;
+}
+            }
 `
 
 const Number = styled.div`
@@ -174,6 +189,12 @@ font-size: 4rem;
 margin-right: 2rem;
 color: #FF4136;
 opacity: 0.7;
+
+@media screen and (max-width: 420px) {
+    font-size: 3rem;
+
+
+            }
 
 `
 

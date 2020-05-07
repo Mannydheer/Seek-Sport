@@ -93,7 +93,6 @@ function App() {
           <Route exact path='/chat'>
             {userLoggedIn.isAuthenticated ?
               <BigWrapper>
-                <StyledTitle>Pick-Up Chat</StyledTitle>
                 <ChatWrapper>
                   <Chat></Chat>
                   <ChatJoin></ChatJoin>
@@ -102,10 +101,9 @@ function App() {
               :
               <h1 style={{ textAlign: 'center' }}>Must be logged in to view this page.</h1>}
           </Route>
-          <Route exact path='/chatJoin/:eventId'>
+          <Route exact path='/chatJoin/:eventId/:groupName'>
             {userLoggedIn.isAuthenticated ?
               <BigWrapper>
-                <StyledTitle>Pick-Up Chat</StyledTitle>
                 <ChatWrapper>
                   <Chat></Chat>
                   <ChatJoin></ChatJoin>
@@ -136,19 +134,24 @@ align-content: center;
 width: 80%;
 height: 40rem;
 margin: 0 auto;
+margin-top: 4rem;
+
+@media screen and (max-width: 768px) {
+        
+display: block;
+align-content: center;
+width: 80%;
+height: 40rem;
+margin-top: 4rem;
+
+            
+    }
 
 
 
 
 `
 
-const StyledTitle = styled.h1`
-    font-size: 2rem;
-    text-align: center;
-    
-  
-
-`
 const BigWrapper = styled.div`
 
 /* background-color: rgb(82,97,144); */

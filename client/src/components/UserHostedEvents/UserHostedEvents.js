@@ -80,8 +80,6 @@ const Wrapper = styled.div`
     width: 90%;
     margin: 0 auto;
 
-
-
 `
 
 const Title = styled.div`
