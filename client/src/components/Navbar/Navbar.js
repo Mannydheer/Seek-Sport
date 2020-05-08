@@ -28,26 +28,6 @@ const Navbar = () => {
         {/* make ul and li */}
         <Burger></Burger>
       </StyledNav>
-
-      {/* <NavigationLink exact to='/sports'><h2>Find Games</h2></NavigationLink> */}
-      {/* Show User Name */}
-      {userLoggedIn.status === "authenticated" &&
-        <div>
-          {/* <StyledName>{userLoggedIn.user.toUpperCase().split('')[0]}</StyledName>
-          <ImageButton onMouseLeave={() => setHover(false)} onMouseOver={() => setHover(true)}> <UserImage src={`./${userLoggedIn.profileImage}`} />
-          </ImageButton>
-          <DropDown onMouseLeave={() => setHover(false)} onMouseOver={() => setHover(true)} style={{ visibility }}>
-            <StyledLoginButton onClick={handleLogout}>Logout</StyledLoginButton>
-            <StyledLoginButton >Edit Profile</StyledLoginButton>
-          </DropDown> */}
-
-        </div>
-      }
-
-
-
-
-
     </Header>
 
   </>

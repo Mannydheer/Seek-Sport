@@ -79,10 +79,6 @@ ul {
 font-size: 0.8rem;  
 padding-left: 5rem;
 
- @media screen and (max-width: 420px) {
-                   
- }
-      
+}
 
 `
-

@@ -32,7 +32,7 @@ function Copyright() {
         <Typography variant="body2" color="textSecondary" align="center">
             {'Copyright ©  '}
             <Link color="inherit" href="/">
-                Park Sports
+                Seek & Sport
       </Link>{' '}
             {new Date().getFullYear()}
             {'.'}
@@ -206,13 +206,7 @@ export default function SignIn() {
                         >
                             Cancel
                         </Button>
-                        <Grid container>
-                            <Grid item>
-                                <Button>
-                                    Don't have an account?
-                                </Button>
-                            </Grid>
-                        </Grid>
+
                     </form>
                 </div>
                 <Box mt={8}>

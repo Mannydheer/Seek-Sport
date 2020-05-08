@@ -14,6 +14,7 @@ import UserActivities from '../UserActivities';
 import Footer from '../Footer';
 import ChatJoin from '../ChatJoin';
 import Chat from '../Chat';
+import Chatbot from '../Chatbot';
 import ChatSystem from '../ChatSystem';
 import ChatModal from '../ChatModal';
 import styled from 'styled-components';
@@ -119,6 +120,7 @@ function App() {
 
         {/* footer */}
         <Footer></Footer>
+        {userLoggedIn.isAuthenticated && <Chatbot></Chatbot>}
       </Router>
     </>
 

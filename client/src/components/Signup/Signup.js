@@ -38,7 +38,8 @@ function Copyright() {
         <Typography variant="body2" color="textSecondary" align="center">
             {'Copyright © '}
             <Link color="inherit" href="/">
-                Pick-Up.com
+                Seek & Sport
+
       </Link>{' '}
             {new Date().getFullYear()}
             {'.'}
