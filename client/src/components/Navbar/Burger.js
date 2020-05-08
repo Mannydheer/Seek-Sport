@@ -39,12 +39,11 @@ z-index: 110;
 div {
     width: 2rem;
     height: 0.25rem;
-    background-color: ${({ open }) => open ? 'white' : 'white'};
+    background-color: ${({ open }) => open ? 'white' : 'black'};
     border-radius: 25px;
     transform-origin: 1px;
     transition: all 0.5s;
     position: relative;
-    color: white;
 
 /* grab the first child of the div. */
     &:nth-child(1) {

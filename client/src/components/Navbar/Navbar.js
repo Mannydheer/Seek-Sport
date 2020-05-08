@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from 'styled-components';
-import { NavLink } from 'react-router-dom';
-import Login from '../Login';
-import Signup from '../Signup';
 import { useDispatch, useSelector } from 'react-redux';
-import { logOutUser } from '../actions/userActions';
-import RightNav from './RightNav';
 import Burger from './Burger';
 
 //
@@ -21,15 +16,11 @@ const Navbar = () => {
   //user redux state.
   const userLoggedIn = useSelector(state => state.userReducer)
   //dispatch
-  const dispatch = useDispatch();
 
   const [hover, setHover] = useState(false);
   const visibility = hover ? "visible" : "hidden";
 
-  const handleLogout = () => {
-    localStorage.removeItem('accesstoken')
-    dispatch(logOutUser())
-  }
+
 
   return <>
     <Header>
@@ -65,14 +56,7 @@ const Navbar = () => {
 
 export default Navbar;
 
-const UserImage = styled.img`
-width: 70px;
-height: 70px;
-position: absolute;
-border-radius: 50%;
-top: 2%;
-right: 2%;
-`
+
 
 const Header = styled.header`
 

@@ -71,13 +71,13 @@ export default ParkDetails;
 
 const Wrapper = styled.div`
     h2 {
-        font-size: 1.1rem;
-        padding: 1rem;
+        font-size: 0.9rem;
+        padding: 0.5rem;
     }
 
     img {
        width: 100%;
-       height: 10rem;
+       height: 30vh;
 
     }
 
@@ -90,7 +90,7 @@ const Wrapper = styled.div`
 
 const Name = styled.div`
 
-font-size: 2rem;`
+font-size: 1.1rem;`
 const Title = styled.div`
 
 img {

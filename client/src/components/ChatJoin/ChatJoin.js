@@ -57,7 +57,6 @@ const ChatJoin = () => {
 
         let todayDate = new Date().toLocaleDateString().split('/')[1]
         let messageDate = d.toLocaleDateString().split('/')[1]
-
         let removeSecondsTime = d.toLocaleTimeString().split(':')
         let AMPM = removeSecondsTime[2].split(' ')[1]
         let time = removeSecondsTime.splice(0, 2).join(':')
@@ -68,7 +67,6 @@ const ChatJoin = () => {
         else {
             finalTime = time + ', ' + AMPM
         }
-
         return finalTime;
 
     }
@@ -76,9 +74,7 @@ const ChatJoin = () => {
     //----------------------SELECTORS------------------
     const userInfo = useSelector(state => state.userReducer);
     const userChats = useSelector(state => state.chatReducer)
-
     let userId = userInfo._id;
-
     //----------------------USE-STATES------------------
     const [name, setName] = useState('');
     const [messages, setMessages] = useState('')

@@ -108,9 +108,12 @@ const EventDetails = ({ index, event, canceled, setCanceled }) => {
 
 
             {/* IMAGES. */}
-            {currentEventParticipants !== null && <Images>
-                {getParticipantImages(currentEventParticipants)}
-            </Images>}
+            <ParticipantText>
+                <Participants>Participants</Participants>
+                {currentEventParticipants !== null && <Images>
+                    {getParticipantImages(currentEventParticipants)}
+                </Images>}
+            </ParticipantText>
 
         </Wrapper >
     )
@@ -120,10 +123,11 @@ const EventDetails = ({ index, event, canceled, setCanceled }) => {
 export default EventDetails;
 const Wrapper = styled.div`
 display: flex;
-width: 100%;
+width: 80%;
 margin: 0 auto;
 border-bottom: 2px solid black;
 font-size: 14px;
+margin-top: 0.5rem;
 
 @media screen and (max-width: 768px) {
 display: block;
@@ -149,6 +153,7 @@ height: 150px;
 border-radius: 50%;
 margin-top: 20px;
 
+
 @media screen and (max-width: 420px) {
     width: 100px;
 height: 100px;
@@ -159,10 +164,16 @@ height: 100px;
 const Images = styled.div`
 display: flex;
 justify-content: space-evenly;
+flex-flow: row wrap;
 @media screen and (max-width: 420px) {
 display: block;
 
             }
+
+`
+
+const ParticipantText = styled.div`
+width: 100%;
 
 `
 
@@ -182,6 +193,19 @@ h1, h2 {
     width: 100%;
 }
             }
+`
+
+const Participants = styled.div`
+ font-weight: 900;
+    line-height: 2;
+    text-align: center;
+    border-radius: 25px;
+    padding: 5px;
+    border: solid 1px black;
+
+
+    
+    
 `
 
 const Number = styled.div`

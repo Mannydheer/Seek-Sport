@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import styled from 'styled-components';
-import { NavLink } from 'react-router-dom';
+import { NavLink, } from 'react-router-dom';
 import Login from '../Login';
 import Signup from '../Signup';
 import { useDispatch, useSelector } from 'react-redux';
+import { logOutUser } from '../actions/userActions';
+
 
 
 
@@ -13,6 +15,14 @@ const RightNav = ({ open }) => {
   console.log(open, 'INSIDE RIGHTNAV')
 
   const userLoggedIn = useSelector(state => state.userReducer)
+
+  const dispatch = useDispatch();
+
+
+  const handleLogout = () => {
+    localStorage.removeItem('accesstoken')
+    dispatch(logOutUser())
+  }
 
   return (<>
     <div>
@@ -24,6 +34,10 @@ const RightNav = ({ open }) => {
         {userLoggedIn.isAuthenticated && <NavigationLink exact to='/chat'><li>Chat Room</li></NavigationLink>}
         {!userLoggedIn.isAuthenticated && <Login></Login>}
         {!userLoggedIn.isAuthenticated && <Signup></Signup>}
+
+        <UserImage src={`./${userLoggedIn.profileImage}`} />
+        {userLoggedIn.isAuthenticated && <List onClick={handleLogout}>Logout</List>}
+
       </Ul>
     </div>
   </>
@@ -31,6 +45,25 @@ const RightNav = ({ open }) => {
 }
 
 export default RightNav;
+
+const StyledName = styled.div`
+`
+const UserImage = styled.img`
+width: 70px;
+height: 70px;
+position: absolute;
+border-radius: 50%;
+top: 2%;
+right: 2%;
+
+@media (max-width: 768px) {
+
+  left: 0;
+  top: 0;
+  margin: 0.5rem;
+
+}
+`
 
 const Ul = styled.ul`
   list-style: none;
@@ -41,9 +74,10 @@ const Ul = styled.ul`
 li {
   padding: 0 1.2rem;
   margin-top: 1.2rem;
-
-  
 }
+
+
+
 
 @media (max-width: 768px) {
     display: block;
@@ -101,9 +135,30 @@ const NavigationLink = styled(NavLink)`
     transition: width .3s;
 
   }
+`
 
 
- 
+//CONSTANT REUSE - REFACTOR
+const List = styled.li`
+  text-decoration: none;
+  color: white;
+  text-transform: uppercase;
+  position: relative;
+  cursor: pointer;
+/* inserts content after it is selected. */
+/* like having a div under it. */
+&:after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 2px;
+    background: white;
+  }
+  /* on hover over ... give it 100% width so we see it. */
+  &:hover::after {
+    width: 100%;
+    transition: width .3s;
+  }
 `
 
 

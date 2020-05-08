@@ -30,10 +30,10 @@ const Home = () => {
             {/* MAIN IMAGE. */}
             <StyledHomeImg>
                 <img src='/running.png'></img>
-                <h1>FIND ANY SPORT NEARBY</h1>
-                <div>
-                    <NavigationLink exact to='/sports'><h2>Find Games</h2></NavigationLink>
-                </div>
+                <BigTitle>FIND ANY SPORT NEARBY</BigTitle>
+
+                <NavigationLink exact to='/sports'><h2>Find Games</h2></NavigationLink>
+
                 {/*  */}
             </StyledHomeImg>
 
@@ -110,7 +110,17 @@ const Home = () => {
 
 export default Home;
 
+const BigTitle = styled.div`
+ text-align: center;
+    font-size: 2rem;
+    
 
+    @media screen and (max-width: 768px) {
+        font-size: 1.5rem;
+                 
+    }
+
+`
 
 const Wrapper = styled.div`
     width: 100vw;
@@ -145,25 +155,29 @@ background-image: linear-gradient(15deg, #13547a 0%, #80d0c7 100%);
     transform: translate(-50%, -100%);
 }
 
-h1 {
-    text-align: center;
-    position:relative;
-    top: 25rem;
-    font-size: 2.5rem;
-}
+
 div {
     display: flex;
     position: absolute;
     left: 50%;
-    top: 50%;
+    top: 40%;
     transform: translate(-50%, 150%);
 }
 
+
+a {
+    display: flex;
+    position: absolute;
+    left: 50%;
+    top:55%;
+    transform: translate(-50%, 150%);
+
+}
 @media screen and (max-width: 768px) {
 h1 {
     font-size: 2rem;
-    top: 27rem;
 }                   
+
  }
  @media screen and (max-width: 420px) {
                    

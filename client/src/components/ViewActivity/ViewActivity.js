@@ -66,7 +66,7 @@ const ViewActivity = () => {
 
     return (
         <>
-            {!allParks.selectedPark !== null ? <div>
+            {!allParks.selectedPark !== null ? <PageContainer>
                 {allParks.selectedPark !== null &&
                     <StyledParkDetails><ParkDetails parkInfo={allParks.selectedPark} /></StyledParkDetails>
 
@@ -74,11 +74,13 @@ const ViewActivity = () => {
                 {/**/}
                 {hostedEvent !== null && allParks.selectedPark !== null &&
                     hostedEvent.map((event, index) => {
-                        return <EventDetails index={index} canceled={canceled} setCanceled={setCanceled} event={event}></EventDetails>
+                        return <EventDetailsWrapper>
+                            <EventDetails index={index} canceled={canceled} setCanceled={setCanceled} event={event}></EventDetails>
+                        </EventDetailsWrapper>
                     })
                 }
 
-            </div> : <div style={{ textAlign: 'center' }}>Please head over to the sports tab to view park acitivities.</div>}
+            </PageContainer> : <div style={{ textAlign: 'center' }}>Please head over to the sports tab to view park acitivities.</div>}
         </>
     )
 
@@ -92,10 +94,44 @@ const Wrapper = styled.div`
 
 const StyledParkDetails = styled.div`
 display: flex;
-justify-content: center;
+justify-content: center; 
+margin-top: 2rem;
+    width: 80%; 
+    margin-left: auto; 
+    margin-right: auto; 
+
+div {
+    font-size: 2rem;
+    width: 100%;
+
+    text-align: center;
+
+}
+`
+const PageContainer = styled.div`
+box-shadow: 0 10px 10px -5px;
+    width: 80%; 
+    margin-left: auto; 
+    margin-right: auto; 
+    position: relative; 
+    height: 100%; 
+    padding-bottom: 2rem;
+
 `
 
+const EventDetailsWrapper = styled.div`
 
-//NOTES:
-    //For now, can only view activities from searching a park as the useEffect that gets
-    //all hosts happens in that component(MAP componenet.)
+    h1 {
+    font-size: 1rem;
+}
+
+h2 {
+    font-size: 1.1rem;
+
+}
+img {
+    width: 100px;
+height: 100px;
+}
+
+`

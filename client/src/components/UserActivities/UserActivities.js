@@ -87,7 +87,7 @@ const Wrapper = styled.div`
 const Title = styled.div`
 width: 90%;
      font-weight: 900;
-    margin: 0 auto;
+     margin: 2rem auto;
     font-size: 3rem;
     border-bottom: black solid 2px;
 `

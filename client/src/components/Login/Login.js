@@ -228,13 +228,11 @@ export default function SignIn() {
 
 
 const List = styled.li`
-
   text-decoration: none;
   color: white;
   text-transform: uppercase;
   position: relative;
   cursor: pointer;
- 
 /* inserts content after it is selected. */
 /* like having a div under it. */
 &:after {
@@ -243,14 +241,11 @@ const List = styled.li`
     width: 0;
     height: 2px;
     background: white;
-
-    
   }
   /* on hover over ... give it 100% width so we see it. */
   &:hover::after {
     width: 100%;
     transition: width .3s;
-
   }
   
  

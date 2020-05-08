@@ -23,6 +23,8 @@ import { ThemeProvider } from "styled-components";
 
 
 
+
+
 import EventDetails from '../EventDetails';
 //geometry
 
@@ -37,14 +39,26 @@ const useStyles = makeStyles(theme => ({
         borderRadius: 3,
         boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
         color: 'white',
-        height: 32,
-
-        padding: '0 30px',
+        height: '3rem',
+        width: '10rem',
+        outline: 'none',
+        padding: '0 10px',
     },
     formControl: {
-        margin: theme.spacing(1),
-        minWidth: 120,
-        display: 'flex'
+
+        display: 'flex',
+        borderTop: 'black solid 0.5px',
+        paddingTop: '3rem',
+        margin: '0 auto',
+        width: '80%',
+        fontFamily: 'Comfortaa, cursive',
+        flexFlow: 'wrap'
+
+
+
+
+
+
 
     }
 }));
@@ -198,7 +212,7 @@ const Host = () => {
                     if (hostResponse.status === 200) {
 
                         setSuccess(hostResponse.message)
-                        setError(null)
+                        setError(false)
                     }
                     else if (hostResponse.status === 400) {
                         console.log(hostResponse.message)
@@ -260,57 +274,67 @@ const Host = () => {
 
         <PageContainer>
             <Details>
-                {selectedPark !== null ? <ParkDetails parkInfo={selectedPark} ></ParkDetails> : <div>Cannot book without selecting a park.</div>}
+                {selectedPark !== null ? <ParkDetails parkInfo={selectedPark} ></ParkDetails>
+                    :
+                    <div>You must select a park to host!</div>}
             </Details>
 
-            <form className={classes.formControl} onSubmit={handleHostInformation}>
+            <FormWrapper className={classes.formControl} onSubmit={handleHostInformation}>
                 <SelectDiv>
                     <InputLabel shrink id="Select a sport"> Sport</InputLabel>
-                    <Select
+                    <SelectTag
                         labelId="Select a sport"
                         id="Sportselection"
                         value={sportSelect}
                         required onChange={(event) => setSportSelect(event.target.value)}>
                         {sports.map(sport => {
                             return (
-                                <MenuItem value={sport} key={sport}>{sport}</MenuItem>
+                                <EachMenuItem value={sport} key={sport}>{sport}</EachMenuItem>
                             )
                         })}
-                    </Select>
+
+
+                    </SelectTag>
                 </SelectDiv>
                 <SelectDiv>
                     <InputLabel shrink id="Select a skill">Skill</InputLabel>
-                    <Select
+                    <SelectTag
                         labelId="Select a skill"
                         id="Select a skill"
                         value={skillSelect}
                         required onChange={(event) => setSkillSelect(event.target.value)}>
                         {skillLevel.map(skill => {
                             return (
-                                <MenuItem value={skill} key={skill}>{skill}</MenuItem>
+                                <EachMenuItem value={skill} key={skill}>{skill}</EachMenuItem>
                             )
                         })}
-                    </Select>
+                    </SelectTag>
                 </SelectDiv>
                 <SelectDiv>
                     <InputLabel shrink id="Select duration">Duration</InputLabel>
-                    <Select
+                    <SelectTag
                         labelId="Select duration"
                         id="duration"
                         value={duration}
                         required onChange={(event) => setDuration(event.target.value)}>
-                        <MenuItem value={duration}>Duration (hrs)</MenuItem>
-                        <MenuItem value={1}>1</MenuItem>
-                        <MenuItem value={2}>2</MenuItem>
-                        <MenuItem value={3}>3</MenuItem>
-                    </Select>
+                        <EachMenuItem value={duration}>Duration (hrs)</EachMenuItem>
+                        <EachMenuItem value={1}>1</EachMenuItem>
+                        <EachMenuItem value={2}>2</EachMenuItem>
+                        <EachMenuItem value={3}>3</EachMenuItem>
+                    </SelectTag>
                 </SelectDiv>
-                <div>
-                    <textarea placeholder="Enter a group name..." id="Group Name" onChange={(e) => setGroupName(e.target.value)}></textarea>
-                </div>
+                <SelectDiv>
+                    <InputLabel shrink id="GroupName">Group name?</InputLabel>
+
+                    <textarea placeholder="Ex: The Dominators." id="GroupName" onChange={(e) => setGroupName(e.target.value)}></textarea>
+                </SelectDiv>
+
                 {/* DATES */}
                 <StyledDate>
+                    <InputLabel shrink id="date">Game day?</InputLabel>
+
                     <DatePicker
+                        id="date"
 
                         todayButton="Today"
                         selected={startDate}
@@ -327,19 +351,20 @@ const Host = () => {
                 </StyledDate>
 
 
+
                 <Button type='submit' variant="outlined" className={classes.root}>Submit</Button>
 
 
 
-            </form>
+            </FormWrapper>
             <StyledMessage>
                 {success !== false && <StyledSuccess>{success}</StyledSuccess>}
                 {error !== false && <StyledError>{error}</StyledError>}
                 {conflictEvent !== null &&
-                    <div>
+                    <EventDetailsWrapper>
                         <ChangeBooking>Would you like to cancel your booking? If not, pick a different time!</ChangeBooking>
                         {!canceled && <EventDetails canceled={canceled} setCanceled={setCanceled} event={conflictEvent} />}
-                    </div>}
+                    </EventDetailsWrapper>}
             </StyledMessage>
 
 
@@ -358,43 +383,127 @@ font-size: 1.5rem;
 color: green;
 `
 const StyledError = styled.div`
+margin: 1rem;
 font-size: 1.5rem;
-
+display:flex;
+padding: 0.5rem;
+justify-content: center;
 color: #ff0000;
+border: solid 1px #ff0000;
+
+
+
+@media (max-width: 768px) { 
+    font-size: 1rem;
+     
+        }
 `
 const ChangeBooking = styled.div`
 font-size: 1.3rem;
+text-align: center;
+margin-bottom: 1rem;
 
 `
 
 const PageContainer = styled.div`
+box-shadow: 0 10px 10px -5px;
     width: 80%; 
     margin-left: auto; 
     margin-right: auto; 
     position: relative; 
-    height: 100vh;   
+    height: 80rem;   
+    padding-bottom: 2rem;
 
-    form {
-        width: 90%; 
-    margin-left: auto; 
-    margin-right: auto; 
 
+    textarea {
+        resize: none;
+        outline: none;
+        height: 2rem;
     }
+    @media (max-width: 768px) { 
+    font-size: 1rem;
+    height: 130rem;      
+        }
 `
 const Details = styled.div`
     width: 90%; 
     margin-left: auto; 
     margin-right: auto; 
 
+    div {
+        text-align: center;   
+        font-size: 2rem;
+    }
+
 `
 
 const StyledDate = styled.div`
+
+input {
+    height: 2rem;
+    outline: none;
+   
+}
+label {
+    font-family: 'Comfortaa', cursive !important;
+   
+
+}
 `
 const SelectDiv = styled.div`
+height: 5rem;
+
+input {
+    height: 2rem;
+    outline: none;
+   
+}
+
+label {
+    font-family: 'Comfortaa', cursive !important;
+}
+
 `
 const StyledMessage = styled.div`
    width: 90%; 
     margin-left: auto; 
     margin-right: auto; 
 
+`
+
+const EachMenuItem = styled(MenuItem)`
+     font-family: 'Comfortaa', cursive !important;
+`
+const SelectTag = styled(Select)`
+     font-family: 'Comfortaa', cursive !important;
+     width: 10rem;
+`
+
+
+const FormWrapper = styled.form`
+
+display: flex;
+          flex-flow:nowrap column;
+          justify-content: center;
+
+
+
+
+@media (max-width: 768px) {            
+        }
+
+`
+
+const EventDetailsWrapper = styled.div`
+height: 2rem;
+font-size: 0.5rem;
+
+h1 {
+    font-size: 1rem;
+}
+
+h2 {
+    font-size: 1.1rem;
+
+}
 `
