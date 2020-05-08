@@ -55,13 +55,11 @@ const EventDetails = ({ index, event, canceled, setCanceled }) => {
     }, [joined])
 
 
-    console.log(event, 'USERHOSTEDEVENTS')
 
 
     //function called from render to show all images.
     const getParticipantImages = (currentEventParticipants) => {
         return currentEventParticipants.map(participant => {
-            console.log('looking at users')
             return <div>
                 <StyledImage key={participant.profileImage} src={participant.profileImage}></StyledImage>
                 <div style={{ textAlign: 'center' }}>{participant.name}</div>

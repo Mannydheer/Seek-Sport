@@ -53,14 +53,6 @@ export default function Cancel({ event, canceled, setCanceled }) {
 
 
     const userInfo = useSelector(state => state.userReducer)
-
-    //control joined.
-
-
-    console.log(event, 'iside cancel')
-    //
-
-
     const handleClickOpen = () => {
         setOpen(true);
     };

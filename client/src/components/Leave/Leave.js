@@ -55,12 +55,6 @@ export default function Leave({ setRefetchParticipants, setJoined, joined, event
 
     const userInfo = useSelector(state => state.userReducer)
 
-    //control joined.
-
-    //
-
-    console.log(joined)
-
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -108,7 +102,6 @@ export default function Leave({ setRefetchParticipants, setJoined, joined, event
             console.log('not auth inside handleLeaveEvent component. In the else.')
         }
     }
-    console.log(joined, 'INSIDE LEAVE')
     return (
         <div>
             <Button className={classes.root} disabled={!joined} variant="outlined" onClick={handleClickOpen}>

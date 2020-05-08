@@ -12,6 +12,11 @@ import {
     updateEvent
 } from '../actions/parkActions';
 import Snackbars from '../SnackBar';
+import styled from 'styled-components';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
+
 
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -33,10 +38,6 @@ const useStyles = makeStyles({
 
 export default function Join({ setJoined, joined, event }) {
 
-    const dispatch = useDispatch();
-
-
-
     const [open, setOpen] = React.useState(false);
     const [openSnack, setOpenSnack] = useState(false);
     const [snackMsg, setSnackMsg] = useState('')
@@ -44,13 +45,7 @@ export default function Join({ setJoined, joined, event }) {
 
     //style modal.
     const classes = useStyles();
-
-    //control joined.
-
-    //
     const [skillSelect, setSkillSelect] = useState("Choose skill level");
-
-    console.log(joined)
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -105,7 +100,6 @@ export default function Join({ setJoined, joined, event }) {
         }
     }
 
-    console.log(joined, 'INSIDE JOIN COMPONENT')
 
     return (
         <div>
@@ -118,13 +112,20 @@ export default function Join({ setJoined, joined, event }) {
                     <DialogContentText>
                         Fill up the information to join.
           </DialogContentText>
-                    <select required onChange={(event) => setSkillSelect(event.target.value)}>
-                        {skillLevel.map(skill => {
-                            return (
-                                <option key={skill}>{skill}</option>
-                            )
-                        })}
-                    </select>
+                    <SelectDiv>
+                        <InputLabel shrink id="Select a skill">Skill</InputLabel>
+                        <SelectTag
+                            labelId="Select a skill"
+                            id="Select a skill"
+                            value={skillSelect}
+                            required onChange={(event) => setSkillSelect(event.target.value)}>
+                            {skillLevel.map(skill => {
+                                return (
+                                    <EachMenuItem value={skill} key={skill}>{skill}</EachMenuItem>
+                                )
+                            })}
+                        </SelectTag>
+                    </SelectDiv>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} color="primary">
@@ -139,4 +140,29 @@ export default function Join({ setJoined, joined, event }) {
 
         </div>
     );
+
 }
+
+
+const EachMenuItem = styled(MenuItem)`
+font-family: 'Comfortaa', cursive !important;
+`
+const SelectTag = styled(Select)`
+font-family: 'Comfortaa', cursive !important;
+width: 10rem;
+`
+
+const SelectDiv = styled.div`
+height: 5rem;
+
+input {
+    height: 2rem;
+    outline: none;
+   
+}
+
+label {
+    font-family: 'Comfortaa', cursive !important;
+}
+
+`

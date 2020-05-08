@@ -247,6 +247,4 @@ const List = styled.li`
     width: 100%;
     transition: width .3s;
   }
-  
- 
 `

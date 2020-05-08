@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import EventDetails from '../EventDetails';
-import ClipLoader from "react-spinners/ClipLoader";
-import { css } from "@emotion/core";
+
 
 
 
@@ -16,10 +15,6 @@ const UserActivities = () => {
     const [canceled, setCanceled] = useState(false)
     const [message, setMessage] = useState(null)
 
-    const override = css`
- display: block;
-  margin: 0 auto;
-`;
 
 
 
@@ -41,8 +36,11 @@ const UserActivities = () => {
                 let eventResponse = await response.json();
 
                 if (eventResponse.status === 200) {
+
+                    //
+                    console.log(eventResponse, 'THIS IS EEVENT RESPONSE')
                     setAllEvents(eventResponse.events)
-                    setMessage(eventResponse.message)
+                    // setMessage(eventResponse.message)
                     setCanceled(false)
 
                 } else {
@@ -53,22 +51,23 @@ const UserActivities = () => {
             }
         }
         handleUserActivities()
-    }, [canceled, setCanceled])
+    }, [canceled])
 
-    console.log(allEvents)
+    console.log(canceled, 'CANCELED INSIDE USERACTIVITIES')
 
     return <Wrapper>
-        <Title>Current Events.
-            <TitleText>See details for all the events you are attending.</TitleText>
+        <Title>Participating Events.
+            <TitleText>See details for the events you have joined.</TitleText>
         </Title>
+        {message !== null && <ErrorMessage>{message}</ErrorMessage>}
 
-        {allEvents !== null ?
+
+
+        {allEvents !== null &&
             allEvents.map((event, index) => {
                 return <EventDetails index={index} canceled={canceled} setCanceled={setCanceled} event={event}></EventDetails>
-            }) : <ClipLoader css={override}
-                size={150} color={"black"} />
+            })
         }
-        {/* {message !== null && <div>{message}</div>} */}
     </Wrapper>
 }
 
@@ -95,6 +94,11 @@ const TitleText = styled.div`
 
     font-size: 1.4rem;
     font-weight: 100;
-    
+`
+
+const ErrorMessage = styled.div`
+width: 90%;
+margin: 0 auto;
+font-size: 2rem;
 
 `

@@ -312,7 +312,7 @@ const ChatJoin = () => {
         <StyledForm>
             <Send>
                 <textarea
-                    autoFocus
+
                     cols="33"
                     value={message}
 

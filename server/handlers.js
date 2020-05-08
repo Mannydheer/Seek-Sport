@@ -1122,7 +1122,12 @@ const handleUserActivities = async (req, res, next) => {
                     .toArray();
 
                 if (eventData.length > 0) {
-                    res.status(200).json({ status: 200, message: 'Success getting all events you have registered for!', events: eventData })
+                    let filteredEventData = eventData.filter(event => {
+                        if (event.userId !== userId) {
+                            return event;
+                        }
+                    })
+                    res.status(200).json({ status: 200, message: 'Success getting all events you have registered for!', events: filteredEventData })
                 }
                 else {
                     res.status(400).json({ status: 400, message: 'Seems like you have no registered to any events! Head to the home page to find activities!' })
