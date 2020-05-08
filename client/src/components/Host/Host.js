@@ -86,11 +86,19 @@ const validateDateBooking = (startDate) => {
         //convert everything to minutes for the specific day.
         let currentTime = new Date().getHours() * 60 + new Date().getMinutes();
         let selectedTime = new Date(startDate).getHours() * 60 + new Date(startDate).getMinutes();
+        let morningLimit = 7.5 * 60;
+        let nightLimit = 22 * 60;
+
+        console.log(morningLimit)
+        console.log(nightLimit)
 
         //if the total minutes selected is greater or equal to the current minutes...
         //these means that we are either at the same time or past the time...
+        //ALSO - we need to make sure the time is between 7:30AM-10PM;
         //thne we are allowed to book.
-        if (selectedTime >= currentTime) {
+        if (selectedTime >= currentTime
+            && selectedTime <= nightLimit
+            && selectedTime >= morningLimit) {
             return true;
         }
         //if not.... cannot book

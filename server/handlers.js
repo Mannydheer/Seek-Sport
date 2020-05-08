@@ -330,6 +330,7 @@ const handleHosting = async (req, res, next) => {
             //first see if the host already exists.
             let findhost = await db.collection(collectionHosts).findOne({ userId: hostingInformation.userId })
             // let userHost = await db.collection(collectionUsers).findOne({ _id: ObjectId(hostingInformation.userId) })
+            console.log(findhost, 'FOUND HOST')
 
             let validBooking = false;
             let validBookingAllEvents = false;
@@ -407,6 +408,9 @@ const handleHosting = async (req, res, next) => {
                             return event
                         }
                     })
+                    console.log(allEvents)
+
+                    console.log(filteredEvents, 'FILTEREDEVENTSSAMEPARK')
                     //filter and get back all the events related to that host at ANY park.
                     //EXCLUDING the current park.
                     //this is so we can seperate the messages we want to send back to the front end.
@@ -416,6 +420,8 @@ const handleHosting = async (req, res, next) => {
                             return event
                         }
                     })
+                    console.log(filteredEvents, 'FILTEREDEVENTSDIFFPARK')
+
 
                     //if current host has not booked any events at any other park...
                     //if this passes then first bool text passes so there arnt any time conflicts from any other events at any park.

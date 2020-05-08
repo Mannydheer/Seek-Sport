@@ -35,7 +35,7 @@ const RightNav = ({ open }) => {
         {!userLoggedIn.isAuthenticated && <Login></Login>}
         {!userLoggedIn.isAuthenticated && <Signup></Signup>}
 
-        <UserImage src={`./${userLoggedIn.profileImage}`} />
+        {userLoggedIn.isAuthenticated && <UserImage src={`./${userLoggedIn.profileImage}`} />}
         {userLoggedIn.isAuthenticated && <List onClick={handleLogout}>Logout</List>}
 
       </Ul>
