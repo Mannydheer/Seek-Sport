@@ -19,9 +19,6 @@ const Chatbot = () => {
 
 
 
-    const handlePage = (props) => {
-        // history.push(`/category/${props}`)
-    }
 
     const theme = {
         background: 'white',
@@ -56,10 +53,10 @@ const Chatbot = () => {
         {
             id: 'Find Games',
             message: "Are you ready to start finding games?",
-            trigger: 'Topic',
+            trigger: 'YesNo',
         },
         {
-            id: 'Topic',
+            id: 'YesNo',
             options: [
                 { value: "Yes", label: "Yes", trigger: () => { return "Yes" } },
                 { value: "No", label: "No", trigger: () => { return "No" } },
@@ -67,52 +64,27 @@ const Chatbot = () => {
         },
         {
             id: 'Yes',
-            message: `Great! Let me redirect you there!`,
-            trigger: () => { history.push('/sports'); return 'Topic' },
+            message: `Great! Let me redirect you there! Also here are some other options.`,
+            trigger: () => { history.push('/sports'); return 'Options' },
         },
         {
             id: "No",
-            message: `No problem, I'll let you keep browsing! Let me know when you're ready!`,
-            trigger: () => { history.push('/'); return 'Topic' },
+            message: `No problem, I'll let you keep browsing, also here are some other options. `,
+            trigger: () => { history.push('/'); return 'Options' },
         },
         {
-            id: 'Search',
-            message: `You can use the search bar above to search for any products, also if you choose a category, you can search within that category! Looking for something else?`,
-            trigger: 'Topic'
-        },
-        {
-            id: 'Home',
-            message: `Our Home Page!!! Are you looking for something else?`,
-            trigger: () => { history.push('/'); return 'Topic' },
-        },
-        {
-            id: 'Cart',
-            message: `Btw you can keep track of your items if you make an account! Don't forget to add your coupon code! 
-            Are you looking for something else?`,
-            trigger: () => { history.push('/Cart'); return 'Topic' },
-        },
-        {
-            id: 'Item Catalog',
-            message: `This is our Shop page with a list of our items, browse away!
-            Are you looking for something else?`,
-            trigger: () => { history.push('/Shop'); return 'Topic' },
-        },
-        {
-            id: 'Show Categories',
+            id: 'Options',
             options: [
-                { value: 'Fitness', label: 'Fitness', trigger: () => { handlePage('Fitness'); return 'RedirectToCategory' } },
-                { value: 'Medical', label: 'Medical', trigger: () => { handlePage('Medical'); return 'RedirectToCategory' } },
-                { value: 'Lifestyle', label: 'Lifestyle', trigger: () => { handlePage('Lifestyle'); return 'RedirectToCategory' } },
-                { value: 'Entertainment', label: 'Entertainment', trigger: () => { handlePage('Entertainment'); return 'RedirectToCategory' } },
-                { value: 'Industrial', label: 'Industrial', trigger: () => { handlePage('Industrial'); return 'RedirectToCategory' } },
-                { value: 'Pets and Animals', label: 'Pets and Animals', trigger: () => { handlePage('Pets and Animals'); return 'RedirectToCategory' } },
-                { value: 'Gaming', label: 'Gaming', trigger: () => { handlePage('Gaming'); return 'RedirectToCategory' } },
+                { value: 'Your events?', label: 'Your events?', trigger: () => { history.push('/userEvents'); return 'Redirect' } },
+                { value: 'Your activities?', label: 'Your activities?', trigger: () => { history.push('/userActivities'); return 'Redirect' } },
+                { value: 'Home Page', label: 'Home Page', trigger: () => { history.push('/'); return 'Redirect' } },
+                { value: 'Chat Room', label: 'Chat Room', trigger: () => { history.push('/chat'); return 'Redirect' } },
             ],
         },
         {
-            id: 'RedirectToCategory',
-            message: `Here are the products for your selected category.Looking for something else?`,
-            trigger: 'Topic',
+            id: 'Redirect',
+            message: `There you go! Looking for something else?`,
+            trigger: 'Options',
         }
     ]
 
