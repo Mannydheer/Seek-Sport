@@ -119,7 +119,9 @@ function App() {
 
 
         {/* footer */}
-        <Footer></Footer>
+        <FooterDiv>
+          <Footer></Footer>
+        </FooterDiv>
         {userLoggedIn.isAuthenticated && <Chatbot></Chatbot>}
       </Router>
     </>
@@ -133,7 +135,7 @@ export default App;
 const ChatWrapper = styled.div`
 display : flex;
 align-content: center;
-background-image: linear-gradient(15deg, #13547a 0%, #80d0c7 100%);
+background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
 padding: 2rem;
 
 /* width: 80%;
@@ -149,7 +151,7 @@ align-content: center;
 height: 40rem;
 margin-top: 4rem; */
 
-            
+          
     }
 
 
@@ -158,9 +160,8 @@ margin-top: 4rem; */
 `
 
 const BigWrapper = styled.div`
+`
+const FooterDiv = styled.div`
 
-/* background-color: rgb(82,97,144); */
-
-
-
+width: 100%;
 `

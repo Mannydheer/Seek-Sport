@@ -266,12 +266,18 @@ const ChatJoin = () => {
 
 
 
-
+    useEffect(() => {
+        if (allMessages && userChats.actualParticipants) {
+            //block end...
+            //take scroll right at the end....
+            scrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+    });
     return <MainWrapper>
         {groupName ? <GroupName>{groupName}</GroupName> :
             <GroupName>Chat Room</GroupName>
         }
-        <ChatWrapper useRef={scrollRef}>
+        <ChatWrapper >
             {/* ALL MESSAGES FROM THE FRONT END. */}
             {
                 allMessages && userChats.actualParticipants && <ChatBox>
@@ -279,35 +285,36 @@ const ChatJoin = () => {
                         //CHANGE KEY
                         return <div>
                             {message.sender === userInfo.user ?
-                                <div>
-                                    <SenderText>
-                                        <div>
-                                            <SenderMessage>{ReactEmoji.emojify(message.message)}</SenderMessage>
-                                            <TimeWrapper>{dateConverter(message.timeStamp)}</TimeWrapper>
-                                        </div>
-                                        {userChats.actualParticipants[message.userId] ? <Image src={`/${userChats.actualParticipants[message.userId].profileImage}`} />
-                                            :
-                                            <ClipLoader size={50} color={"white"} />}
-                                    </SenderText>
-
-                                </div>
+                                <SenderText>
+                                    <div>
+                                        <SenderMessage>{ReactEmoji.emojify(message.message)}</SenderMessage>
+                                        <TimeWrapper>{dateConverter(message.timeStamp)}</TimeWrapper>
+                                    </div>
+                                    {userChats.actualParticipants[message.userId] ? <Image src={`/${userChats.actualParticipants[message.userId].profileImage}`} />
+                                        :
+                                        <ClipLoader size={50} color={"white"} />}
+                                </SenderText>
                                 :
                                 <ReceiverText>
-                                    {/* THIS ONE */}
-
                                     {userChats.actualParticipants[message.userId] ? <Image src={`/${userChats.actualParticipants[message.userId].profileImage}`} />
                                         :
                                         <ClipLoader size={50} color={"white"} />}
                                     <div>
                                         <ReceiverMessage>{ReactEmoji.emojify(message.message)}</ReceiverMessage>
+
                                         <ReceiveTimeWrapper>{dateConverter(message.timeStamp)}</ReceiveTimeWrapper>
                                     </div>
                                 </ReceiverText>
                             }
                         </div>
+
                     })}
+                    <div ref={scrollRef}></div>
+
+
                 </ChatBox>
             }
+
         </ChatWrapper>
         <StyledForm>
             <Send>
@@ -377,13 +384,14 @@ padding: 10px;
 `
 
 const StyledForm = styled.form`
-height: 100%;
+
 width: 100%;
 position: relative;
 bottom: 0;
 
 textarea {
     width: 100%;
+    height: 5rem;
     resize: none;
     background-image: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);
     border-radius: 0 0 25px 25px;
@@ -392,13 +400,16 @@ textarea {
     font-size:1rem;
     padding-bottom: 5px;
     color: white;
+    font-family: 'Comfortaa', cursive;
+
 
 }
 
 `
 const StyledSendButton = styled(IoMdSend)`
-background-image: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);width: 2rem;
-height: 3rem;
+background-image: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);
+width: 3rem;
+height: 5rem;
 border-radius: 0 0px 25px 0;
 border-top: white solid 1px;
 border-left: white solid 1px;
@@ -412,21 +423,15 @@ right: 0;
 const Send = styled.div`
 display: flex;
 `
-
-
-
-
 const ChatBox = styled.div`
 width: 100%;
 height: 25rem;
-
-
-
 `
-
 const ChatWrapper = styled.div`
 position: relative;
-background-color: rgb(82,97,144);
+/* background-color: rgb(82,97,144); */
+background-color: rgba(0,0,0,0.4) !important;
+
 width: 100%;
 height: 40rem;
 overflow-y: scroll;
@@ -439,13 +444,7 @@ height: 20rem
 width: 100%;
 height: 10rem                    
  }
-            
-
-
-
-
 `
-
 
 const MainWrapper = styled.div`
 width: 100%;
@@ -460,10 +459,10 @@ margin-right: 1.1rem;
 const GroupName = styled.h1`
 text-align: center;
 height: 7%;
-background-color: rgb(82,97,144);
+background-color: rgba(0,0,0,0.4) !important;
 border-radius: 25px 25px 0 0;
 color: white;
-border-bottom: 2px solid white;
+border-bottom: 1px solid white;
 
 
 `

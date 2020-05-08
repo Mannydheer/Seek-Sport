@@ -132,7 +132,7 @@ export default Chat;
 
 const Wrapper = styled.div`
 padding: 0 2rem;
-background-color: rgb(82,97,144);
+background-color: rgba(0,0,0,0.4) !important;
 opacity: 0.9;
 margin-left: 1.1rem;
 width: 100%;
