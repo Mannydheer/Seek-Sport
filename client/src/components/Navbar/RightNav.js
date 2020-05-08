@@ -21,7 +21,7 @@ const RightNav = ({ open }) => {
         <NavigationLink exact to='/'><li>Home</li></NavigationLink>
         {userLoggedIn.isAuthenticated && <NavigationLink exact to='/userEvents'><li>My Events</li></NavigationLink>}
         {userLoggedIn.isAuthenticated && <NavigationLink exact to='/userActivities'><li>My Activities</li></NavigationLink>}
-        {userLoggedIn.isAuthenticated && <NavigationLink exact to='/chat'><li>Chat</li></NavigationLink>}
+        {userLoggedIn.isAuthenticated && <NavigationLink exact to='/chat'><li>Chat Room</li></NavigationLink>}
         {!userLoggedIn.isAuthenticated && <Login></Login>}
         {!userLoggedIn.isAuthenticated && <Signup></Signup>}
       </Ul>

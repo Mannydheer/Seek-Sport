@@ -108,9 +108,10 @@ word-wrap: break-word;
 padding-right: 4rem;
     padding-bottom: 20px; 
     margin: 2rem 0;
-    width: 400px;
+    width: 375px;
     text-align: center;
     font-size: 1rem;
+    margin-left: 2rem;
     
     /* h2 {
         font-size: 1.1rem;

@@ -136,6 +136,7 @@ background-color: rgb(82,97,144);
 opacity: 0.9;
 margin-left: 1.1rem;
 width: 100%;
+
 a {
     text-decoration: none;
     color: black;
@@ -155,8 +156,7 @@ h1 {
     width: 100%;
     overflow-y: scroll;
 scroll-behavior: smooth;
-height: 10rem;
-font-size: 10px;
+height: 14rem;
     
             }
 
@@ -166,6 +166,9 @@ font-size: 10px;
 const BigWrapper = styled.div`
 display: flex;
 width: 100%;
+margin-top: 2rem;
+
+
 
 @media screen and (max-width: 420px) {
     display: block;
@@ -193,7 +196,7 @@ width: 15px;
 height: 15px;
 background-color: green;
 position: absolute;
-right: 70%;
+left: 10%;
 z-index: 1000;
 bottom: 0%;
 border-radius: 50%;
@@ -208,7 +211,7 @@ position: absolute;
 border-radius: 50%;
 border: solid 1px white;
 position: absolute;
-right: 70%;
+left: 10%;
 bottom: 0%;
 
 z-index: 1000;

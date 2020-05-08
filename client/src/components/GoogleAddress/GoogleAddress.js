@@ -57,7 +57,12 @@ const GoogleAddress = ({ setCoordinates, setParkMenu }) => {
                             {loading ? <div>...loading</div> : null}
                             {/* add styling. */}
                             {suggestions.map((suggestion) => {
-                                return <StyledSuggestion {...getSuggestionItemProps(suggestion)}> {suggestion.description}</StyledSuggestion>
+                                const style = {
+                                    backgroundImage: suggestion.active ? "linear-gradient(15deg, #13547a 0%, #80d0c7 100%)" : '',
+                                    color: suggestion.active ? 'white' : ''
+                                }
+
+                                return <StyledSuggestion {...getSuggestionItemProps(suggestion, { style })}> {suggestion.description}</StyledSuggestion>
                             })}
                         </StyledSearches>
                     </div>}
@@ -89,15 +94,12 @@ justify-content: center;
 
 const StyledSearches = styled.div`
 width: 40vw;
+box-shadow: 0 10px 6px -6px #777;
+
 `
 
 const StyledSuggestion = styled.div`
-&:hover {
-    cursor: pointer;
-    background-image: linear-gradient(-60deg, #16a085 0%, #f4d03f 100%);
-    border-radius: 10px;
-
-}
+border-radius: 5px;
 `
 
 

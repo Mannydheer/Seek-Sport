@@ -312,11 +312,7 @@ const ChatJoin = () => {
                     })}
                 </ChatBox>
             }
-
-
         </ChatWrapper>
-
-
         <StyledForm>
             <Send>
                 <textarea
@@ -436,7 +432,7 @@ const ChatWrapper = styled.div`
 position: relative;
 background-color: rgb(82,97,144);
 width: 100%;
-height: 85%;
+height: 40rem;
 overflow-y: scroll;
 scroll-behavior: smooth;
 @media screen and (max-width: 768px) {
@@ -459,6 +455,9 @@ const MainWrapper = styled.div`
 width: 100%;
 opacity: 0.9;
 margin-left: 1.1rem;
+margin-top: 2rem;
+margin-right: 1.1rem;
+
 `
 
 //APP component has the h1

@@ -68,6 +68,14 @@ button {
         opacity: 0.8;
     }
 }
+
+
+@media screen and (max-width: 768px) {
+button {
+    font-size: 0.7rem;
+}
+    
+            }
 `
 
 const StyledEventInformation = styled.div`

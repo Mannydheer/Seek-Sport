@@ -3,6 +3,10 @@ import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectPark, requestHosts, retrieveHosts, retrieveHostsError } from '../actions/parkActions';
 import EventDetails from '../EventDetails';
+import ClipLoader from "react-spinners/ClipLoader";
+import { css } from "@emotion/core";
+
+
 
 
 const UserHostedEvents = () => {
@@ -13,6 +17,11 @@ const UserHostedEvents = () => {
     const [participants, setParticipants] = useState(null)
     const [error, setError] = useState(false)
     const [canceled, setCanceled] = useState(false)
+
+    const override = css`
+    display: block;
+     margin: 0 auto;
+   `;
 
 
     useEffect(() => {
@@ -54,15 +63,18 @@ const UserHostedEvents = () => {
     return (
         <Wrapper>
             <Title>Hosted Events.
-            <TitleText>See details for all your events.</TitleText>
+            <TitleText>See details for all the events you are hosting.</TitleText>
             </Title>
 
 
-            {events !== null && participants !== null && events.map((event, index) => {
+            {events !== null ? participants !== null && events.map((event, index) => {
                 return (
                     <EventDetails index={index} canceled={canceled} setCanceled={setCanceled} event={event} />
                 )
-            })}
+            }) : <ClipLoader
+                    css={override}
+                    size={150} color={"black"} />
+            }
             {error && <div>Error occured on the page.</div>}
         </Wrapper>
     )

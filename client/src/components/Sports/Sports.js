@@ -7,6 +7,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import WrappedMap from '../Map/Map';
 import { PageContainer } from '../Constants/Constants'
 
+import MoonLoader from "react-spinners/MoonLoader";
+
+
 
 
 //
@@ -79,6 +82,8 @@ const Sports = () => {
 
 
 
+
+
     //sliding info modal.
 
     return (
@@ -114,7 +119,8 @@ const Sports = () => {
 
             {
                 userLoggedIn.status !== "authenticated" ?
-                    <h1>You must be logged in to find games.</h1> :
+                    <h1>You must be logged in to find games.
+                    </h1> :
                     <div>
                         {/* // */}
                         <div style={{ padding: '10px' }}>

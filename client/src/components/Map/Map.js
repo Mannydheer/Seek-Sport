@@ -108,9 +108,6 @@ const Map = ({ coordinates, parkMenu, setParkMenu }) => {
 
     return (
         <>
-            {/* <ParkButton>FIND PARKS</ParkButton> */}
-
-
             <Sidebar style={(parkMenu) ? { transform: "translateX(0px)" } : {
                 transform: "translateX(-400px)"
             }}>
@@ -140,7 +137,6 @@ const Map = ({ coordinates, parkMenu, setParkMenu }) => {
                         )
                     }
                     //else render RED MARKER(no hosts.)
-
                     else {
                         return (
                             <Marker
@@ -149,38 +145,12 @@ const Map = ({ coordinates, parkMenu, setParkMenu }) => {
                                 position={park.geometry.location}
                                 onClick={() => handleParkSelect(park)} />
                         )
-
                     }
-
                 })}
-                {/* RENDER ALL HOSTED PARKS. */}
-                {/* {hostsInfo.hosts !== null && hostedParks !== null && hostedParks.map(park => {
-                    return (
-                        <Marker
-                            icon={{ url: '/person.png' }}
-                            position={park.geometry.location}
-                            onClick={() => handleParkSelect(park)} />
-                    )
-                })} */}
-                {/* CURRENT POSITION - HOME. */}
+
                 <Marker position={coordinates}
                     icon={{ url: '/home.png' }}
                 ></Marker>
-
-                {/* TIPPY/INFO ON CLICK OF A MARKER.  */}
-                {/* {parkInfo !== null &&
-                    //control the tippy for each map point.
-                    <InfoWindow
-                        position={{
-                            lat: parkInfo.geometry.location.lat,
-                            lng: parkInfo.geometry.location.lng
-                        }}
-                        onCloseClick={() => setParkInfo(null)}>
-                        <div>
-                            <div>park details</div>
-                            <div>{parkInfo.name}</div>
-                        </div>
-                    </InfoWindow>} */}
             </GoogleMap>
         </>
 

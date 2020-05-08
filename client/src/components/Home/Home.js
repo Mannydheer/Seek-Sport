@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { PageWrapper } from '../Constants/Constants'
 import mainImage from '../../Images/SportHome.jpg'
 import { NavLink, useHistory } from 'react-router-dom';
-import Slider from "react-slick";
+
 
 
 
@@ -17,8 +17,8 @@ const Home = () => {
         infinite: false,
         dots: true,
         speed: 1000,
-        arrow: true,
-        slidesToShow: 4,
+        arrows: true,
+        slidesToShow: 2,
         slidesToScroll: 4
     };
 
@@ -50,16 +50,40 @@ const Home = () => {
                 </Rules>
             </InfoSection>
             {/* IMAGES */}
-            <Slider {...settings}>
+            <ImagesWrapper>
 
-                <Image src={'./Tennis.jpg'}></Image>
-                <Image src={'./Tennis.jpg'}></Image>
-                <Image src={'./Tennis.jpg'}></Image>
-                <Image src={'./Tennis.jpg'}></Image>
-                <Image src={'./Tennis.jpg'}></Image>
-                <Image src={'./Tennis.jpg'}></Image>
 
-            </Slider>
+                <div>
+                    <SportName>basketball</SportName>
+                    <Image src={'./basket.jpg'}></Image>
+                </div>
+                <div>
+                    <SportName>Tennis</SportName>
+                    <Image src={'./Tennis.jpg'}></Image>
+                </div>
+                <div>
+                    <SportName>Soccer</SportName>
+                    <Image src={'./soccer.jpg'}></Image>
+                </div>
+                <div>
+                    <SportName>Badminton</SportName>
+                    <Image src={'./badminton.jpg'}></Image>
+                </div>
+                <div>
+                    <SportName>Hockey</SportName>
+                    <Image src={'./Hockey.jpg'}></Image>
+                </div>
+                <div>
+                    <SportName>Volleyball</SportName>
+                    <Image src={'./volleyball.jpg'}></Image>
+                </div>
+                <div>
+                    <SportName>Baseball</SportName>
+                    <Image src={'./baseball.jpg'}></Image>
+                </div>
+
+
+            </ImagesWrapper>
 
 
 
@@ -68,7 +92,9 @@ const Home = () => {
             <PurposeWrapper>
                 <PurposeText>
                     <div>We help people stay active daily</div>
-                    <p>ageMaker including versions of including versi including versi including versi including versi including versi including versi including versi including versi including versi including versi including versi including versi including versi including versi including versi including versi Lorem Ipsum.</p>
+                    <p>
+
+                        Finding people who want to play the same sport, at the same time, in the same area is hard and that's the reason why most of us end up not playing sport at all. Seek&Sport helps you connect with people around you, with similar profiles, and start playing the sport of your choice. </p>
 
                 </PurposeText>
                 <Field src='/Field.jpg'></Field>
@@ -282,16 +308,20 @@ button {
 
 
 const PurposeText = styled.div`
-
 width: 20rem;
-
-
 div {
-    font-size: 3rem;
+    font-size: 2.5rem;
     text-transform: uppercase;
-    border-bottom: lightgray 2px solid;  
-   
+    border-bottom: lightgray 2px solid;    
 }
+@media screen and (max-width: 768px) {
+width: 80%;
+margin: 0 auto;
+div {
+    font-size: 2rem;   
+}
+             
+ }
 `
 
 const PurposeWrapper = styled.div`
@@ -299,23 +329,69 @@ display: flex;
 justify-content: space-evenly;
 margin-top: 3rem;
 
+
+@media screen and (max-width: 768px) {
+    display: block;
+   text-align: center;
+             
+ }
+ @media screen and (max-width: 420px) {
+               
+ }
+
+`
+const Field = styled.img`
+width: 35rem;
+border-radius: 25px;
+
+
+@media screen and (max-width: 768px) {
+    width: 25rem;
+             
+ }
 `
 
 
+// SLIDESHOW IMAGES.
 const ImagesWrapper = styled.div`
 
-height: 15rem;
-width: 100vw;
+height: 25rem;
+width: 100%;
+display: flex;
 background-image: linear-gradient(15deg, #13547a 0%, #80d0c7 100%);
+overflow-x: scroll;
+
+div {
+    color: white;
+    text-align: center;
+    margin-top: 3rem;
+    padding: 0 5rem;
+    
+}
+
+@media screen and (max-width: 420px) {
+     div {
+        padding: 0 2rem;
+}         
+
+ }
 `
 
 const Image = styled.img`
-width: 250px;
-height: 200px;
+width: 20rem;
+height: 15rem;
+position: relative;
+top: 15%;
+object-fit: cover;
+
+
+
+border: white solid 5px;
+border-radius: 25px;
 `
 
-const Field = styled.img`
-width: 30rem;
-height: 25rem;
-border-radius: 25px;
+const SportName = styled.h4`
+font-size: 1.5rem;
+text-transform: uppercase;
+
 `
