@@ -2,30 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import EventDetails from '../EventDetails';
-
 //components.
 import ParkDetails from '../ParkDetails'
-
-
-
 const ViewActivity = () => {
-
-
-
-    const dispatch = useDispatch();
     //stores all nearby parks in store.
     const allParks = useSelector(state => state.parkReducer)
-
-    //check why it is here?
     const [canceled, setCanceled] = useState(false)
-
-
     const [hostedEvent, setHostedEvents] = useState(null)
-
-
     //error
     const [error, setError] = useState(false)
-
     //on component mount.
     useEffect(() => {
         //onMount, get the events for the selectedPark.
@@ -61,15 +46,11 @@ const ViewActivity = () => {
             return
         }
     }, [canceled, setCanceled])
-
-    console.log(hostedEvent, 'HOSTED EVENTS')
-
     return (
         <>
             {!allParks.selectedPark !== null ? <PageContainer>
                 {allParks.selectedPark !== null &&
                     <StyledParkDetails><ParkDetails parkInfo={allParks.selectedPark} /></StyledParkDetails>
-
                 }
                 {/**/}
                 {hostedEvent !== null && allParks.selectedPark !== null &&
@@ -89,9 +70,7 @@ const ViewActivity = () => {
 export default ViewActivity;
 
 const Wrapper = styled.div`
-
 `
-
 const StyledParkDetails = styled.div`
 display: flex;
 justify-content: center; 

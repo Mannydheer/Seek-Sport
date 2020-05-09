@@ -6,21 +6,12 @@ import {
     requestHosts, retrieveHosts, retrieveHostsError,
     requestEvents, retrieveEvents, retrieveEventsError
 } from '../actions/parkActions';
-
-import { lastSelectedPark } from '../actions/userActions';
-
 import { useDispatch, useSelector } from 'react-redux';
 //components
 import ParkSidebar from '../ParkSidebar';
-
-
 import styled from 'styled-components';
-
-
-
 const Map = ({ coordinates, parkMenu, setParkMenu }) => {
     //pass down coordinates as props.
-
     const dispatch = useDispatch();
     //user reducer
     const userLoggedIn = useSelector(state => state.userReducer)
@@ -34,13 +25,8 @@ const Map = ({ coordinates, parkMenu, setParkMenu }) => {
     const [parkInfo, setParkInfo] = useState(null)
     //hosted parks that match with nearby parks.
     const [hostedParks, setHostedParks] = useState(null)
-
-
     // ----------------------------Will handle nearby search and get hosted parks from BE-------------------------
-    // const handleParks = () => {
-
     useEffect(() => {
-
         const handleNearestPlacesAndHosts = async () => {
             dispatch(requestParks())
             let response = await fetch('/nearbySearch', {
@@ -94,10 +80,6 @@ const Map = ({ coordinates, parkMenu, setParkMenu }) => {
         handleNearestPlacesAndHosts();
         // }
     }, [])
-
-
-
-
     //control slide in modal for when selecting a park.
     const handleParkSelect = (park) => {
         //load state with the park information clicked on.
@@ -105,7 +87,6 @@ const Map = ({ coordinates, parkMenu, setParkMenu }) => {
         //park menu will make modal appear. 
         setParkMenu(!parkMenu)
     }
-
     return (
         <>
             <Sidebar style={(parkMenu) ? { transform: "translateX(0px)" } : {
@@ -167,34 +148,11 @@ const Sidebar = styled.div`
 display: flex;
 flex-direction: column;
 flex-wrap: wrap;
-
    position: fixed; 
     left: 0; 
     width:400px;
     height: 70vh; 
     transition-duration: .7s;
     top: 30vh; 
-
     background-image: linear-gradient(15deg, #13547a 0%, #80d0c7 100%);
-    
     `
-
-// const ParkButton = styled.button`
-//     position: absolute;
-//     top: 30vh;
-//     right: 47vw;
-//     border-radius: 25px;
-//     padding: 5px;
-//     font-size:1.2rem;
-//     outline: none;
-//     transition: ease all 1s;
-
-
-//     &:hover {
-//         cursor: pointer;
-//         background-image: linear-gradient(-60deg, #16a085 0%, #f4d03f 100%);
-
-
-//     }
-
-//     `

@@ -53,6 +53,7 @@ width: 70px;
 height: 70px;
 position: absolute;
 border-radius: 50%;
+border: solid 3px white;
 top: 2%;
 right: 2%;
 

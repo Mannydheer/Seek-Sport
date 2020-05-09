@@ -6,6 +6,8 @@ import { requestRegisteredUserEvents, retrieveRegisteredUserEvents, retrieveRegi
 import ChatJoin from '../ChatJoin';
 import Rooms from '../Rooms';
 import styled from 'styled-components';
+import ClipLoader from "react-spinners/ClipLoader";
+
 
 const Chat = () => {
     //pseudocode.
@@ -15,27 +17,15 @@ const Chat = () => {
     //we will use this as the rooms for each chat.
     //so ... when clicking on the button, you will now be inside the chat...
     //redirect to chat messaging component..
-
     const userInfo = useSelector(state => state.userReducer);
     const userRegisteredEvents = useSelector(state => state.userRegisteredReducer)
     const actualChatParticipants = useSelector(state => state.chatReducer.actualParticipants)
     const chatInfo = useSelector(state => state.chatReducer)
-
-
-
-    // const [eventInfo, setEventInfo] = useState(null);
-
-
     //on mount of this chat component...
     //we will get all events that the current user is registered for.
-
     const dispatch = useDispatch();
-
     useEffect(() => {
-
         let userId = userInfo._id;
-
-
         const handleUserRegisteredEvents = async () => {
             dispatch(requestRegisteredUserEvents())
             try {
@@ -56,8 +46,6 @@ const Chat = () => {
         }
         handleUserRegisteredEvents()
     }, [])
-    //we have the user Id.
-
     const checkOnlineParticipant = (id) => {
         //first we find the room from the chat participants
         //use actualChatParticipants.room
@@ -80,6 +68,12 @@ const Chat = () => {
                     return <StyledInactive />
                 }
             }
+            else {
+                return <ClipLoader size={50} color={"white"} />
+            }
+        }
+        else {
+            return <ClipLoader size={50} color={"white"} />
         }
     }
 
@@ -99,15 +93,10 @@ const Chat = () => {
                         })
                     }
                 </RoomWrapper>
-
-
             }
         </Wrapper>
         <Wrapper >
-
-
             <h1 style={{ textAlign: 'center', color: 'white' }}>Participants</h1>
-
             {/* ------------------------------GETTING PARTICIPANTS CURRENTLY INSIDE CHAT ROOM.-------------------------- */}
             {actualChatParticipants && chatInfo.status === "retrieved" && <div>
                 {Object.values(actualChatParticipants).map(participant => {
@@ -115,50 +104,40 @@ const Chat = () => {
                         {checkOnlineParticipant(participant.userId)}
                         <Image src={`/${participant.profileImage}`} />
                         <Name>{participant.name}</Name>
-
                     </div>
                 })}
             </div>
             }
-
-
-
-
         </Wrapper>
     </BigWrapper>
 }
 
 export default Chat;
-
 const Wrapper = styled.div`
 padding: 0 2rem;
 background-color: rgba(0,0,0,0.4) !important;
 opacity: 0.9;
 margin-left: 1.1rem;
 width: 100%;
-
 a {
     text-decoration: none;
     color: black;
     border-radius: 10px;
 }
 border-radius: 25px;
-
 h1 {
     text-align: center;
     color: white;
     margin-bottom: 8px;
     border-bottom: 2px solid white;
 }
-
 @media screen and (max-width: 768px) {
     margin-bottom: 20px;
     width: 100%;
     overflow-y: scroll;
 scroll-behavior: smooth;
 height: 14rem;
-    
-            }
+}
 
 
 `
@@ -167,22 +146,13 @@ const BigWrapper = styled.div`
 display: flex;
 width: 100%;
 margin-top: 2rem;
-
-
-
 @media screen and (max-width: 420px) {
-    display: block;
-
+display: block;
 font-size: 8px;
-            }
+}
 `
-
 const RoomWrapper = styled.div`
- 
-
 `
-
-
 const Image = styled.img`
 width: 50px;
 height: 50px;

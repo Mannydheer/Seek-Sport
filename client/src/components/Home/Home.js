@@ -5,26 +5,8 @@ import mainImage from '../../Images/SportHome.jpg'
 import { NavLink, useHistory } from 'react-router-dom';
 
 
-
-
-
-
-
-
 const Home = () => {
-
-    var settings = {
-        infinite: false,
-        dots: true,
-        speed: 1000,
-        arrows: true,
-        slidesToShow: 2,
-        slidesToScroll: 4
-    };
-
     const history = useHistory();
-
-
     return (
         <Wrapper>
             {/* MAIN IMAGE. */}
@@ -38,7 +20,7 @@ const Home = () => {
             </StyledHomeImg>
 
             {/*TEXT */}
-            <h3>The fastest way to find pick up games in your area.</h3>
+            <h3>The fastest way to find games in your area.</h3>
             <InfoSection>
                 <BasketBall src='/Basketball.jpg'></BasketBall>
                 <Rules>
@@ -51,8 +33,6 @@ const Home = () => {
             </InfoSection>
             {/* IMAGES */}
             <ImagesWrapper>
-
-
                 <div>
                     <SportName>basketball</SportName>
                     <Image src={'./basket.jpg'}></Image>
@@ -81,116 +61,74 @@ const Home = () => {
                     <SportName>Baseball</SportName>
                     <Image src={'./baseball.jpg'}></Image>
                 </div>
-
-
             </ImagesWrapper>
-
-
-
-
             {/* PURPOSE */}
             <PurposeWrapper>
                 <PurposeText>
                     <div>We help people stay active daily</div>
-                    <p>
-
-                        Finding people who want to play the same sport, at the same time, in the same area is hard and that's the reason why most of us end up not playing sport at all. Seek&Sport helps you connect with people around you, with similar profiles, and start playing the sport of your choice. </p>
-
+                    <p>Finding people who want to play the same sport, at the same time, in the same area is hard and that's the reason why most of us end up not playing sport at all. Seek&Sport helps you connect with people around you, with similar profiles, and start playing the sport of your choice. </p>
                 </PurposeText>
                 <Field src='/Field.jpg'></Field>
             </PurposeWrapper>
-
         </Wrapper>
-
-
-
     )
-
 }
 
 export default Home;
-
 const BigTitle = styled.div`
- text-align: center;
-    font-size: 2rem;
-    
-
-    @media screen and (max-width: 768px) {
-        font-size: 1.5rem;
-                 
-    }
-
+text-align: center;
+font-size: 2rem;
+@media screen and (max-width: 768px) {
+font-size: 1.5rem;                 
+}
 `
-
 const Wrapper = styled.div`
-    width: 100vw;
-
+width: 100vw;
 h3 {
-    text-transform: uppercase;
-    text-align: center;
-    padding: 1rem;
-    border-bottom: lightgray 2px solid;  
-    /* margin: 0 auto;
-    width: 80%; */
+text-transform: uppercase;
+text-align: center;
+padding: 1rem;
+border-bottom: lightgray 2px solid;  
 }
 `
-
 const StyledHomeImg = styled.div`
-    width: 100vw;
-    height: 80vh;
-    
+width: 100vw;
+height: 80vh;    
 background-image: linear-gradient(15deg, #13547a 0%, #80d0c7 100%);
-    position: relative; 
-    bottom: 1rem;
-    background-position: right; 
-    color: white;
-    z-index: 100;
-
-    img {
-  width: 20rem;
-  height: 20rem;
-  position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -100%);
+position: relative; 
+bottom: 1rem;
+background-position: right; 
+color: white;
+z-index: 100;
+img {
+width: 20rem;
+height: 20rem;
+position: absolute;
+left: 50%;
+top: 50%;
+transform: translate(-50%, -100%);
 }
-
-
 div {
-    display: flex;
-    position: absolute;
-    left: 50%;
-    top: 40%;
-    transform: translate(-50%, 150%);
+display: flex;
+position: absolute;
+left: 50%;
+top: 40%;
+transform: translate(-50%, 150%);
 }
-
-
 a {
-    display: flex;
-    position: absolute;
-    left: 50%;
-    top:55%;
-    transform: translate(-50%, 150%);
-
+display: flex;
+position: absolute;
+left: 50%;
+top:55%;
+transform: translate(-50%, 150%);
 }
 @media screen and (max-width: 768px) {
 h1 {
     font-size: 2rem;
 }                   
-
- }
- @media screen and (max-width: 420px) {
-                   
- }
-
+}
 `
-
 const NavigationLink = styled(NavLink)`
-    /* text-decoration: none;
-    color: black;
-    font-weight: 600; 
-    transition-duration: 400ms; 
-    border-radius: 25px; */
   font-size: 1.1rem;
   background: none;
   border-radius: 10px;
@@ -200,14 +138,10 @@ const NavigationLink = styled(NavLink)`
   padding: 10px;
   margin: 5px;
   color: white;
-
   &:hover {
       opacity: 0.4;
       cursor: pointer;
-      
   }
-  
- 
 `
 
 // -----------------------------INFOSECTION----------------------
@@ -215,46 +149,36 @@ const InfoSection = styled.div`
 display: flex;
 justify-content: space-evenly;
 margin: 4rem;
-
-
 @media screen and (max-width: 768px) {
-    display: block;
-    text-align: center;
-
-    h1 {
-         font-size: 2rem,;
-
-     }              
- }
- @media screen and (max-width: 420px) {
-     h1 {
-         font-size: 1.5rem;
-     }                
+display: block;
+text-align: center;
+h1 {
+     font-size: 2rem,;
+}              
+}
+@media screen and (max-width: 420px) {
+h1 {
+    font-size: 1.5rem;
+}                
  }
 `
 const BasketBall = styled.img`
 width: 30rem;
 height: 25rem;
-
 @media screen and (max-width: 768px) {
     width: 25rem;
 height: 20rem;
 }         
- 
- @media screen and (max-width: 420px) {
-    width: 27rem;
-height: 22rem;
-              
- }
-
-
+@media screen and (max-width: 420px) {
+width: 27rem;
+height: 22rem;              
+}
 `
 const Rules = styled.div`
 h1 {
-    font-size: 3rem;
-    word-wrap: none;
+font-size: 3rem;
+word-wrap: none;
 }
-
 div {
     text-transform: uppercase;
     margin: 2rem;
@@ -277,50 +201,37 @@ button {
     }
 }
 @media screen and (max-width: 768px) {
-    display: block;
-
-    h1 {
-    font-size: 2.5rem;
+display: block;
+h1 {
+font-size: 2.5rem;
 }
-
 div {
-    text-transform: uppercase;
-    margin: 1.2rem;
-    font-size: 1.4rem;
+text-transform: uppercase;
+margin: 1.2rem;
+font-size: 1.4rem;
 }
-
-    button {
-    font-size: 1.5rem;
-    left: 0;
-
+button {
+font-size: 1.5rem;
+left: 0;
 }
-
-
  }
  @media screen and (max-width: 420px) {
-    display: block;
-
-    h1 {
-         font-size: 2rem;
-         text-align: center;
-         margin-top: 1.1rem;
-     }     
-     div {
-    margin: 1.2rem 0;
-    font-size: 1.2rem;
-    text-align: center;
+display: block;
+h1 {
+font-size: 2rem;
+text-align: center;
+margin-top: 1.1rem;
+}     
+div {
+margin: 1.2rem 0;
+font-size: 1.2rem;
+text-align: center;
 }         
 button {
-    font-size: 1.5rem;
-    left: 0;
-
-
-}
-                
+    font-size: 1.5rem;left: 0;
+}             
  }
 `
-
-
 const PurposeText = styled.div`
 width: 20rem;
 div {
@@ -342,15 +253,13 @@ const PurposeWrapper = styled.div`
 display: flex;
 justify-content: space-evenly;
 margin-top: 3rem;
-
-
 @media screen and (max-width: 768px) {
     display: block;
    text-align: center;
              
  }
  @media screen and (max-width: 420px) {
-               
+             
  }
 
 `

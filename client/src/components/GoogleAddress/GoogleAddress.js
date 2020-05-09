@@ -12,14 +12,7 @@ import { FaSearch } from 'react-icons/fa';
 const GoogleAddress = ({ setCoordinates, setParkMenu }) => {
 
     const [address, setAddress] = useState('')
-
-
-
-
-
-
     const handleSelect = async (value) => {
-
         //get longitude and latitude.
         Geocode.setApiKey("AIzaSyAt-D4AMalUpyQjUe3laQYyjjNgy_hcCOc");
         // set response language. Defaults to english.
@@ -61,7 +54,6 @@ const GoogleAddress = ({ setCoordinates, setParkMenu }) => {
                                     backgroundImage: suggestion.active ? "linear-gradient(15deg, #13547a 0%, #80d0c7 100%)" : '',
                                     color: suggestion.active ? 'white' : ''
                                 }
-
                                 return <StyledSuggestion {...getSuggestionItemProps(suggestion, { style })}> {suggestion.description}</StyledSuggestion>
                             })}
                         </StyledSearches>
@@ -69,11 +61,8 @@ const GoogleAddress = ({ setCoordinates, setParkMenu }) => {
             </PlacesAutocomplete>
         </Wrapper>
     )
-
 }
-
 export default GoogleAddress;
-
 const StyledInput = styled.input`
 width: 100%;
 height: 30px;
@@ -83,29 +72,18 @@ padding: 10px;
 outline: none;
 border-radius: 25px;
 position: relative;
-
-
-
 `
 const Wrapper = styled.div`
 display: flex;
 justify-content: center;
 `
-
 const StyledSearches = styled.div`
 width: 40vw;
 box-shadow: 0 10px 6px -6px #777;
-
 `
-
 const StyledSuggestion = styled.div`
 border-radius: 5px;
 `
-
-
 const StyledFaSearch = styled(FaSearch)`
-    position: absolute;
- 
-    
-    
+position: absolute;    
 `

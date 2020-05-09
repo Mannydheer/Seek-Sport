@@ -15,21 +15,12 @@ import Footer from '../Footer';
 import ChatJoin from '../ChatJoin';
 import Chat from '../Chat';
 import Chatbot from '../Chatbot';
-import ChatSystem from '../ChatSystem';
-import ChatModal from '../ChatModal';
 import styled from 'styled-components';
 
-
-
-
-
 function App() {
-
   const dispatch = useDispatch();
-
   const userLoggedIn = useSelector(state => state.userReducer)
   const hostsInfo = useSelector(state => state.hostReducer)
-
   //validate if a user token still available in browser.
   //keep user logged in.
   useEffect(() => {
@@ -57,17 +48,11 @@ function App() {
     handleTokenUser()
   }, [])
 
-
-
-
   return (
     <>
       <GlobalStyles></GlobalStyles>
-
       <Router>
         <Navbar></Navbar>
-
-
         <Switch>
           <Route exact path='/'>
             <Home></Home>
@@ -114,11 +99,6 @@ function App() {
               <h1 style={{ textAlign: 'center' }}>Must be logged in to view this page.</h1>}
           </Route>
         </Switch>
-        {/* {userLoggedIn.isAuthenticated ? <ChatModal></ChatModal> :
-          <h1 style={{ textAlign: 'center' }}>Must be logged in to view this page.</h1>} */}
-
-
-        {/* footer */}
         <FooterDiv>
           <Footer></Footer>
         </FooterDiv>
@@ -137,27 +117,10 @@ display : flex;
 align-content: center;
 background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
 padding: 2rem;
-
-/* width: 80%;
-height: 40rem;
-margin: 0 auto;
-margin-top: 4rem; */
-
 @media screen and (max-width: 768px) {
-        
 display: block;
-align-content: center;
-/* width: 80%;
-height: 40rem;
-margin-top: 4rem; */
-
-          
-    }
-
-
-
-
-`
+align-content: center;  
+}`
 
 const BigWrapper = styled.div`
 `

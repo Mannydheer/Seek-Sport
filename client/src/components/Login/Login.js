@@ -14,19 +14,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Dialog from '@material-ui/core/Dialog';
 import styled from "styled-components";
-
-
-//
 import { loginSuccess, loginError, loginRequest } from '../actions/userActions';
 import { useDispatch, useSelector } from 'react-redux';
-
-
-
-//
-
 //Reference Sebastian Silbermann - Materials UI OpenSource Code
-
-
 function Copyright() {
     return (
         <Typography variant="body2" color="textSecondary" align="center">
@@ -39,7 +29,6 @@ function Copyright() {
         </Typography>
     );
 }
-
 const useStyles = makeStyles((theme) => ({
     paper: {
         marginTop: theme.spacing(8),
@@ -61,35 +50,24 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SignIn() {
-
     const [open, setOpen] = useState(false);
     const [error, setError] = useState(null)
-
-    //
     const dispatch = useDispatch();
-
-    //user info and password. 
     const [userInfo, setUserInfo] = useState({
         user: '',
         pass: '',
     })
-
-
     const classes = useStyles();
-
-
+    //---------------FUNCTIONS--------------
     const handleClickOpen = () => {
         setOpen(true);
         setError(false)
     };
-
     const handleClose = () => {
         setOpen(false);
     };
-
     const handleDone = (e) => {
         e.preventDefault();
-
         const handleLogin = async () => {
             //action to request user data.
             dispatch(loginRequest())
@@ -121,27 +99,16 @@ export default function SignIn() {
                     dispatch(loginError())
                 }
             }
-
             catch (err) {
                 console.log(err)
             }
         }
-        //function call.
         handleLogin();
-
-
     }
-
-
-
     return (<>
-
         <List onClick={handleClickOpen}>
             Login
         </List>
-
-
-
         <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
@@ -213,13 +180,9 @@ export default function SignIn() {
                     <Copyright />
                 </Box>
             </Container>
-
-
         </Dialog>
-
     </>);
 }
-
 
 const List = styled.li`
   text-decoration: none;

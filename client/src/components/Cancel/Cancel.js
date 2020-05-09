@@ -7,18 +7,11 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { makeStyles } from '@material-ui/core/styles';
-
 import { skillLevel, sports } from '../data';
 import { useDispatch, useSelector } from 'react-redux';
-//snackbar
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
-
-
-
-import {
-    updateEvent
-} from '../actions/parkActions';
+import { updateEvent } from '../actions/parkActions';
 import Snackbars from '../SnackBar';
 
 
@@ -35,35 +28,22 @@ const useStyles = makeStyles({
         padding: '0 30px',
     },
 });
-
-
-
 export default function Cancel({ event, canceled, setCanceled }) {
 
     const [open, setOpen] = React.useState(false);
     const [openSnack, setOpenSnack] = useState(false);
     const [snackMsg, setSnackMsg] = useState('')
-
     const dispatch = useDispatch();
-
-
-    //style modal.
     const classes = useStyles();
-
-
-
     const userInfo = useSelector(state => state.userReducer)
     const handleClickOpen = () => {
         setOpen(true);
     };
-
     const handleClose = () => {
         setOpen(false);
     };
-
     const handleCancelEvent = async () => {
         //ensure user is authenticated.
-
         let token = localStorage.getItem('accesstoken')
         try {
             let response = await fetch("/cancelEvent", {

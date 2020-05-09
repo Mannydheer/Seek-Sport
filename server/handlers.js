@@ -312,10 +312,6 @@ const handleHosting = async (req, res, next) => {
     //if found, loop through their events at that park and check if there are any time clashes.
     //if time clashes send back message saying you have already booked at that time.
 
-
-
-
-
     const client = new MongoClient(uri, {
         useNewUrlParser: true,
         useUnifiedTopology: true,

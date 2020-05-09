@@ -2,9 +2,7 @@ import React, { useState } from 'react'
 import styled from 'styled-components';
 import RightNav from './RightNav';
 
-
 const Burger = () => {
-
     const [open, setOpen] = useState(false)
     return (<>
         <StyledBurger open={open} onClick={() => setOpen(!open)}>
@@ -14,12 +12,9 @@ const Burger = () => {
         </StyledBurger>
         <RightNav open={open}></RightNav>
     </>
-
     )
 }
-
 export default Burger;
-
 
 const StyledBurger = styled.div`
 @media (max-width: 768px) {
@@ -32,10 +27,6 @@ display: flex;
 justify-content: space-around;
 flex-flow: column nowrap;
 z-index: 110;
-
-
-
-
 div {
     width: 2rem;
     height: 0.25rem;

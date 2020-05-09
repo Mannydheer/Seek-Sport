@@ -14,19 +14,12 @@ import ParkDetails from '../ParkDetails';
 
 
 const ParkSidebar = ({ parkInfo, parkMenu, setParkMenu }) => {
-
-    console.log(parkInfo)
     let history = useHistory();
     const dispatch = useDispatch();
-
-
     const userLoggedIn = useSelector(state => state.userReducer)
     const hostsInfo = useSelector(state => state.hostReducer)
     const allEvents = useSelector(state => state.eventReducer)
-
-
-
-
+    //---------------FUNCTIONS--------------
     const handleHostView = () => {
         //store the select park into the redux store.
         dispatch(selectPark(parkInfo))
@@ -37,38 +30,24 @@ const ParkSidebar = ({ parkInfo, parkMenu, setParkMenu }) => {
         dispatch(selectPark(parkInfo))
         history.push('/viewActivity')
     }
-
     return (
         <>
-
             {parkMenu &&
                 <Wrapper>
                     {/* details about the park. */}
                     <ParkDetails parkInfo={parkInfo}></ParkDetails>
-
                     <BtnWrapper>
                         {<Buttons onClick={handleHostView}>Host Activity</Buttons>}
                         {/* You can only host when there is red marker. */}
                         {allEvents.events[parkInfo.id] && <Buttons onClick={handleViewActivity}>View Activity</Buttons>}
-
                     </BtnWrapper>
                     {parkMenu && <Btn onClick={() => setParkMenu(false)}><AiOutlineClose></AiOutlineClose></Btn>}
-
                 </Wrapper>}
-
-
-
-
-
         </>
-
     )
-
 }
 
-
 export default ParkSidebar;
-
 const Btn = styled.div`
 position: absolute;
 top: 0vh;

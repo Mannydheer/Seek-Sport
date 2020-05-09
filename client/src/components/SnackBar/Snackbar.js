@@ -36,7 +36,6 @@ export default function Snackbars({ snackMsg, openSnack, setOpenSnack }) {
                     {snackMsg}
                 </Alert>}
             </Snackbar>
-            {/* <Alert severity="success">This is a success message!</Alert> */}
         </div>
     );
 }

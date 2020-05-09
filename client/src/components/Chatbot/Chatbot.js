@@ -10,16 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 const Chatbot = () => {
 
     let history = useHistory();
-
     const userLoggedIn = useSelector(state => state.userReducer)
-
-
-
-
-
-
-
-
     const theme = {
         background: 'white',
         headerBgColor: '#0D2538',
@@ -28,15 +19,11 @@ const Chatbot = () => {
         botFontColor: 'white',
         userBubbleColor: 'white'
     }
-
-
-
     const config = {
         width: "300px",
         height: "400px",
         floating: true
     };
-
     const steps = [
         {
             //reffering to the step by Id
@@ -87,12 +74,7 @@ const Chatbot = () => {
             trigger: 'Options',
         }
     ]
-
-
-
-
     return <div>
-
         <ThemeProvider theme={theme}>
             <ChatBot
                 userAvatar={userLoggedIn.profileImage}
@@ -100,13 +82,10 @@ const Chatbot = () => {
                 botAvatar={"https://img.icons8.com/dusk/64/000000/bot.png"}
                 botDelay={1000}
                 floating={true}
-
                 steps={steps} {...config}
             />
         </ThemeProvider>
     </div>
-
-
 }
 
 export default Chatbot;

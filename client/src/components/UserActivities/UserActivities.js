@@ -15,11 +15,6 @@ const UserActivities = () => {
     const [canceled, setCanceled] = useState(false)
     const [message, setMessage] = useState(null)
 
-
-
-
-
-
     useEffect(() => {
         //on mount will get all the events that the current user has signed up for.
         const handleUserActivities = async () => {
@@ -36,8 +31,6 @@ const UserActivities = () => {
                 let eventResponse = await response.json();
 
                 if (eventResponse.status === 200) {
-
-                    //
                     console.log(eventResponse, 'THIS IS EEVENT RESPONSE')
                     setAllEvents(eventResponse.events)
                     // setMessage(eventResponse.message)
@@ -52,17 +45,11 @@ const UserActivities = () => {
         }
         handleUserActivities()
     }, [canceled])
-
-    console.log(canceled, 'CANCELED INSIDE USERACTIVITIES')
-
     return <Wrapper>
         <Title>Participating Events.
             <TitleText>See details for the events you have joined.</TitleText>
         </Title>
         {message !== null && <ErrorMessage>{message}</ErrorMessage>}
-
-
-
         {allEvents !== null &&
             allEvents.map((event, index) => {
                 return <EventDetails index={index} canceled={canceled} setCanceled={setCanceled} event={event}></EventDetails>

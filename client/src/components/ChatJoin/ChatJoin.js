@@ -15,46 +15,19 @@ import ReactEmoji from 'react-emoji';
 
 
 
-
-
-
-
 let socket;
 let ENDPOINT = 'localhost:4000';
 
 
 const ChatJoin = () => {
+    //initialize SOCKET ENDPOINT.
     socket = io(ENDPOINT);
-    //
-    //now we have the eventId of which we want to join the chat
-    //we have access to the participant ID which will be the room.
     let eventId = useParams().eventId;
     let groupName = useParams().groupName;
-
     const scrollRef = useRef(null);
-
-
     const dispatch = useDispatch();
-
-
-    //GET ROOM HISTORY FUNCTION.
-    const getRoomHistory = () => {
-
-        socket.on('room-message-history', (messageHistoryForRoom) => {
-            dispatch(requestChats())
-            if (messageHistoryForRoom) {
-                dispatch(retrieveChats(messageHistoryForRoom))
-            }
-            else {
-                dispatch(retrieveChatsError())
-            }
-        })
-
-    }
-
     const dateConverter = (timeData) => {
         let d = new Date(timeData);
-
         let todayDate = new Date().toLocaleDateString().split('/')[1]
         let messageDate = d.toLocaleDateString().split('/')[1]
         let removeSecondsTime = d.toLocaleTimeString().split(':')
@@ -82,20 +55,10 @@ const ChatJoin = () => {
     const [leaveRoomMessage, setLeaveRoomMessage] = useState(null)
     const [allMessages, setAllMessages] = useState(null);
     // const [chatMembers, setChatMembers] = useState(null)
-
-
-
     //---------------------USE-EFFECTS.------------------
-
-
-
     //--------------FETCH ALL PARTICIPANTS OF THAT ROOM...---------------
-
     useEffect(() => {
-
         if (eventId) {
-
-
             const handleGetChatRoom = async () => {
                 let token = localStorage.getItem('accesstoken')
                 try {
@@ -110,12 +73,10 @@ const ChatJoin = () => {
                     if (response.status === 200) {
                         let participantResponse = await response.json();
                         let userObject = {}
-
                         participantResponse.eventParticipants.forEach(user => {
                             userObject[user.userId] = user;
                         })
                         //also keep track of which room the participants are from.
-                        // setChatMembers(userObject)
                         dispatch(actualChatParticipants(userObject))
                         dispatch(selectedRoom(`${eventId}-Room-1`))
                     }
@@ -127,20 +88,10 @@ const ChatJoin = () => {
             handleGetChatRoom();
         }
     }, [eventId])
-
-
-
-
     //--------------JOIN A ROOM...---------------
     //first time someone join... they will not be an existing user...
     //so the BE and FE both get updated with the participant and room data.
-    //
-
-
     useEffect(() => {
-
-        console.log(eventId, '************************')
-
         if (eventId) {
             socket.emit('join', { name: userInfo.user, userId: userId, room: `${eventId}-Room-1` }, (messageInfo) => {
                 console.log('component MOUNT', messageInfo)
@@ -179,22 +130,6 @@ const ChatJoin = () => {
             }
         }
     }, [eventId, ENDPOINT])
-
-    //--------------GET ALL ROOM MESSAGE HISTORY.---------------
-
-    // useEffect(() => {
-    //     socket.on('room-message-history', (messageHistoryForRoom) => {
-    //         dispatch(requestChats())
-    //         if (messageHistoryForRoom) {
-    //             dispatch(retrieveChats(messageHistoryForRoom))
-    //         }
-    //         else {
-    //             dispatch(retrieveChatsError())
-    //         }
-    //     })
-    // }, [eventId, userChats])
-
-
     //--------------SOCKET WILL LISTEN FOR CHAT-MESSAGE---------------
     useEffect(() => {
         socket.on('chat-message', (message) => {
@@ -202,7 +137,6 @@ const ChatJoin = () => {
             dispatch(addMessage(message))
         })
     }, [])
-
     //--------------JOIN OR LEAVE GROUP MESSAGE!---------------
     useEffect(() => {
         socket.on('users-join-leave', (message) => {
@@ -211,7 +145,6 @@ const ChatJoin = () => {
             dispatch(addChatParticipants(message))
         })
     }, [message])
-
     //--------------GET ALL MESSAGES FOR THE ROOM.---------------
     useEffect(() => {
         if (userChats.status === 'retrieved' && eventId !== null) {
@@ -220,22 +153,15 @@ const ChatJoin = () => {
                     setAllMessages(eachRoom.messages)
                 }
             })
-            // if (!currentRoom.messages) {
-            //     setAllMessages(currentRoom.messages)
-            // }
         }
     }, [userChats, allMessages])
-
-
     //--------------ENTER KEYPRESS AND SEDN MESSAGE..---------------
     useEffect(() => {
         window.addEventListener("keydown", handleKeypress)
         //need to remove event listnner.
         return () => window.removeEventListener("keydown", handleKeypress);
     }, [message])
-
     //---------------------FUNCTIONS------------------
-
     const handleKeypress = (e) => {
         if (e.keyCode === 13) {
             handleSubmit(e)
@@ -262,10 +188,7 @@ const ChatJoin = () => {
 
         }
     }
-
-
-
-
+    //--------------SCROLL TO BOTTOM---------------
     useEffect(() => {
         if (allMessages && userChats.actualParticipants) {
             //block end...
@@ -273,10 +196,15 @@ const ChatJoin = () => {
             scrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
         }
     });
+
     return <MainWrapper>
-        {groupName ? <GroupName>{groupName}</GroupName> :
-            <GroupName>Chat Room</GroupName>
-        }
+
+        <GroupNameWrapper>
+            {groupName ? <GroupName>{groupName}
+            </GroupName> :
+                <GroupName>Chat Room</GroupName>
+            }
+        </GroupNameWrapper>
         <ChatWrapper >
             {/* ALL MESSAGES FROM THE FRONT END. */}
             {
@@ -310,54 +238,40 @@ const ChatJoin = () => {
 
                     })}
                     <div ref={scrollRef}></div>
-
-
                 </ChatBox>
             }
-
         </ChatWrapper>
         <StyledForm>
             <Send>
                 <textarea
-
                     cols="33"
                     value={message}
-
                     placeholder="Type your message..." type="text" onChange={(e) => setMessage(e.target.value)}>
-
                 </textarea>
                 <StyledSendButton onClick={handleSubmit}></StyledSendButton>
-
             </Send>
             <Link to={`/chat?name=${name}`}></Link>
         </StyledForm>
-
     </MainWrapper>
 }
-
 export default ChatJoin;
-
 const SenderText = styled.div`
 display: flex;
 justify-content: flex-end;
 margin: 0 1.1rem;
-/* text-align: right; */
 `
 const TimeWrapper = styled.div`
 margin: 8px 1.1rem;
 color: white;
 text-align: right;
 font-size: 0.8rem;
-/* text-align: right; */
 `
 const ReceiveTimeWrapper = styled.div`
 margin: 8px 1.1rem;
 color: white;
 text-align: left;
 font-size: 0.8rem;
-/* text-align: right; */
 `
-
 const Image = styled.img`
 width: 50px;
 height: 50px;
@@ -375,20 +289,16 @@ const ReceiverMessage = styled.div`
 background-color: rgb(130,204,221);
 border-radius: 25px;
 padding: 7px;
-
 `
 const SenderMessage = styled.div`
 background-color: rgb(120,224,143);
 border-radius: 25px;
 padding: 10px;
 `
-
 const StyledForm = styled.form`
-
 width: 100%;
 position: relative;
 bottom: 0;
-
 textarea {
     width: 100%;
     height: 5rem;
@@ -401,10 +311,7 @@ textarea {
     padding-bottom: 5px;
     color: white;
     font-family: 'Comfortaa', cursive;
-
-
 }
-
 `
 const StyledSendButton = styled(IoMdSend)`
 background-image: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);
@@ -417,23 +324,18 @@ cursor: pointer;
 color: white;
 position: absolute;
 right: 0;
-
 `
-
 const Send = styled.div`
 display: flex;
 `
 const ChatBox = styled.div`
 width: 100%;
-height: 25rem;
 `
 const ChatWrapper = styled.div`
 position: relative;
-/* background-color: rgb(82,97,144); */
 background-color: rgba(0,0,0,0.4) !important;
-
 width: 100%;
-height: 40rem;
+height: 33.5rem;
 overflow-y: scroll;
 scroll-behavior: smooth;
 @media screen and (max-width: 768px) {
@@ -445,24 +347,23 @@ width: 100%;
 height: 10rem                    
  }
 `
-
 const MainWrapper = styled.div`
 width: 100%;
 opacity: 0.9;
 margin-left: 1.1rem;
 margin-top: 2rem;
 margin-right: 1.1rem;
-
 `
-
-//APP component has the h1
 const GroupName = styled.h1`
+border-bottom: solid 2px white;
+width: 95%;
+margin: 0 auto;
+`
+const GroupNameWrapper = styled.div`
 text-align: center;
 height: 7%;
 background-color: rgba(0,0,0,0.4) !important;
 border-radius: 25px 25px 0 0;
 color: white;
-border-bottom: 1px solid white;
-
-
+width: 100%;
 `

@@ -7,9 +7,6 @@ import { withStyles, makeStyles } from '@material-ui/core/styles';
 
 
 const Rooms = ({ event, index }) => {
-
-
-
     const HtmlTooltip = withStyles(theme => ({
         tooltip: {
             backgroundColor: 'white',
@@ -22,9 +19,7 @@ const Rooms = ({ event, index }) => {
 
         },
     }))(Tooltip);
-
     return (<Wrapper>
-
         <HtmlTooltip
             title={
                 <React.Fragment>
@@ -38,16 +33,8 @@ const Rooms = ({ event, index }) => {
         >
             <Button>{event.groupName}</Button>
         </HtmlTooltip>
-
-
-
-
-
     </Wrapper>)
-
 }
-
-
 export default Rooms;
 
 const Wrapper = styled.div`
@@ -74,7 +61,6 @@ button {
 button {
     font-size: 0.7rem;
 }
-    
             }
 `
 

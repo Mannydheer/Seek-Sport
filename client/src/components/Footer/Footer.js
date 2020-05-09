@@ -28,35 +28,25 @@ const Footer = () => {
 
         </ul>
     </FooterWrapper>
-
-
-
 }
-
 export default Footer;
-
 const Suscribe = styled.div`
 `
 const Email = styled.div`
 display: flex;
-
 `
-
 const FooterWrapper = styled.footer`
-
 display: flex;
 justify-content: space-evenly;
 margin-top: 5rem;
 height: 20rem;
 width: 100%;
 background-image: linear-gradient(to right, #434343 0%, black 100%);color: white;
-
 ul {
     margin-top: 4rem;
     list-style: none;
      li {
          padding: 10px;
-
          input {
             background-color: #AAAAAA;
             border-radius: 5px;
@@ -74,11 +64,8 @@ ul {
          }
      }
 }
-
 @media screen and (max-width: 768px) {
 font-size: 0.8rem;  
 padding-left: 5rem;
-
 }
-
 `

@@ -7,22 +7,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { makeStyles } from '@material-ui/core/styles';
-
-import { skillLevel, sports } from '../data';
 import { useDispatch, useSelector } from 'react-redux';
-//snackbar
-import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
-
-
-
-import {
-    updateEvent
-} from '../actions/parkActions';
 import Snackbars from '../SnackBar';
-
-
-//styled.
 
 const useStyles = makeStyles({
     root: {
@@ -36,33 +22,21 @@ const useStyles = makeStyles({
         padding: '0 30px',
     },
 });
-
-
-
 export default function Leave({ setRefetchParticipants, setJoined, joined, event }) {
-
     const [open, setOpen] = React.useState(false);
     const [openSnack, setOpenSnack] = useState(false);
     const [snackMsg, setSnackMsg] = useState('')
-
     const dispatch = useDispatch();
-
-
-    //style modal.
+    //modal styles.
     const classes = useStyles();
-
-
-
     const userInfo = useSelector(state => state.userReducer)
-
+    //---------------FUNCTIONS--------------
     const handleClickOpen = () => {
         setOpen(true);
     };
-
     const handleClose = () => {
         setOpen(false);
     };
-
     const handleLeaveEvent = async () => {
         if (userInfo.isAuthenticated) {
             const participantDetails = {

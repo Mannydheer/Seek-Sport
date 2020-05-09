@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react'
-import { PageWrapper } from '../Constants/Constants'
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectPark, requestHosts, retrieveHosts, retrieveHostsError } from '../actions/parkActions';
+import { useSelector } from 'react-redux';
 import ParkDetails from '../ParkDetails';
 import DatePicker from "react-datepicker";
 import { skillLevel, sports } from '../data';
@@ -11,26 +9,8 @@ import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
-import FormControl from '@material-ui/core/FormControl';
-
-//themeprovider to style react-datepicker/
-import { ThemeProvider } from "styled-components";
-
-
-
-
-
-
-
-
-
-
 import EventDetails from '../EventDetails';
-//geometry
-
-
 import "react-datepicker/dist/react-datepicker.css";
-
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -45,7 +25,6 @@ const useStyles = makeStyles(theme => ({
         padding: '0 10px',
     },
     formControl: {
-
         display: 'flex',
         borderTop: 'black solid 0.5px',
         paddingTop: '3rem',
@@ -53,18 +32,9 @@ const useStyles = makeStyles(theme => ({
         width: '80%',
         fontFamily: 'Comfortaa, cursive',
         flexFlow: 'wrap'
-
-
-
-
-
-
-
     }
 }));
-
 const validateDateBooking = (startDate) => {
-
     //Todays day and month.
     let currentDate = new Date().toLocaleDateString().split('/');
     let currentMonth = currentDate[0]
@@ -88,10 +58,6 @@ const validateDateBooking = (startDate) => {
         let selectedTime = new Date(startDate).getHours() * 60 + new Date(startDate).getMinutes();
         let morningLimit = 7.5 * 60;
         let nightLimit = 22 * 60;
-
-        console.log(morningLimit)
-        console.log(nightLimit)
-
         //if the total minutes selected is greater or equal to the current minutes...
         //these means that we are either at the same time or past the time...
         //ALSO - we need to make sure the time is between 7:30AM-10PM;
@@ -108,56 +74,28 @@ const validateDateBooking = (startDate) => {
     }
     //if its past the date.
     else return false
-
 }
-
-
-
-
 //-----------------------------------COMPONENT---------------------------------
 const Host = () => {
-
     //for modal class.
     const classes = useStyles();
     const userLoggedIn = useSelector(state => state.userReducer);
     //use this for real.
     const selectedPark = useSelector(state => state.parkReducer.selectedPark);
-
-
-    //
     const [sportSelect, setSportSelect] = useState("Choose sport");
     const [skillSelect, setSkillSelect] = useState("Choose skill level");
     const [duration, setDuration] = useState("Choose duration");
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState(false);
-
     const [startDate, setStartDate] = useState(new Date())
     const [canceled, setCanceled] = useState(false)
     const [groupName, setGroupName] = useState(null)
-
-
     const [conflictEvent, setConflictEvent] = useState(null);
-
     const handleHostInformation = async (event) => {
-        //add selected park.
         event.preventDefault();
-        //reset
         setConflictEvent(null)
         setSuccess(false)
-
-
         //---------------------TIME ----------------------------
-
-
-
-        let startTime = Math.round(((startDate.getTime() / 1000) / 60))
-        let currentTime = Math.round(((new Date().getTime() / 1000) / 60))
-
-        //if selected date < todays day - throw err
-        //2nd if selected date ==== todays date => make sure time in minutes
-        //3rd if selected date > today date then any time is valid.
-        //ONLY IF ALLOW FETCH IS TRUE.
-
         if (sportSelect !== "Choose sport" &&
             skillSelect !== "Choose skill level" &&
             duration !== "Choose duration" && groupName !== null &&
@@ -167,17 +105,11 @@ const Host = () => {
             //if a valid date is chosen.
             console.log(validDate)
             if (validDate) {
-
-                //next check if its the same day...
                 let hostingInformation = {
                     name: userLoggedIn.user,
                     userId: userLoggedIn._id,
                     profileImage: userLoggedIn.profileImage,
-                    // skillSelected: skillSelect,
-                    // sportSelect: sportSelect,
                 }
-
-
                 let eventInformation = {
                     name: userLoggedIn.user,
                     //whoever is currently logged in.
@@ -188,7 +120,6 @@ const Host = () => {
                     parkId: selectedPark.id,
                     parkName: selectedPark.name,
                     groupName: groupName,
-
                     placeId: selectedPark.place_id,
                     Registration: new Date(),
                     isBooked: true,
@@ -197,10 +128,7 @@ const Host = () => {
                     time: startDate,
                     duration: parseInt(duration)
                 }
-
-                //if token is undefined. will be handled in the back?
                 let token = localStorage.getItem('accesstoken')
-                //
                 try {
                     let response = await fetch("/hostingInformation", {
                         method: "POST",
@@ -240,19 +168,16 @@ const Host = () => {
                 catch (err) {
                     console.log(err, "catch error inside handleHosting in Host component.")
                 }
-
             }
             else {
                 setError('Make sure you pick a valid day and time!')
             }
         }
         //if any of the cases fail. 
-
         else {
             setError('Make sure all fields have been selected and that a valid time was selected.')
         }
     }
-
     const handleChange = (date) => {
         console.log(date)
         setSuccess(false)
@@ -260,26 +185,12 @@ const Host = () => {
         setConflictEvent(null)
         setError(false)
     };
-
-
     useEffect(() => {
-
-        console.log('inside use efffect')
         setError(false)
         setConflictEvent(null)
         setCanceled(false)
     }, [canceled])
-    //as cleanup for states?
-
-
-
-
-    console.log(groupName, 'GROUPNAME')
-
-
-
     return (
-
         <PageContainer>
             <Details>
                 {selectedPark !== null ? <ParkDetails parkInfo={selectedPark} ></ParkDetails>
@@ -300,8 +211,6 @@ const Host = () => {
                                 <EachMenuItem value={sport} key={sport}>{sport}</EachMenuItem>
                             )
                         })}
-
-
                     </SelectTag>
                 </SelectDiv>
                 <SelectDiv>
@@ -340,10 +249,8 @@ const Host = () => {
                 {/* DATES */}
                 <StyledDate>
                     <InputLabel shrink id="date">Game day?</InputLabel>
-
                     <DatePicker
                         id="date"
-
                         todayButton="Today"
                         selected={startDate}
                         onChange={handleChange}
@@ -357,13 +264,7 @@ const Host = () => {
                         dateFormat="MMMM d, yyyy h:mm aa"
                     />
                 </StyledDate>
-
-
-
                 <Button type='submit' variant="outlined" className={classes.root}>Submit</Button>
-
-
-
             </FormWrapper>
             <StyledMessage>
                 {success !== false && <StyledSuccess>{success}</StyledSuccess>}
@@ -374,16 +275,9 @@ const Host = () => {
                         {!canceled && <EventDetails canceled={canceled} setCanceled={setCanceled} event={conflictEvent} />}
                     </EventDetailsWrapper>}
             </StyledMessage>
-
-
-
-
-
         </PageContainer>
     )
-
 }
-
 export default Host;
 
 const StyledSuccess = styled.div`
@@ -398,12 +292,8 @@ padding: 0.5rem;
 justify-content: center;
 color: #ff0000;
 border: solid 1px #ff0000;
-
-
-
 @media (max-width: 768px) { 
-    font-size: 1rem;
-     
+font-size: 1rem;
         }
 `
 const ChangeBooking = styled.div`
@@ -415,14 +305,12 @@ margin-bottom: 1rem;
 
 const PageContainer = styled.div`
 box-shadow: 0 10px 10px -5px;
-    width: 80%; 
-    margin-left: auto; 
-    margin-right: auto; 
-    position: relative; 
-    height: 80rem;   
-    padding-bottom: 2rem;
-
-
+width: 80%; 
+margin-left: auto; 
+margin-right: auto; 
+position: relative; 
+height: 80rem;   
+padding-bottom: 2rem;
     textarea {
         resize: none;
         outline: none;
@@ -437,48 +325,35 @@ const Details = styled.div`
     width: 90%; 
     margin-left: auto; 
     margin-right: auto; 
-
     div {
         text-align: center;   
         font-size: 2rem;
     }
-
 `
-
 const StyledDate = styled.div`
-
 input {
     height: 2rem;
     outline: none;
-   
 }
 label {
     font-family: 'Comfortaa', cursive !important;
-   
-
 }
 `
 const SelectDiv = styled.div`
 height: 5rem;
-
 input {
     height: 2rem;
     outline: none;
-   
 }
-
 label {
     font-family: 'Comfortaa', cursive !important;
 }
-
 `
 const StyledMessage = styled.div`
    width: 90%; 
     margin-left: auto; 
     margin-right: auto; 
-
 `
-
 const EachMenuItem = styled(MenuItem)`
      font-family: 'Comfortaa', cursive !important;
 `
@@ -486,32 +361,19 @@ const SelectTag = styled(Select)`
      font-family: 'Comfortaa', cursive !important;
      width: 10rem;
 `
-
-
 const FormWrapper = styled.form`
-
 display: flex;
-          flex-flow:nowrap column;
-          justify-content: center;
-
-
-
-
-@media (max-width: 768px) {            
-        }
-
+flex-flow:nowrap column;
+justify-content: center;
 `
 
 const EventDetailsWrapper = styled.div`
 height: 2rem;
 font-size: 0.5rem;
-
 h1 {
     font-size: 1rem;
 }
-
 h2 {
     font-size: 1.1rem;
-
 }
 `

@@ -3,10 +3,7 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 // import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
@@ -14,25 +11,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Dialog from '@material-ui/core/Dialog';
 import styled from "styled-components";
-import { NavLink } from 'react-router-dom';
-
-
-//
 import ImageUploader from 'react-images-upload';
-
-
 import { useDispatch, useSelector } from 'react-redux';
-
 import { loginRequest, loginSuccess, loginError } from '../actions/userActions';
 
-
-
-
-//
-
 //Reference Sebastian Silbermann - Materials UI OpenSource Code
-
-
 function Copyright() {
     return (
         <Typography variant="body2" color="textSecondary" align="center">
@@ -72,28 +55,15 @@ export default function SignUp() {
     const [open, setOpen] = useState(false);
     const [error, setError] = useState(false)
     const formRef = useRef(null);
-
-    // console.log(formRef.current, 'this is form ref current')
-    // console.log(formRef, 'this is form ref')
-
-
-    //for image uploader
-
     const dispatch = useDispatch();
-
 
     const [userInfo, setUserInfo] = useState({
         user: '',
         pass: '',
     })
     const [file, setFile] = useState(null)
-
-
-
-
     const classes = useStyles();
-
-
+    //---------------FUNCTIONS--------------
     const handleClickOpen = () => {
         setOpen(true);
         setError(false)
@@ -106,7 +76,6 @@ export default function SignUp() {
 
     const handleDone = (e) => {
         e.preventDefault();
-
         const files = new FormData();
         files.append('file', file)
         files.append('name', userInfo.user)

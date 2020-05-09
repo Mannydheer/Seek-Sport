@@ -12,18 +12,15 @@ import { css } from "@emotion/core";
 const UserHostedEvents = () => {
 
     const userInfo = useSelector(state => state.userReducer)
-
     const [events, setEvents] = useState(null)
     const [participants, setParticipants] = useState(null)
     const [error, setError] = useState(false)
     const [canceled, setCanceled] = useState(false)
-
+    //STYLING FOR CLIPLOADER
     const override = css`
     display: block;
      margin: 0 auto;
    `;
-
-
     useEffect(() => {
 
         const handleUserEvents = async () => {
@@ -65,8 +62,6 @@ const UserHostedEvents = () => {
             <Title>Hosted Events.
             <TitleText>See details for all the events you are hosting.</TitleText>
             </Title>
-
-
             {events !== null ? participants !== null && events.map((event, index) => {
                 return (
                     <EventDetails index={index} canceled={canceled} setCanceled={setCanceled} event={event} />

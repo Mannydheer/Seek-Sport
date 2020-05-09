@@ -1,30 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Join from '../Join';
 import Leave from '../Leave';
 import Cancel from '../Cancel';
 import { useLocation } from 'react-router-dom';
-
-//
-import Snackbars from '../SnackBar';
-
-
-
 const EventDetails = ({ index, event, canceled, setCanceled }) => {
-
     const userInfo = useSelector(state => state.userReducer)
     const parkInfo = useSelector(state => state.parkReducer)
-
     //set state for the participants of that current event.
     const [currentEventParticipants, setCurrentEventParticipants] = useState(null)
     let location = useLocation().pathname;
     const [joined, setJoined] = useState(false)
 
-
-
     useEffect(() => {
-
         const handleCurrentEventParticipants = async () => {
             let token = localStorage.getItem('accesstoken')
             try {
@@ -51,11 +40,7 @@ const EventDetails = ({ index, event, canceled, setCanceled }) => {
             }
         }
         handleCurrentEventParticipants();
-
     }, [joined])
-
-
-
 
     //function called from render to show all images.
     const getParticipantImages = (currentEventParticipants) => {
@@ -67,21 +52,16 @@ const EventDetails = ({ index, event, canceled, setCanceled }) => {
 
         })
     }
-
     return (
         <Wrapper key={event._id}>
             {typeof index === "number" && <Number>0{index + 1}.</Number>}
-
             <MainText >
-
                 <h1>Host: {event.name}</h1>
-                {/* <StyledImage src={}></StyledImage> */}
                 <h2>Sport: {event.sport}</h2>
                 <h2>Skill: {event.skill}</h2>
                 <h2>Time: {event.readTime}</h2>
                 <h2>Date: {event.bookedDate}</h2>
                 <h2>Duration: {event.duration} hr</h2>
-
                 {parkInfo.parks !== null &&
                     parkInfo.parks.map(park => {
                         if (park.id === event.parkId) {
@@ -90,21 +70,14 @@ const EventDetails = ({ index, event, canceled, setCanceled }) => {
                                 <h2>Park name: {park.name}</h2>
                             </div>
                         }
-
                     })
                 }
-
-
             </MainText>
-
             {location !== '/userEvents' ? <JoinLeave>
                 {userInfo._id !== event.userId && <Join setJoined={setJoined} joined={joined} event={event} />}
                 {userInfo._id !== event.userId && <Leave setJoined={setJoined} joined={joined} event={event} />}
                 {userInfo._id === event.userId && <Cancel canceled={canceled} setCanceled={setCanceled} event={event} />}
             </JoinLeave> : userInfo._id === event.userId && <JoinLeave><Cancel canceled={canceled} setCanceled={setCanceled} event={event} /></JoinLeave>}
-
-
-
             {/* IMAGES. */}
             <ParticipantText>
                 <Participants>Participants</Participants>
@@ -112,11 +85,9 @@ const EventDetails = ({ index, event, canceled, setCanceled }) => {
                     {getParticipantImages(currentEventParticipants)}
                 </Images>}
             </ParticipantText>
-
         </Wrapper >
     )
 }
-
 
 export default EventDetails;
 const Wrapper = styled.div`
@@ -126,15 +97,11 @@ margin: 0 auto;
 border-bottom: 2px solid black;
 font-size: 14px;
 margin-top: 0.5rem;
-
 @media screen and (max-width: 768px) {
 display: block;
 text-align: center;
 width: 100%;
-            }
-
-
-
+}
 `
 const JoinLeave = styled.div`
 display: flex;
@@ -142,37 +109,27 @@ flex-direction: column;
 justify-content: center;
 align-content: center;
 margin-right: 2rem;
-
-
 `
 const StyledImage = styled.img`
 width: 150px;
 height: 150px;
 border-radius: 50%;
 margin-top: 20px;
-
-
 @media screen and (max-width: 420px) {
-    width: 100px;
+width: 100px;
 height: 100px;
-
-            }
+}
 `
-
 const Images = styled.div`
 display: flex;
 justify-content: space-evenly;
 flex-flow: row wrap;
 @media screen and (max-width: 420px) {
 display: block;
-
-            }
-
+}
 `
-
 const ParticipantText = styled.div`
 width: 100%;
-
 `
 
 const MainText = styled.div`
@@ -185,62 +142,25 @@ h1 {
     width: 300px;
     line-height: 2;
 }
-
 @media screen and (max-width: 768px) {
-h1, h2 {
-    width: 100%;
+h1, h2 {width: 100%;}
 }
-            }
 `
-
 const Participants = styled.div`
- font-weight: 900;
-    line-height: 2;
-    text-align: center;
-    border-radius: 25px;
-    padding: 5px;
-    border: solid 1px black;
-
-
-    
-    
+font-weight: 900;
+line-height: 2;
+text-align: center;
+border-radius: 25px;
+padding: 5px;
+border: solid 1px black;    
 `
-
 const Number = styled.div`
 font-weight: 600;
 font-size: 4rem;
 margin-right: 2rem;
 color: #FF4136;
 opacity: 0.7;
-
 @media screen and (max-width: 420px) {
-    font-size: 3rem;
-
-
-            }
-
+font-size: 3rem;
+}
 `
-
-
-    // useEffect(() => {
-    //     get the host picture.
-    //     since this compoenent renders for each event indiivdually. 
-    //     we search for the participantId that matches the participant id in the event.
-    //     let matchedParticipantsForEvent = participants.find(participant => {
-    //         if (participant._id === event.participantId) {
-    //             return participant
-    //         }
-    //     });
-    //     if (matchedParticipantsForEvent !== undefined) {
-
-    //         setCurrentEventParticipants(matchedParticipantsForEvent.participants)
-    //         //see if the current user matched with any of the participants.
-    //         matchedParticipantsForEvent.participants.find(participant => {
-    //             if (participant.userId === userInfo._id) {
-    //                 setJoined(true)
-    //             }
-
-    //         })
-    //     }
-    //     on change of event.
-    // }, [participants])

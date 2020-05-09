@@ -16,10 +16,7 @@ import styled from 'styled-components';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
-
-
 import { makeStyles } from '@material-ui/core/styles';
-
 //styled.
 const useStyles = makeStyles({
     root: {
@@ -29,32 +26,22 @@ const useStyles = makeStyles({
         boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
         color: 'white',
         height: 32,
-
         padding: '0 30px',
     },
 });
-
-
-
 export default function Join({ setJoined, joined, event }) {
-
     const [open, setOpen] = React.useState(false);
     const [openSnack, setOpenSnack] = useState(false);
     const [snackMsg, setSnackMsg] = useState('')
     const userInfo = useSelector(state => state.userReducer)
-
-    //style modal.
     const classes = useStyles();
     const [skillSelect, setSkillSelect] = useState("Choose skill level");
-
     const handleClickOpen = () => {
         setOpen(true);
     };
-
     const handleClose = () => {
         setOpen(false);
     };
-
     //function that will add participants.
     const handleJoinEvent = async () => {
         if (userInfo.isAuthenticated && skillSelect !== "Choose skill level") {
@@ -99,8 +86,6 @@ export default function Join({ setJoined, joined, event }) {
             console.log('not auth inside JOIN component. In the else.')
         }
     }
-
-
     return (
         <div>
             <Button disabled={joined} variant="outlined" className={classes.root} onClick={handleClickOpen}>
