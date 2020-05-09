@@ -37,27 +37,38 @@ const useStyles = makeStyles(theme => ({
 const validateDateBooking = (startDate) => {
     //Todays day and month.
     let currentDate = new Date().toLocaleDateString().split('/');
-    let currentMonth = currentDate[0]
-    let currentDay = currentDate[1]
+    let currentMonth = parseInt(currentDate[0])
+    let currentDay = parseInt(currentDate[1])
     //booking date.
     let bookingDate = new Date(startDate).toLocaleDateString().split('/');
-    let bookingMonth = bookingDate[0]
-    let bookingDay = bookingDate[1]
-    console.log(bookingMonth, currentMonth, bookingDay, currentDay)
+    let bookingMonth = parseInt(bookingDate[0])
+    let bookingDay = parseInt(bookingDate[1])
+
+    //
+
+    //convert everything to minutes for the specific day.
+    let currentTime = new Date().getHours() * 60 + new Date().getMinutes();
+    let selectedTime = new Date(startDate).getHours() * 60 + new Date(startDate).getMinutes();
+    let morningLimit = 7.5 * 60;
+    let nightLimit = 22 * 60;
     //compare month and day of booking.
     //year CHECKING NOT DONE.
     //if its any day past today... no problems trying to book.
     //backend will handle conflicts if there are any.
     if (bookingMonth >= currentMonth && bookingDay > currentDay) {
-        return true;
+        if (selectedTime >= currentTime
+            && selectedTime <= nightLimit
+            && selectedTime >= morningLimit) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
     //if its the same day... then check for time.
     else if (bookingMonth === currentMonth && bookingDay === currentDay) {
-        //convert everything to minutes for the specific day.
-        let currentTime = new Date().getHours() * 60 + new Date().getMinutes();
-        let selectedTime = new Date(startDate).getHours() * 60 + new Date(startDate).getMinutes();
-        let morningLimit = 7.5 * 60;
-        let nightLimit = 22 * 60;
+        console.log('inside same day')
+        console.log(typeof currentTime, typeof selectedTime)
         //if the total minutes selected is greater or equal to the current minutes...
         //these means that we are either at the same time or past the time...
         //ALSO - we need to make sure the time is between 7:30AM-10PM;
@@ -73,7 +84,9 @@ const validateDateBooking = (startDate) => {
         }
     }
     //if its past the date.
-    else return false
+    else {
+        return false
+    }
 }
 //-----------------------------------COMPONENT---------------------------------
 const Host = () => {
@@ -91,6 +104,7 @@ const Host = () => {
     const [canceled, setCanceled] = useState(false)
     const [groupName, setGroupName] = useState(null)
     const [conflictEvent, setConflictEvent] = useState(null);
+
     const handleHostInformation = async (event) => {
         event.preventDefault();
         setConflictEvent(null)
@@ -143,18 +157,13 @@ const Host = () => {
                         })
                     })
                     let hostResponse = await response.json()
-                    console.log(hostResponse)
                     //ADD DISPATCHED?
                     if (hostResponse.status === 200) {
-
                         setSuccess(hostResponse.message)
                         setError(false)
                     }
                     else if (hostResponse.status === 400) {
-                        console.log(hostResponse.message)
-
                         setError(hostResponse.message)
-
                     }
                     else if (hostResponse.status === 409) {
                         setError(hostResponse.message)
