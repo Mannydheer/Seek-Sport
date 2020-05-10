@@ -13,11 +13,8 @@ import { IoMdSend } from 'react-icons/io';
 import ClipLoader from "react-spinners/ClipLoader";
 import ReactEmoji from 'react-emoji';
 
-
-
 let socket;
 let ENDPOINT = 'localhost:4000';
-
 
 const ChatJoin = () => {
     //initialize SOCKET ENDPOINT.
@@ -26,6 +23,8 @@ const ChatJoin = () => {
     let groupName = useParams().groupName;
     const scrollRef = useRef(null);
     const dispatch = useDispatch();
+
+
     const dateConverter = (timeData) => {
         let d = new Date(timeData);
         let todayDate = new Date().toLocaleDateString().split('/')[1]
@@ -254,6 +253,9 @@ const ChatJoin = () => {
         </StyledForm>
     </MainWrapper>
 }
+
+
+
 export default ChatJoin;
 const SenderText = styled.div`
 display: flex;

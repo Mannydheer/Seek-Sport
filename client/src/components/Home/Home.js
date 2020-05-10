@@ -77,9 +77,10 @@ const Home = () => {
 export default Home;
 const BigTitle = styled.div`
 text-align: center;
+margin-top: 50px;
 font-size: 2rem;
 @media screen and (max-width: 768px) {
-font-size: 1.5rem;                 
+font-size: 2rem;                 
 }
 `
 const Wrapper = styled.div`

@@ -51,7 +51,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignIn() {
     const [open, setOpen] = useState(false);
-    const [error, setError] = useState(null)
+
+    const [error, setError] = useState(null);
     const dispatch = useDispatch();
     const [userInfo, setUserInfo] = useState({
         user: '',
