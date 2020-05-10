@@ -26,22 +26,24 @@ const {
     handleGetHosts,
     handleGetEvents,
     handleUserEvents,
-    handleJoinEvent,
     handleViewActivityEvents,
-    handleLeaveEvent,
     handleCurrentEventParticipants,
-    handleCancelEvent,
     handleSelectedParkEvents,
     handleUserActivities,
     handleUserRegisteredEvents,
     handleGetChatRoom,
-} = require('./handlers')
+} = require('./controllers/handlers')
 
-const { addUserChat, getUserChat, getUsersInRoom, addUser } = require('./chatHandlers');
+//user login-signup controller.
 const { handleSignUp, handleLogin, handleGetUser } = require('./controllers/user-controller');
-const { handlePhoto, handleNearbySearch } = require('./controllers/google-api-controllers')
+//google-api controller
+const { handlePhoto, handleNearbySearch } = require('./controllers/google-api-controllers');
+//join-cancel-leave event controller.
+const { handleJoinEvent, handleLeaveEvent, handleCancelEvent } = require('./controllers/join-leave-cancel-event-controller');
+//authorize middleware. (token checking)
+const { auth } = require('./controllers/middleware-controller')
 
-const { auth } = require('../server/middleware')
+
 require('dotenv').config();
 //data file for items
 const upload = multer({ dest: './public/uploads/' })

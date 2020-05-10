@@ -214,6 +214,8 @@ const handleGetUser = async (req, res, next) => {
     })
 }
 
+
+
 module.exports = {
     handleSignUp,
     handleLogin, handleGetUser,

@@ -80,7 +80,11 @@ text-align: center;
 margin-top: 50px;
 font-size: 2rem;
 @media screen and (max-width: 768px) {
-font-size: 2rem;                 
+    font-size: 1.5rem;        
+}
+@media screen and (max-width: 420px) {
+    font-size: 1.3rem;
+         
 }
 `
 const Wrapper = styled.div`

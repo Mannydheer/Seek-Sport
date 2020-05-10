@@ -1,5 +1,10 @@
 
+'use strict';
+//env vairablkes
+require('dotenv').config();
 
+//allows to fetch to an API from backend with fetch method API.
+const fetch = require('isomorphic-fetch');
 //@endpoint POST /nearbySearch
 //@desc authenticate user token and send back user info
 //@access PRIVATE - will need to validate token?
