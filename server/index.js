@@ -11,14 +11,7 @@ const MongoClient = require('mongodb').MongoClient;
 const uri = "mongodb+srv://dbUser:YOFwbi6x3P5o3H4d@cluster0-seh3x.mongodb.net/test?authSource=admin&replicaSet=Cluster0-shard-0&w=majority&readPreference=primary&retryWrites=true&ssl=true"
 
 const dbName = 'ParkGames';
-const collectionUsers = 'Users'
-const collectionHosts = 'Hosts'
-const collectionEvents = 'Events'
-const collectionParticipants = 'Participants'
-const collectionUserEvents = 'UserEvents'
 const collectionRooms = 'Rooms'
-const collectionChats = "Chats"
-
 const assert = require('assert')
 var ObjectId = require('mongodb').ObjectID;
 
@@ -27,12 +20,8 @@ var ObjectId = require('mongodb').ObjectID;
 const http = require('http');
 const socketio = require('socket.io');
 
-const users = [];
-// const upload = multer({ dest: 'uploads/' })
 
-const { handleSignUp, handleLogin,
-    handleGetUser, handleNearbySearch,
-    handlePhoto,
+const {
     handleHosting,
     handleGetHosts,
     handleGetEvents,
@@ -46,10 +35,11 @@ const { handleSignUp, handleLogin,
     handleUserActivities,
     handleUserRegisteredEvents,
     handleGetChatRoom,
-
 } = require('./handlers')
 
 const { addUserChat, getUserChat, getUsersInRoom, addUser } = require('./chatHandlers');
+const { handleSignUp, handleLogin, handleGetUser } = require('./controllers/user-controller');
+const { handlePhoto, handleNearbySearch } = require('./controllers/google-api-controllers')
 
 const { auth } = require('../server/middleware')
 require('dotenv').config();
