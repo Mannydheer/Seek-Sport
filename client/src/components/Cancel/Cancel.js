@@ -74,14 +74,12 @@ export default function Cancel({ event, canceled, setCanceled }) {
             <Button className={classes.root} variant="outlined" onClick={handleClickOpen}>
                 Cancel?
       </Button>
-
             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
                 <DialogTitle id="form-dialog-title">Cancel Event</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         Are you sure you want to cancel the event?
           </DialogContentText>
-
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} color="primary">
@@ -92,7 +90,6 @@ export default function Cancel({ event, canceled, setCanceled }) {
           </Button>
                 </DialogActions>
             </Dialog>
-
             <Snackbars snackMsg={snackMsg} openSnack={openSnack} setOpenSnack={setOpenSnack}></Snackbars>
         </div>
     );

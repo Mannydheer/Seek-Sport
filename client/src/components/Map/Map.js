@@ -101,7 +101,6 @@ const Map = ({ coordinates, parkMenu, setParkMenu }) => {
 
                 {/* RENDER ALL PARKS NEARBY */}
                 {allParks.status === 'retrieved parks.' && allEvents.events !== null && allParks.parks.map(park => {
-
                     //Compare hosted parks with nearby parks. 
                     //if being hosted, render PERSON MARKER(hosts).
                     if (
@@ -128,20 +127,15 @@ const Map = ({ coordinates, parkMenu, setParkMenu }) => {
                         )
                     }
                 })}
-
                 <Marker position={coordinates}
                     icon={{ url: '/home.png' }}
                 ></Marker>
             </GoogleMap>
         </>
-
     )
-
 }
 //Must wrap within these scrip - read documentaion.
 const WrappedMap = withScriptjs(withGoogleMap(Map));
-
-
 export default WrappedMap;
 
 const Sidebar = styled.div`

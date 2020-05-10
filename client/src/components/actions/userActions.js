@@ -14,6 +14,8 @@ export const logOutUser = () => ({
     type: 'LOGOUT',
 })
 
+// -----------user-events---------------
+
 export const requestRegisteredUserEvents = () => ({
     type: 'REQUEST_REGISTERED_USER_EVENTS',
 })

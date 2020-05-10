@@ -1,7 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { PageWrapper } from '../Constants/Constants'
-import mainImage from '../../Images/SportHome.jpg'
 import { NavLink, useHistory } from 'react-router-dom';
 
 
@@ -13,9 +11,7 @@ const Home = () => {
             <StyledHomeImg>
                 <img src='/running.png'></img>
                 <BigTitle>FIND ANY SPORT NEARBY</BigTitle>
-
                 <NavigationLink exact to='/sports'><h2>Find Games</h2></NavigationLink>
-
                 {/*  */}
             </StyledHomeImg>
 
