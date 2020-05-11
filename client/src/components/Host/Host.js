@@ -57,9 +57,8 @@ const validateDateBooking = (startDate) => {
     //backend will handle conflicts if there are any.
     console.log(bookingMonth, currentMonth, bookingDay, currentDay)
     if (bookingMonth >= currentMonth && bookingDay > currentDay) {
-        console.log('inside')
-        if (selectedTime >= currentTime
-            && selectedTime <= nightLimit
+        console.log(selectedTime, currentTime, nightLimit, morningLimit)
+        if (selectedTime <= nightLimit
             && selectedTime >= morningLimit) {
             return true;
         }
