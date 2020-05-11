@@ -55,7 +55,9 @@ const validateDateBooking = (startDate) => {
     //year CHECKING NOT DONE.
     //if its any day past today... no problems trying to book.
     //backend will handle conflicts if there are any.
+    console.log(bookingMonth, currentMonth, bookingDay, currentDay)
     if (bookingMonth >= currentMonth && bookingDay > currentDay) {
+        console.log('inside')
         if (selectedTime >= currentTime
             && selectedTime <= nightLimit
             && selectedTime >= morningLimit) {
