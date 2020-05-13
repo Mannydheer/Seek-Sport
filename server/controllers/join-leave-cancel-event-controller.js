@@ -120,14 +120,8 @@ const handleLeaveEvent = async (req, res, next) => {
             let removeUserEvent = await db.collection(collectionUserEvents)
                 .updateOne({ _id: ObjectId(participantDetails.userId) }, { $pull: { events: eventInformation._id } })
 
-            console.log(removeUserEvent)
-
-
-
             assert(1, removeUserEvent.matchedCount)
             assert(1, removeUserEvent.modifiedCount)
-
-
             res.status(200).json({ status: 200, message: "Successfully left the event!" })
         }
         catch (error) {
@@ -145,12 +139,7 @@ const handleLeaveEvent = async (req, res, next) => {
 //@desc cancel the event selected 
 //@access PRIVATE - will need to validate token? YES
 const handleCancelEvent = async (req, res, next) => {
-    console.log('INSIDE CANCEL EVENT')
-
     const eventId = req.body.eventId
-
-
-
     const client = new MongoClient(uri, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -185,18 +174,12 @@ const handleCancelEvent = async (req, res, next) => {
             //we get an array.
             await getParticipants.participants.forEach(async (participant) => {
                 let removeUserEvent = await db.collection(collectionUserEvents).findOneAndUpdate({ _id: ObjectId(participant.userId) }, { $pull: { events: ObjectId(eventId) } })
-                console.log(removeUserEvent)
             })
 
             //deleted participants.
             let deletedParticipants = await db.collection(collectionParticipants).deleteOne({ _id: ObjectId(participantId) })
             console.log(deletedParticipants.deletedCount)
             assert(1, deletedParticipants.deletedCount)
-
-
-
-
-
             res.status(200).json({ status: 200, message: "Successfully canceled the event!" })
         }
         catch (error) {

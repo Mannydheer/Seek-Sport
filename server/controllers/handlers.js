@@ -105,8 +105,6 @@ const handleHosting = async (req, res, next) => {
                             assert(1, addUserEvent.matchedCount)
                             assert(1, addUserEvent.modifiedCount)
 
-
-
                             res.status(200).json({
                                 status: 200,
                                 message: "New Host Reservation successful. Thanks for booking! Also you were added as a participant",
@@ -133,18 +131,13 @@ const handleHosting = async (req, res, next) => {
                 }
                 //if there are events under this host 
                 else {
-
                     //allEvents only has the events related to the current host... 
-
                     //filter the events that are held at the CURRENT park at which the host is trying to book.
                     let filteredEvents = allEvents.filter(event => {
                         if (event.parkId === eventInformation.parkId) {
                             return event
                         }
                     })
-                    console.log(allEvents)
-
-                    console.log(filteredEvents, 'FILTEREDEVENTSSAMEPARK')
                     //filter and get back all the events related to that host at ANY park.
                     //EXCLUDING the current park.
                     //this is so we can seperate the messages we want to send back to the front end.
@@ -154,9 +147,6 @@ const handleHosting = async (req, res, next) => {
                             return event
                         }
                     })
-                    console.log(filteredEvents, 'FILTEREDEVENTSDIFFPARK')
-
-
                     //if current host has not booked any events at any other park...
                     //if this passes then first bool text passes so there arnt any time conflicts from any other events at any park.
                     if (filteredEventsAllParks.length === 0) {
@@ -194,13 +184,6 @@ const handleHosting = async (req, res, next) => {
                             //we will check for each of the events.
                             let eventStartTime = new Date(event.time).getHours() * 60 + (new Date(event.time).getMinutes());
                             let eventEndTime = event.duration * 60 + eventStartTime;
-                            console.log('NEWWWWWWWW TIMEEEE************************')
-                            console.log('inside foreachjhgjhgjh')
-                            console.log(currentMinutes, 'current minutes')
-                            console.log(eventEndTime, 'event duration time')
-                            console.log(eventStartTime, 'event start time.')
-                            console.log(startMinutes, 'START MINUTES')
-                            console.log(endMinutes, 'endmimutes')
                             //see if the start time is within the start-end time for the current booking.
                             //checking if start minutes is within the event range and if the end minutes is within the range.
                             //if one of them are true... then there is a time conflict.
@@ -247,20 +230,12 @@ const handleHosting = async (req, res, next) => {
                         //CHECKING TIME CONFLICTS AT THE SPECIFIC PARK HE IS TRYING TO HOST.
                         // let timeConflict = false;
                         filteredEvents.forEach((event) => {
-
                             //for each event, grab the start time.
                             let eventStartTime = new Date(event.time).getHours() * 60 + (new Date(event.time).getMinutes());
                             let eventEndTime = event.duration * 60 + eventStartTime;
-                            console.log('inside foreach')
-                            console.log(currentMinutes, 'current minutes')
-                            console.log(eventEndTime, 'event duration time')
-                            console.log(eventStartTime, 'event start time.')
-                            console.log(startMinutes, 'START MINUTES')
-                            console.log(endMinutes, 'endmimutes')
                             //see if the start time is within the start-end time for the current booking.
                             if (startMinutes <= eventEndTime && startMinutes >= eventStartTime
                                 || endMinutes <= eventEndTime && endMinutes >= eventStartTime) {
-
                                 //also check if its the same day. becuase it it isnt
                                 if (event.bookedDate === eventInformation.bookedDate) {
                                     // timeConflict = true;
@@ -283,12 +258,10 @@ const handleHosting = async (req, res, next) => {
                             }
 
                         });
-                        console.log(validBookingAllEvents, validBooking)
                         //everything passes so the booking can go through.
                     }
                 }
             }
-
             //HERE WILL BE THE FINAL TEST.
             if (validBooking && validBookingAllEvents) {
                 eventInformation.hostId = findhost._id
@@ -317,23 +290,16 @@ const handleHosting = async (req, res, next) => {
                 let r3 = await db.collection(collectionRooms)
                     .insertOne({ _id: `${eventId}-Room-1`, participantId: participantId, chatParticipants: [] })
                 assert(1, r3.insertedCount)
-
                 //also a host should be registered in his own events.
                 //inside the collectionUserEvents.
-
                 let addUserEvent = await db.collection(collectionUserEvents).updateOne({ _id: ObjectId(hostingInformation.userId) }, { $push: { events: eventId } })
                 assert(1, addUserEvent.matchedCount)
                 assert(1, addUserEvent.modifiedCount)
-
-
-
-                console.log(validBooking)
                 res.status(200).json({
                     status: 200,
                     message: "Reservation successful. Thanks for booking! Keep in mind you have other events under your name. Also you've been added as a participant",
                     hostingInformation: hostingInformation
                 })
-
             } else {
                 res.status(400).json({ status: 400, message: "Booking was not valid - time conflicts." })
             }
@@ -353,7 +319,6 @@ const handleHosting = async (req, res, next) => {
 
 
 const handleGetHosts = async (req, res, next) => {
-
     const client = new MongoClient(uri, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -374,7 +339,6 @@ const handleGetHosts = async (req, res, next) => {
                         hosts: data
                     })
                 })
-
         }
         catch (error) {
             console.log(error.stack, 'Catch Error in handleHosting')
@@ -426,11 +390,7 @@ const handleGetEvents = async (req, res, next) => {
 //@desc get events associated with current user logged in.
 //@access PRIVATE - will need to validate token? YES
 const handleUserEvents = async (req, res, next) => {
-
     const _id = req.params._id;
-
-    console.log(_id, 'this is ID')
-
     const client = new MongoClient(uri, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -524,17 +484,12 @@ const handleViewActivityEvents = async (req, res, next) => {
     })
 }
 
-
-
 //@endpoint POST /viewActivityEvents
 //@desc get all events associated with that park.
 //@access PRIVATE - will need to validate token? YES
 const handleCurrentEventParticipants = async (req, res, next) => {
 
     let participantId = req.params.participantId
-    console.log(participantId, 'id in current')
-
-
     const client = new MongoClient(uri, {
         useNewUrlParser: true,
         useUnifiedTopology: true,

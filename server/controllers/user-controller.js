@@ -21,7 +21,6 @@ const jwt = require('jsonwebtoken')
 require('dotenv').config();
 
 //allows to fetch to an API from backend with fetch method API.
-const fetch = require('isomorphic-fetch');
 
 // ----------------------------------------SIGNUP----------------------------------------
 
