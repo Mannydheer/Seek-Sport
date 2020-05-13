@@ -1,6 +1,7 @@
 
 ### Project Title
-Seek&Sport - A website application that allows for users to find nearby parks within their area and finding people to play sports with.
+Seek&Sport - A website application that allows for users to find nearby parks based on an address and then finding people to play sports with.
+
 Users can book, join and leave events.
 Also once within an event, can join the chat room to talk with the other particiapnts!
 
@@ -11,6 +12,8 @@ Go to the server directory. Run npm install/yarn install followed by npm start/y
 
 Go to the client directory. Run npm install/yarn install followed by npm start/yarn start. Accept to listen to FE on port 3000
 
+## Link to demo.
+https://www.youtube.com/watch?v=aU5c4TsWLIk
 
 ### Flow for user.
 ## SignUp/Login
@@ -72,7 +75,6 @@ Go to the client directory. Run npm install/yarn install followed by npm start/y
 <img src="Screenshots/offline.png" alt="offline">
 
 
-## Link to demo.
 
 ### Prerequisites
 - Mongodb
@@ -90,5 +92,5 @@ Manider Dheer.
 This project is licensed under the MIT License - see the LICENSE.md file for details
 
 ### Acknowledgments
-Big thank you to LucasBassetti - ReactSimpleChatbot
-Materials UI!
+Big thank you to LucasBassetti - ReactSimpleChatbot.
+Materials UI.
