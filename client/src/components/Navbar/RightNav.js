@@ -77,9 +77,6 @@ li {
   margin-top: 1.2rem;
 }
 
-
-
-
 @media (max-width: 768px) {
     display: block;
     background-color: #0D2538;

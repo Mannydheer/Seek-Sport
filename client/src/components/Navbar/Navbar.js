@@ -41,16 +41,12 @@ export default Navbar;
 const Header = styled.header`
 
 background-image: linear-gradient(15deg, #13547a 0%, #80d0c7 100%);
-
-
     height: 5rem; 
     position: relative; 
   
     z-index: 101;
     background-position: right; 
-
 `
-
 const StyledNav = styled.nav`
 width: 100%;
 

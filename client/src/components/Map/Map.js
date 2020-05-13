@@ -121,7 +121,6 @@ const Map = ({ coordinates, parkMenu, setParkMenu }) => {
                         return (
                             <Marker
                                 key={park.id}
-
                                 position={park.geometry.location}
                                 onClick={() => handleParkSelect(park)} />
                         )

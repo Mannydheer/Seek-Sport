@@ -36,7 +36,7 @@ const Sports = () => {
                                 parkMenu={parkMenu}
                                 setParkMenu={setParkMenu}
                                 coordinates={coordinates}
-                                googleMapURL={`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=AIzaSyAt-D4AMalUpyQjUe3laQYyjjNgy_hcCOc`}
+                                googleMapURL={`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=${process.env.REACT_APP_GOOGLE_KEY}`}
                                 loadingElement={<div style={{ height: '100%' }}></div>}
                                 containerElement={<div style={{ height: '100%' }}></div>}
                                 mapElement={<div style={{ height: '100%' }}></div>}

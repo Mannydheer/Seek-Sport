@@ -14,7 +14,7 @@ const GoogleAddress = ({ setCoordinates, setParkMenu }) => {
     const [address, setAddress] = useState('')
     const handleSelect = async (value) => {
         //get longitude and latitude.
-        Geocode.setApiKey("AIzaSyAt-D4AMalUpyQjUe3laQYyjjNgy_hcCOc");
+        Geocode.setApiKey(process.env.REACT_APP_GOOGLE_KEY);
         // set response language. Defaults to english.
         Geocode.setLanguage("en");
         // set response region. Its optional.
