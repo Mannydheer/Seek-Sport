@@ -3,14 +3,12 @@ const intitialState = {
     isLoading: false,
     rooms: [],
 
-
 };
 
 export default function chatReducer(state = intitialState, action) {
     switch (action.type) {
         //singup or login success
         case "REQUEST_CHAT": {
-            console.log(action)
             return {
                 ...state,
                 status: 'requesting chat...',
@@ -19,7 +17,6 @@ export default function chatReducer(state = intitialState, action) {
         }
         case "RETRIEVE_CHAT": {
             let stateCopy = { ...state }
-            console.log(action)
             //check if you can find the room.
             let findRoom = stateCopy.rooms.find(room => {
                 if (room._id === action.payload.roomData._id) {
@@ -28,7 +25,6 @@ export default function chatReducer(state = intitialState, action) {
                 }
             })
             if (!findRoom) {
-                console.log('DIDNT IFND')
                 stateCopy.rooms.push(action.payload.roomData)
             }
             return {
@@ -38,7 +34,6 @@ export default function chatReducer(state = intitialState, action) {
             }
         }
         case "RETRIEVE_CHAT_ERROR": {
-            console.log(action)
             return {
                 ...state,
                 status: 'Error occured retrieving chats.',
@@ -48,10 +43,7 @@ export default function chatReducer(state = intitialState, action) {
         }
         case "ADD_MESSAGE": {
             let stateCopy = { ...state }
-
-            console.log('HIT ADD MESSAGE.')
-
-            let findRoom = stateCopy.rooms.find(room => {
+            stateCopy.rooms.find(room => {
                 if (room._id === action.message.room) {
                     //if there are no room messages.
                     //make them and then push the message that is coming...
@@ -74,12 +66,8 @@ export default function chatReducer(state = intitialState, action) {
             }
         }
         case "LEAVE_ROOM": {
-
-            console.log('WE ARE IN LEAVE ROOM.')
-            console.log(action)
             let stateCopy = { ...state }
-
-            let findRoom = stateCopy.rooms.find((room, index) => {
+            stateCopy.rooms.find((room, index) => {
                 if (room._id === action.data.room && room.chatParticipants) {
                     //once you find the room... push the new message.
                     room.chatParticipants.find((participant, index) => {
@@ -97,7 +85,6 @@ export default function chatReducer(state = intitialState, action) {
         }
         case "ADD_CHAT_PARTICIPANT": {
             //FIX
-            console.log(action, 'adding chat participants')
             let stateCopy = { ...state }
 
             stateCopy.rooms.find((room, index) => {
@@ -113,14 +100,11 @@ export default function chatReducer(state = intitialState, action) {
 
         case "REMOVE_CHAT_PARTICIPANT": {
             let stateCopy = { ...state }
-
-
             return {
                 ...stateCopy,
             }
         }
         case "ACTUAL_CHAT_PARTICIPANTS": {
-            console.log(action)
             let stateCopy = { ...state }
             stateCopy.actualParticipants = action.data;
             return {
@@ -134,8 +118,6 @@ export default function chatReducer(state = intitialState, action) {
                 ...stateCopy,
             }
         }
-
-
         default:
             return state;
     }

@@ -5,6 +5,7 @@ import Join from '../Join';
 import Leave from '../Leave';
 import Cancel from '../Cancel';
 import { useLocation } from 'react-router-dom';
+
 const EventDetails = ({ index, event, canceled, setCanceled }) => {
     const userInfo = useSelector(state => state.userReducer)
     const parkInfo = useSelector(state => state.parkReducer)
@@ -45,7 +46,7 @@ const EventDetails = ({ index, event, canceled, setCanceled }) => {
     //function called from render to show all images.
     const getParticipantImages = (currentEventParticipants) => {
         return currentEventParticipants.map(participant => {
-            return <div>
+            return <div key={`${participant.profileImage}`}>
                 <StyledImage key={participant.profileImage} src={participant.profileImage}></StyledImage>
                 <div style={{ textAlign: 'center' }}>{participant.name}</div>
             </div>
@@ -65,7 +66,7 @@ const EventDetails = ({ index, event, canceled, setCanceled }) => {
                 {parkInfo.parks !== null &&
                     parkInfo.parks.map(park => {
                         if (park.id === event.parkId) {
-                            return <div>
+                            return <div key={`${park.id}${park.formatted_address}`}>
                                 <h2>Address: {park.formatted_address}</h2>
                                 <h2>Park name: {park.name}</h2>
                             </div>

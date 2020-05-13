@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectPark, requestHosts, retrieveHosts, retrieveHostsError } from '../actions/parkActions';
+import { useSelector } from 'react-redux';
 import EventDetails from '../EventDetails';
 import ClipLoader from "react-spinners/ClipLoader";
 import { css } from "@emotion/core";

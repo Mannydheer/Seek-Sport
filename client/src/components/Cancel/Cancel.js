@@ -1,17 +1,12 @@
 import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { makeStyles } from '@material-ui/core/styles';
-import { skillLevel, sports } from '../data';
 import { useDispatch, useSelector } from 'react-redux';
-import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
-import { updateEvent } from '../actions/parkActions';
 import Snackbars from '../SnackBar';
 
 
@@ -28,14 +23,13 @@ const useStyles = makeStyles({
         padding: '0 30px',
     },
 });
-export default function Cancel({ event, canceled, setCanceled }) {
+export default function Cancel({ event, setCanceled }) {
 
     const [open, setOpen] = React.useState(false);
     const [openSnack, setOpenSnack] = useState(false);
     const [snackMsg, setSnackMsg] = useState('')
-    const dispatch = useDispatch();
     const classes = useStyles();
-    const userInfo = useSelector(state => state.userReducer)
+
     const handleClickOpen = () => {
         setOpen(true);
     };

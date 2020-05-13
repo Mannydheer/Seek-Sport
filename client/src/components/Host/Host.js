@@ -55,9 +55,7 @@ const validateDateBooking = (startDate) => {
     //year CHECKING NOT DONE.
     //if its any day past today... no problems trying to book.
     //backend will handle conflicts if there are any.
-    console.log(bookingMonth, currentMonth, bookingDay, currentDay)
     if (bookingMonth >= currentMonth && bookingDay > currentDay) {
-        console.log(selectedTime, currentTime, nightLimit, morningLimit)
         if (selectedTime <= nightLimit
             && selectedTime >= morningLimit) {
             return true;
@@ -68,8 +66,7 @@ const validateDateBooking = (startDate) => {
     }
     //if its the same day... then check for time.
     else if (bookingMonth === currentMonth && bookingDay === currentDay) {
-        console.log('inside same day')
-        console.log(typeof currentTime, typeof selectedTime)
+
         //if the total minutes selected is greater or equal to the current minutes...
         //these means that we are either at the same time or past the time...
         //ALSO - we need to make sure the time is between 7:30AM-10PM;
@@ -118,7 +115,6 @@ const Host = () => {
             //now check if it is the same date first....
             let validDate = validateDateBooking(startDate)
             //if a valid date is chosen.
-            console.log(validDate)
             if (validDate) {
                 let hostingInformation = {
                     name: userLoggedIn.user,
@@ -189,7 +185,6 @@ const Host = () => {
         }
     }
     const handleChange = (date) => {
-        console.log(date)
         setSuccess(false)
         setStartDate(date)
         setConflictEvent(null)

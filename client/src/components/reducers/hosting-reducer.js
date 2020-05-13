@@ -17,7 +17,6 @@ export default function hostReducer(state = intitialState, action) {
             }
         }
         case "RETRIEVE_HOSTS": {
-            console.log(action)
             return {
                 ...state,
                 status: 'retrieved hosts.',
@@ -26,7 +25,6 @@ export default function hostReducer(state = intitialState, action) {
             }
         }
         case "RETRIEVE_HOSTS_ERROR": {
-            console.log(action)
             return {
                 ...state,
                 status: 'Error occured retrieving hosts.',
@@ -34,15 +32,6 @@ export default function hostReducer(state = intitialState, action) {
                 hosts: null
             }
         }
-        // case "SELECTED_PARK": {
-        //     return {
-        //         ...state,
-        //         selectedPark: action.park
-
-        //     }
-        // }
-
-
         default:
             return state;
     }

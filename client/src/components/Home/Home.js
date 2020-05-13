@@ -9,7 +9,7 @@ const Home = () => {
         <Wrapper>
             {/* MAIN IMAGE. */}
             <StyledHomeImg>
-                <img src='/running.png'></img>
+                <img alt="Runner" src='/running.png'></img>
                 <BigTitle>FIND ANY SPORT NEARBY</BigTitle>
                 <NavigationLink exact to='/sports'><h2>Find Games</h2></NavigationLink>
                 {/*  */}

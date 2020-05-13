@@ -30,11 +30,7 @@ const Footer = () => {
     </FooterWrapper>
 }
 export default Footer;
-const Suscribe = styled.div`
-`
-const Email = styled.div`
-display: flex;
-`
+
 const FooterWrapper = styled.footer`
 display: flex;
 justify-content: space-evenly;

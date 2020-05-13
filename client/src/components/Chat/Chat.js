@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { requestRegisteredUserEvents, retrieveRegisteredUserEvents, retrieveRegisteredUserEventsError } from '../actions/userActions';
-
-import ChatJoin from '../ChatJoin';
 import Rooms from '../Rooms';
 import styled from 'styled-components';
 import ClipLoader from "react-spinners/ClipLoader";
@@ -31,7 +29,6 @@ const Chat = () => {
             try {
                 let response = await fetch(`/userRegisteredEvents/${userId}`);
                 let userResponse = await response.json()
-                console.log(userResponse)
                 if (userResponse.status === 200) {
                     dispatch(retrieveRegisteredUserEvents(
                         userResponse.eventInfo
@@ -100,7 +97,8 @@ const Chat = () => {
             {/* ------------------------------GETTING PARTICIPANTS CURRENTLY INSIDE CHAT ROOM.-------------------------- */}
             {actualChatParticipants && chatInfo.status === "retrieved" && <div>
                 {Object.values(actualChatParticipants).map(participant => {
-                    return <div style={{ position: 'relative', display: 'flex' }}>
+                    return <div key={`${participant.parkId}${participant.profileImage}`}
+                        style={{ position: 'relative', display: 'flex' }}>
                         {checkOnlineParticipant(participant.userId)}
                         <Image src={`/${participant.profileImage}`} />
                         <Name>{participant.name}</Name>

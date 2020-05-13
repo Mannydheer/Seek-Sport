@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useParams, useHistory } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import io from 'socket.io-client';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -50,8 +50,7 @@ const ChatJoin = () => {
     //----------------------USE-STATES------------------
     const [name, setName] = useState('');
     const [messages, setMessages] = useState('')
-    const [message, setMessage] = useState(null)
-    const [leaveRoomMessage, setLeaveRoomMessage] = useState(null)
+    const [message, setMessage] = useState('')
     const [allMessages, setAllMessages] = useState(null);
     // const [chatMembers, setChatMembers] = useState(null)
     //---------------------USE-EFFECTS.------------------
@@ -93,14 +92,11 @@ const ChatJoin = () => {
     useEffect(() => {
         if (eventId) {
             socket.emit('join', { name: userInfo.user, userId: userId, room: `${eventId}-Room-1` }, (messageInfo) => {
-                console.log('component MOUNT', messageInfo)
                 if (messageInfo.existingUser) {
                     dispatch(addChatParticipants(messageInfo))
                 }
                 else if
                     (messageInfo.joined) {
-
-                    console.log('successful join')
                     dispatch(requestChats())
                     if (messageInfo.roomData) {
                         dispatch(retrieveChats(messageInfo))
@@ -120,8 +116,6 @@ const ChatJoin = () => {
                 }
                 //leaeve the room.
                 socket.emit('leaveRoom', (leaveRoomData), (data) => {
-                    console.log('COMPONENT UNMOUNT')
-                    setLeaveRoomMessage(message)
                     dispatch(leaveRoom(data))
                     //also redirect to room page.
                 })
@@ -132,14 +126,12 @@ const ChatJoin = () => {
     //--------------SOCKET WILL LISTEN FOR CHAT-MESSAGE---------------
     useEffect(() => {
         socket.on('chat-message', (message) => {
-            console.log(message, 'INSIDE CHAT-MESSAGE BEFORE DISPATCH')
             dispatch(addMessage(message))
         })
     }, [])
     //--------------JOIN OR LEAVE GROUP MESSAGE!---------------
     useEffect(() => {
         socket.on('users-join-leave', (message) => {
-            console.log(message, 'message inside join or leave')
             setMessages(message.message)
             dispatch(addChatParticipants(message))
         })
@@ -147,7 +139,7 @@ const ChatJoin = () => {
     //--------------GET ALL MESSAGES FOR THE ROOM.---------------
     useEffect(() => {
         if (userChats.status === 'retrieved' && eventId !== null) {
-            let currentRoom = userChats.rooms.find(eachRoom => {
+            userChats.rooms.find(eachRoom => {
                 if (eachRoom._id === `${eventId}-Room-1`) {
                     setAllMessages(eachRoom.messages)
                 }
@@ -168,8 +160,7 @@ const ChatJoin = () => {
     }
     //--------------SUBMIT A MESAGE---------------
     const handleSubmit = (e) => {
-        console.log('inside handle submit')
-        console.log('enter', message)
+
         e.preventDefault();
         if (message) {
             //dispatch action to add the message.
@@ -184,14 +175,11 @@ const ChatJoin = () => {
             socket.emit('sendMessage', (data), () =>
                 setMessage('')
             )
-
         }
     }
     //--------------SCROLL TO BOTTOM---------------
     useEffect(() => {
         if (allMessages && userChats.actualParticipants) {
-            //block end...
-            //take scroll right at the end....
             scrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
         }
     });
@@ -210,7 +198,7 @@ const ChatJoin = () => {
                 allMessages && userChats.actualParticipants && <ChatBox>
                     {allMessages.map(message => {
                         //CHANGE KEY
-                        return <div>
+                        return <div key={`${message.room}${message.timeStamp}`}>
                             {message.sender === userInfo.user ?
                                 <SenderText>
                                     <div>

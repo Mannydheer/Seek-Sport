@@ -13,7 +13,6 @@ export default function userReducer(state = intitialState, action) {
     switch (action.type) {
         //singup or login success
         case "LOGIN_SUCCESS": {
-            console.log(action)
             return {
                 ...state,
                 status: 'authenticated',

@@ -11,7 +11,6 @@ export default function parkReducer(state = intitialState, action) {
     switch (action.type) {
         //singup or login success
         case "REQUEST_PARKS": {
-            console.log(action)
             return {
                 ...state,
                 status: 'requesting parks...',
@@ -19,7 +18,6 @@ export default function parkReducer(state = intitialState, action) {
             }
         }
         case "RETRIEVE_PARKS": {
-            console.log(action)
             return {
                 ...state,
                 status: 'retrieved parks.',
@@ -28,7 +26,6 @@ export default function parkReducer(state = intitialState, action) {
             }
         }
         case "RETRIEVE_PARKS_ERROR": {
-            console.log(action)
             return {
                 ...state,
                 status: 'Error occured',

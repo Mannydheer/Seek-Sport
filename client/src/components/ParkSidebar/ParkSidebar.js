@@ -1,23 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components'
 import { AiOutlineClose } from 'react-icons/ai';
-import { Link, useHistory } from 'react-router-dom';
-
-
+import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectPark } from '../actions/parkActions';
 import ParkDetails from '../ParkDetails';
 
-
-
-
-
-
 const ParkSidebar = ({ parkInfo, parkMenu, setParkMenu }) => {
     let history = useHistory();
     const dispatch = useDispatch();
-    const userLoggedIn = useSelector(state => state.userReducer)
-    const hostsInfo = useSelector(state => state.hostReducer)
     const allEvents = useSelector(state => state.eventReducer)
     //---------------FUNCTIONS--------------
     const handleHostView = () => {

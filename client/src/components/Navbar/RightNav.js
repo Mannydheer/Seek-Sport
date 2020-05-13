@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import styled from 'styled-components';
 import { NavLink, } from 'react-router-dom';
 import Login from '../Login';
@@ -12,13 +12,8 @@ import { logOutUser } from '../actions/userActions';
 
 
 const RightNav = ({ open }) => {
-  console.log(open, 'INSIDE RIGHTNAV')
-
   const userLoggedIn = useSelector(state => state.userReducer)
-
   const dispatch = useDispatch();
-
-
   const handleLogout = () => {
     localStorage.removeItem('accesstoken')
     dispatch(logOutUser())
@@ -46,8 +41,7 @@ const RightNav = ({ open }) => {
 
 export default RightNav;
 
-const StyledName = styled.div`
-`
+
 const UserImage = styled.img`
 width: 70px;
 height: 70px;

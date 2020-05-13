@@ -1,9 +1,8 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import WrappedMap from '../Map/Map';
-import MoonLoader from "react-spinners/MoonLoader";
 import GoogleAddress from '../GoogleAddress';
 
 

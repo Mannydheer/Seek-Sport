@@ -12,7 +12,7 @@ import Container from '@material-ui/core/Container';
 import Dialog from '@material-ui/core/Dialog';
 import styled from "styled-components";
 import ImageUploader from 'react-images-upload';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { loginRequest, loginSuccess, loginError } from '../actions/userActions';
 
 //Reference Sebastian Silbermann - Materials UI OpenSource Code
@@ -105,6 +105,7 @@ export default function SignUp() {
                             _id: userResponse._id,
                             profileImage: userResponse.profileImage
                         }))
+                        //close modal.
                         setOpen(false)
                     }
                     else {
@@ -112,9 +113,7 @@ export default function SignUp() {
                         dispatch(loginError(userResponse.message))
                     }
                 }
-
                 catch (err) {
-                    //dispatch?
                     console.log(err)
                 }
             }
@@ -124,17 +123,14 @@ export default function SignUp() {
         }
         handleSignup()
     }
-
+    //image uploader.
     const onDrop = (file) => {
-
-
         if (file !== undefined) {
             // let image = picture[0].name;
             setFile(file[0])
         }
         else return;
     }
-
     return (<>
         <List onClick={handleClickOpen}>
             Sign up

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Navbar from '../Navbar';
 import GlobalStyles from '../GlobalStyles';
 import Home from '../Home';
@@ -20,7 +20,6 @@ import styled from 'styled-components';
 function App() {
   const dispatch = useDispatch();
   const userLoggedIn = useSelector(state => state.userReducer)
-  const hostsInfo = useSelector(state => state.hostReducer)
   //validate if a user token still available in browser.
   //keep user logged in.
   useEffect(() => {

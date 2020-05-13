@@ -10,7 +10,6 @@ export default function userRegisteredReducer(state = intitialState, action) {
     switch (action.type) {
         //singup or login success
         case "REQUEST_REGISTERED_USER_EVENTS": {
-            console.log(action)
             return {
                 ...state,
                 status: 'retrieving...',

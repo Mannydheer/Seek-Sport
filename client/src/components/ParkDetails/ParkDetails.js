@@ -9,13 +9,10 @@ const ParkDetails = ({ parkInfo }) => {
     useEffect(() => {
         const handlePhoto = async () => {
             if (parkInfo.photos === undefined) {
-                //put something that does exist. 
-                console.log('photo does not exist')
+                return
             }
             else {
-
                 let photo = parkInfo.photos[0].photo_reference;
-                console.log(photo, 'inside handle photo')
                 try {
                     let response = await fetch('/parkPhoto', {
                         method: "POST",

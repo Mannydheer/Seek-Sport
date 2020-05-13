@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 //scripts to deploy google maps. 
-import { GoogleMap, withScriptjs, withGoogleMap, Marker, InfoWindow } from 'react-google-maps';
+import { GoogleMap, withScriptjs, withGoogleMap, Marker } from 'react-google-maps';
 import {
     requestParks, retrieveParks, retrieveParksError,
     requestHosts, retrieveHosts, retrieveHostsError,
@@ -13,8 +13,6 @@ import styled from 'styled-components';
 const Map = ({ coordinates, parkMenu, setParkMenu }) => {
     //pass down coordinates as props.
     const dispatch = useDispatch();
-    //user reducer
-    const userLoggedIn = useSelector(state => state.userReducer)
     //stores all nearby parks in store.
     const allParks = useSelector(state => state.parkReducer)
     //all hosted parks in sotre. 
@@ -23,8 +21,6 @@ const Map = ({ coordinates, parkMenu, setParkMenu }) => {
     const allEvents = useSelector(state => state.eventReducer)
     //selected park that you clicked on. 
     const [parkInfo, setParkInfo] = useState(null)
-    //hosted parks that match with nearby parks.
-    const [hostedParks, setHostedParks] = useState(null)
     // ----------------------------Will handle nearby search and get hosted parks from BE-------------------------
     useEffect(() => {
         const handleNearestPlacesAndHosts = async () => {

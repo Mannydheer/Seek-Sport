@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import PlacesAutocomplete, {
-    geoCodeByAddress,
-} from 'react-places-autocomplete';
+import React, { useState } from 'react';
+import PlacesAutocomplete from 'react-places-autocomplete';
 import Geocode from "react-geocode";
 import styled from 'styled-components';
 import { FaSearch } from 'react-icons/fa';
@@ -26,7 +24,6 @@ const GoogleAddress = ({ setCoordinates, setParkMenu }) => {
         Geocode.fromAddress(value).then(
             response => {
                 const { lat, lng } = response.results[0].geometry.location;
-                console.log(lat, lng);
                 setCoordinates({
                     lat: lat,
                     lng: lng

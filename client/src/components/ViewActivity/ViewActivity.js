@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import EventDetails from '../EventDetails';
 //components.
@@ -10,7 +10,6 @@ const ViewActivity = () => {
     const [canceled, setCanceled] = useState(false)
     const [hostedEvent, setHostedEvents] = useState(null)
     //error
-    const [error, setError] = useState(false)
     //on component mount.
     useEffect(() => {
         //onMount, get the events for the selectedPark.
@@ -33,8 +32,6 @@ const ViewActivity = () => {
                         //this will cause useEffect to refetch event data.
                         setCanceled(false)
 
-                    } else {
-                        setError(true)
                     }
                 } catch (err) {
                     throw err
