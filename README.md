@@ -1,5 +1,5 @@
 
-### Project Title
+### Seek & Sport
 Seek&Sport - A website application that allows for users to find nearby parks based on an address and then finding people to play sports with.
 
 Users can book, join and leave events.

@@ -52,7 +52,7 @@ const ViewActivity = () => {
                 {/**/}
                 {hostedEvent !== null && allParks.selectedPark !== null &&
                     hostedEvent.map((event, index) => {
-                        return <EventDetailsWrapper>
+                        return <EventDetailsWrapper key={`${event.placeId}${event.participantId}`}>
                             <EventDetails index={index} canceled={canceled} setCanceled={setCanceled} event={event}></EventDetails>
                         </EventDetailsWrapper>
                     })

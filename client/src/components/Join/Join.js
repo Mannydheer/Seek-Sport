@@ -63,7 +63,6 @@ export default function Join({ setJoined, joined, event }) {
                     })
                 })
                 let joinResponse = await response.json();
-                console.log(joinResponse.event)
                 if (joinResponse.status === 200) {
                     //double check why it happens for only one.
                     setJoined(true)
@@ -117,7 +116,7 @@ export default function Join({ setJoined, joined, event }) {
           </Button>
                 </DialogActions>
             </Dialog>
-            <Snackbars snackMsg={snackMsg} openSnack={openSnack} setOpenSnack={setOpenSnack}></Snackbars>
+            {openSnack && <Snackbars snackMsg={snackMsg} setOpenSnack={setOpenSnack} openSnack={openSnack}></Snackbars>}
 
         </div>
     );

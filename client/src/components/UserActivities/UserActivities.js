@@ -17,34 +17,44 @@ const UserActivities = () => {
 
     useEffect(() => {
         //on mount will get all the events that the current user has signed up for.
+        let unmounted = false;
         const handleUserActivities = async () => {
-            let token = localStorage.getItem('accesstoken')
-            try {
-                let response = await fetch(`/userActivities/${userLoggedIn._id}`, {
-                    method: "GET",
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json',
-                        'Authorization': `${token}`
-                    },
-                })
-                let eventResponse = await response.json();
+            if (!unmounted) {
+                let token = localStorage.getItem('accesstoken')
+                try {
+                    let response = await fetch(`/userActivities/${userLoggedIn._id}`, {
+                        method: "GET",
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Accept: 'application/json',
+                            'Authorization': `${token}`
+                        },
+                    })
+                    let eventResponse = await response.json();
 
-                if (eventResponse.status === 200) {
-                    console.log(eventResponse, 'THIS IS EEVENT RESPONSE')
-                    setAllEvents(eventResponse.events)
-                    // setMessage(eventResponse.message)
-                    setCanceled(false)
+                    if (eventResponse.status === 200) {
+                        console.log(eventResponse, 'THIS IS EEVENT RESPONSE')
+                        setAllEvents(eventResponse.events)
+                        // setMessage(eventResponse.message)
+                        setCanceled(false)
 
-                } else {
-                    setMessage(eventResponse.message)
+                    } else {
+                        setMessage(eventResponse.message)
+
+                    }
+                } catch (err) {
+                    throw err
                 }
-            } catch (err) {
-                throw err
             }
         }
         handleUserActivities()
+
+        return () => {
+            unmounted = true;
+        }
     }, [canceled])
+
+
     return <Wrapper>
         <Title>Participating Events.
             <TitleText>See details for the events you have joined.</TitleText>
@@ -52,7 +62,7 @@ const UserActivities = () => {
         {message !== null && <ErrorMessage>{message}</ErrorMessage>}
         {allEvents !== null &&
             allEvents.map((event, index) => {
-                return <EventDetails index={index} canceled={canceled} setCanceled={setCanceled} event={event}></EventDetails>
+                return <EventDetails key={event.Registration} index={index} canceled={canceled} setCanceled={setCanceled} event={event}></EventDetails>
             })
         }
     </Wrapper>

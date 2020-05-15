@@ -42,10 +42,10 @@ const ParkDetails = ({ parkInfo }) => {
         <Wrapper>
             <Title>
                 <Name>{parkInfo.name}</Name>
-                <img src={parkInfo.icon}></img>
+                <img alt="Park Icon" src={parkInfo.icon}></img>
             </Title>
             <h2>{parkInfo.formatted_address}</h2>
-            {image !== null && <img src={image}></img>}
+            {image !== null && <img alt="Park Image" src={image}></img>}
             <div>Ratings: {parkInfo.user_ratings_total}</div>
         </Wrapper>
     )

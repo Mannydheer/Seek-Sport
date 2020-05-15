@@ -55,7 +55,6 @@ export default function Leave({ setJoined, joined, event }) {
                     })
                 })
                 let leaveResponse = await response.json();
-                console.log(leaveResponse.event)
                 if (leaveResponse.status === 200) {
                     // setRefetchParticipants(true)
                     setOpen(false)
@@ -98,7 +97,7 @@ export default function Leave({ setJoined, joined, event }) {
                 </DialogActions>
             </Dialog>
 
-            <Snackbars snackMsg={snackMsg} openSnack={openSnack} setOpenSnack={setOpenSnack}></Snackbars>
+            {openSnack && <Snackbars snackMsg={snackMsg} setOpenSnack={setOpenSnack} openSnack={openSnack}></Snackbars>}
         </div>
     );
 }

@@ -84,7 +84,7 @@ export default function Cancel({ event, setCanceled }) {
           </Button>
                 </DialogActions>
             </Dialog>
-            <Snackbars snackMsg={snackMsg} openSnack={openSnack} setOpenSnack={setOpenSnack}></Snackbars>
+            {openSnack && <Snackbars snackMsg={snackMsg} setOpenSnack={setOpenSnack} openSnack={openSnack}></Snackbars>}
         </div>
     );
 }

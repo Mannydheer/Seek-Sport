@@ -16,43 +16,50 @@ const UserHostedEvents = () => {
     const [error, setError] = useState(false)
     const [canceled, setCanceled] = useState(false)
     //STYLING FOR CLIPLOADER
+
     const override = css`
     display: block;
      margin: 0 auto;
    `;
-    useEffect(() => {
 
+    useEffect(() => {
+        let unmounted = false;
         const handleUserEvents = async () => {
-            let token = localStorage.getItem('accesstoken')
-            //will get all events related to the user.
-            try {
-                let response = await fetch(`/userEvents/${userInfo._id}`, {
-                    method: "GET",
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json',
-                        'Authorization': `${token}`
+            if (!unmounted) {
+                let token = localStorage.getItem('accesstoken')
+                //will get all events related to the user.
+                try {
+                    let response = await fetch(`/userEvents/${userInfo._id}`, {
+                        method: "GET",
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Accept: 'application/json',
+                            'Authorization': `${token}`
+                        }
+                    })
+                    if (response.status === 200) {
+                        let userEvents = await response.json();
+                        setEvents(userEvents.events)
+                        setParticipants(userEvents.participants)
+                        //setCanceled will be turned to true if a cancel occurs. 
+                        //this will cause useEffect to refetch event data.
+                        setCanceled(false)
                     }
-                })
-                if (response.status === 200) {
-                    let userEvents = await response.json();
-                    console.log(userEvents.events, 'inside userhostedvenet')
-                    setEvents(userEvents.events)
-                    setParticipants(userEvents.participants)
-                    //setCanceled will be turned to true if a cancel occurs. 
-                    //this will cause useEffect to refetch event data.
-                    setCanceled(false)
+                    else {
+                        setError(true)
+                    }
                 }
-                else {
+                catch (err) {
+                    console.log(err, 'error occured inside catch for handler user events.')
                     setError(true)
                 }
             }
-            catch (err) {
-                console.log(err, 'error occured inside catch for handler user events.')
-                setError(true)
-            }
         }
         handleUserEvents();
+
+        return () => {
+            unmounted = true;
+        }
     }, [canceled, setCanceled])
 
 
@@ -63,7 +70,7 @@ const UserHostedEvents = () => {
             </Title>
             {events !== null ? participants !== null && events.map((event, index) => {
                 return (
-                    <EventDetails index={index} canceled={canceled} setCanceled={setCanceled} event={event} />
+                    <EventDetails key={`${event.Registration}${event.placeId}`} index={index} canceled={canceled} setCanceled={setCanceled} event={event} />
                 )
             }) : <ClipLoader
                     css={override}

@@ -55,6 +55,8 @@ const ChatJoin = () => {
     // const [chatMembers, setChatMembers] = useState(null)
     //---------------------USE-EFFECTS.------------------
     //--------------FETCH ALL PARTICIPANTS OF THAT ROOM...---------------
+
+    console.log(messages, '59 ')
     useEffect(() => {
         if (eventId) {
             const handleGetChatRoom = async () => {
@@ -132,7 +134,6 @@ const ChatJoin = () => {
     //--------------JOIN OR LEAVE GROUP MESSAGE!---------------
     useEffect(() => {
         socket.on('users-join-leave', (message) => {
-            setMessages(message.message)
             dispatch(addChatParticipants(message))
         })
     }, [message])
@@ -185,7 +186,6 @@ const ChatJoin = () => {
     });
 
     return <MainWrapper>
-
         <GroupNameWrapper>
             {groupName ? <GroupName>{groupName}
             </GroupName> :

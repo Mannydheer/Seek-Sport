@@ -102,7 +102,6 @@ client.connect(async (err) => {
                 //if there are participants, check if there is the person trying to join isn't 
                 //already joined.
                 if (existingUser) {
-
                     let messageInfo = {
                         existingUser: true,
                         roomData: getRoom,

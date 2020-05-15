@@ -15,33 +15,44 @@ const EventDetails = ({ index, event, canceled, setCanceled }) => {
     const [joined, setJoined] = useState(false)
 
     useEffect(() => {
+
+        let unmounted = false;
         const handleCurrentEventParticipants = async () => {
-            let token = localStorage.getItem('accesstoken')
-            try {
-                let response = await fetch(`/currentEventParticipants/${event.participantId}`, {
-                    method: "GET",
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json',
-                        'Authorization': `${token}`
-                    },
-                })
-                if (response.status === 200) {
-                    let participantResponse = await response.json();
-                    setCurrentEventParticipants(participantResponse.eventParticipants)
-                    participantResponse.eventParticipants.find(participant => {
-                        if (participant.userId === userInfo._id) {
-                            setJoined(true)
-                        }
+            //only if you havn't mounted yet
+            if (!unmounted) {
+
+                let token = localStorage.getItem('accesstoken')
+                try {
+                    let response = await fetch(`/currentEventParticipants/${event.participantId}`, {
+                        method: "GET",
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Accept: 'application/json',
+                            'Authorization': `${token}`
+                        },
                     })
+                    if (response.status === 200) {
+                        let participantResponse = await response.json();
+                        setCurrentEventParticipants(participantResponse.eventParticipants)
+                        participantResponse.eventParticipants.find(participant => {
+                            if (participant.userId === userInfo._id) {
+                                setJoined(true)
+                            }
+                        })
+                    }
                 }
-            }
-            catch (err) {
-                console.log(err, 'error occured inside catch for handler user events.')
+                catch (err) {
+                    console.log(err, 'error occured inside catch for handler user events.')
+                }
             }
         }
         handleCurrentEventParticipants();
-    }, [joined])
+
+
+        return () => {
+            unmounted = true;
+        }
+    }, [joined, userInfo.id, event.participantId])
 
     //function called from render to show all images.
     const getParticipantImages = (currentEventParticipants) => {
