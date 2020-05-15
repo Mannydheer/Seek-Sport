@@ -33,7 +33,6 @@ const UserActivities = () => {
                     let eventResponse = await response.json();
 
                     if (eventResponse.status === 200) {
-                        console.log(eventResponse, 'THIS IS EEVENT RESPONSE')
                         setAllEvents(eventResponse.events)
                         // setMessage(eventResponse.message)
                         setCanceled(false)

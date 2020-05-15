@@ -12,35 +12,42 @@ const ViewActivity = () => {
     //error
     //on component mount.
     useEffect(() => {
-        //onMount, get the events for the selectedPark.
-        if (allParks.selectedPark !== null) {
-            const handleSelectedParkEvents = async () => {
-                let token = localStorage.getItem('accesstoken')
-                try {
-                    let response = await fetch(`/selectedParkEvents/${allParks.selectedPark.id}`, {
-                        method: "GET",
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Accept: 'application/json',
-                            'Authorization': `${token}`
-                        },
-                    })
-                    let eventResponse = await response.json();
-                    if (eventResponse.status === 200) {
-                        setHostedEvents(eventResponse.events)
-                        //setCanceled will be turned to true if a cancel occurs. 
-                        //this will cause useEffect to refetch event data.
-                        setCanceled(false)
+        let unmounted = false;
+        //cleanup
+        if (!unmounted) {
+            //onMount, get the events for the selectedPark.
+            if (allParks.selectedPark !== null) {
+                const handleSelectedParkEvents = async () => {
+                    let token = localStorage.getItem('accesstoken')
+                    try {
+                        let response = await fetch(`/selectedParkEvents/${allParks.selectedPark.id}`, {
+                            method: "GET",
+                            headers: {
+                                'Content-Type': 'application/json',
+                                Accept: 'application/json',
+                                'Authorization': `${token}`
+                            },
+                        })
+                        let eventResponse = await response.json();
+                        if (eventResponse.status === 200) {
+                            setHostedEvents(eventResponse.events)
+                            //setCanceled will be turned to true if a cancel occurs. 
+                            //this will cause useEffect to refetch event data.
+                            setCanceled(false)
 
+                        }
+                    } catch (err) {
+                        throw err
                     }
-                } catch (err) {
-                    throw err
                 }
+                handleSelectedParkEvents()
             }
-            handleSelectedParkEvents()
+            else {
+                return
+            }
         }
-        else {
-            return
+        return () => {
+            unmounted = true;
         }
     }, [canceled, setCanceled])
     return (

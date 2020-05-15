@@ -97,7 +97,7 @@ export default function Leave({ setJoined, joined, event }) {
                 </DialogActions>
             </Dialog>
 
-            {openSnack && <Snackbars snackMsg={snackMsg} setOpenSnack={setOpenSnack} openSnack={openSnack}></Snackbars>}
+            {openSnack && <Snackbars snackMsg={snackMsg} setOpenSnack={setOpenSnack} ></Snackbars>}
         </div>
     );
 }

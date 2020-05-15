@@ -49,14 +49,12 @@ const ChatJoin = () => {
     let userId = userInfo._id;
     //----------------------USE-STATES------------------
     const [name, setName] = useState('');
-    const [messages, setMessages] = useState('')
     const [message, setMessage] = useState('')
     const [allMessages, setAllMessages] = useState(null);
     // const [chatMembers, setChatMembers] = useState(null)
     //---------------------USE-EFFECTS.------------------
     //--------------FETCH ALL PARTICIPANTS OF THAT ROOM...---------------
 
-    console.log(messages, '59 ')
     useEffect(() => {
         if (eventId) {
             const handleGetChatRoom = async () => {

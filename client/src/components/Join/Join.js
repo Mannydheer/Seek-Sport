@@ -116,7 +116,7 @@ export default function Join({ setJoined, joined, event }) {
           </Button>
                 </DialogActions>
             </Dialog>
-            {openSnack && <Snackbars snackMsg={snackMsg} setOpenSnack={setOpenSnack} openSnack={openSnack}></Snackbars>}
+            {openSnack && <Snackbars snackMsg={snackMsg} setOpenSnack={setOpenSnack}></Snackbars>}
 
         </div>
     );

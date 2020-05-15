@@ -1,34 +1,20 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-// import Snackbar from '@material-ui/core/Snackbar';
-// import MuiAlert from '@material-ui/lab/Alert';
-// import { makeStyles } from '@material-ui/core/styles';
 
-// function Alert(props) {
-//     return <MuiAlert elevation={6} variant="filled" {...props} />;
-// }
-// const useStyles = makeStyles((theme) => ({
-//     root: {
-//         width: '100%',
-//         '& > * + *': {
-//             marginTop: theme.spacing(2),
-//         },
-//     },
-// }));
-export default function Snackbars({ openSnack, snackMsg, setOpenSnack }) {
-    // const classes = useStyles();
-    // const handleClose = (event, reason) => {
-    //     if (reason === 'clickaway') {
-    //         return;
-    //     }
-    //     setOpenSnack(false);
-    // };
+export default function Snackbars({ snackMsg, setOpenSnack }) {
+
+
 
     useEffect(() => {
-        setTimeout(() => {
+
+        const timer = setTimeout(() => {
             setOpenSnack(false)
         }, 3000);
+        return () => clearTimeout(timer);
+
     }, [])
+
+
 
 
 
@@ -37,11 +23,6 @@ export default function Snackbars({ openSnack, snackMsg, setOpenSnack }) {
     return (
         <Alert>
             {snackMsg}
-            {/* <Snackbar open={openSnack} autoHideDuration={3000} onClose={handleClose}>
-                {snackMsg !== '' && <Alert onClose={handleClose} severity="success">
-                    {snackMsg}
-                </Alert>}
-            </Snackbar> */}
         </Alert>
     );
 }
