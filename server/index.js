@@ -20,24 +20,25 @@ var ObjectId = require('mongodb').ObjectID;
 const http = require('http');
 const socketio = require('socket.io');
 
-
-const {
-    handleHosting,
-    handleGetHosts,
-    handleGetEvents,
+//chat controller.
+const { handleGetChatRoom, } = require('./controllers/handlers/chatController')
+//user events controller.
+const { handleUserActivities, handleUserRegisteredEvents, } = require('./controllers/handlers/UserEventsController')
+//host controller
+const { handleHosting, handleGetHosts } = require('./controllers/handlers/hostController');
+//event controller.
+const { handleGetEvents,
     handleUserEvents,
     handleViewActivityEvents,
     handleCurrentEventParticipants,
     handleSelectedParkEvents,
-    handleUserActivities,
-    handleUserRegisteredEvents,
-    handleGetChatRoom,
-} = require('./controllers/handlers')
+} = require('./controllers/handlers/eventController');
+
 
 //user login-signup controller.
 const { handleSignUp, handleLogin, handleGetUser } = require('./controllers/user-controller');
 //google-api controller
-const { handlePhoto, handleNearbySearch } = require('./controllers/google-api-controllers');
+const { handlePhoto, handleNearbySearch } = require('./gateways/google-api-requests');
 //join-cancel-leave event controller.
 const { handleJoinEvent, handleLeaveEvent, handleCancelEvent } = require('./controllers/join-leave-cancel-event-controller');
 //authorize middleware. (token checking)
@@ -245,7 +246,7 @@ app.post('/nearbySearch', handleNearbySearch)
 app.post('/parkPhoto', handlePhoto)
 //store the hosting informaiton
 app.post('/hostingInformation', auth, handleHosting)
-app.get('/getParksWithHosts', handleGetHosts)
+app.get('/getParksWithHosts', auth, handleGetHosts)
 //store event information
 app.get('/getEvents', handleGetEvents)
 //user events.

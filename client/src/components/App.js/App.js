@@ -1,20 +1,20 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Navbar from '../Navbar';
+import Navbar from '../../pages/pages/Navbar';
 import GlobalStyles from '../GlobalStyles';
-import Home from '../Home';
-import Sports from '../Sports';
-import Host from '../Host';
+import Home from '../../pages/pages/Home';
+import Sports from '../../pages/pages/Sports';
+import Host from '../../pages/pages/Host';
 import { fetchUserProfile } from '../helpers/helpers'
 import { loginSuccess, loginError, loginRequest } from '../actions/userActions';
 import { useDispatch, useSelector } from 'react-redux';
 import ViewActivity from '../ViewActivity';
-import UserHostedEvents from '../UserHostedEvents';
-import UserActivities from '../UserActivities';
-import Footer from '../Footer';
-import ChatJoin from '../ChatJoin';
-import Chat from '../Chat';
-import Chatbot from '../Chatbot';
+import UserHostedEvents from '../../pages/pages/UserHostedEvents';
+import UserActivities from '../../pages/pages/UserActivities';
+import Footer from '../../pages/pages/Footer';
+import ChatJoin from '../../pages/pages/ChatJoin';
+import Chat from '../../pages/pages/Chat';
+import Chatbot from '../../pages/pages/Chatbot';
 import styled from 'styled-components';
 
 function App() {

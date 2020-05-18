@@ -13,7 +13,7 @@ import Dialog from '@material-ui/core/Dialog';
 import styled from "styled-components";
 import ImageUploader from 'react-images-upload';
 import { useDispatch } from 'react-redux';
-import { loginRequest, loginSuccess, loginError } from '../actions/userActions';
+import { loginRequest, loginSuccess, loginError } from '../../../components/actions/userActions';
 
 //Reference Sebastian Silbermann - Materials UI OpenSource Code
 function Copyright() {

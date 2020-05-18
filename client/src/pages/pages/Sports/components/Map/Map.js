@@ -5,10 +5,10 @@ import {
     requestParks, retrieveParks, retrieveParksError,
     requestHosts, retrieveHosts, retrieveHostsError,
     requestEvents, retrieveEvents, retrieveEventsError
-} from '../actions/parkActions';
+} from '../../../../../components/actions/parkActions';
 import { useDispatch, useSelector } from 'react-redux';
 //components
-import ParkSidebar from '../ParkSidebar';
+import ParkSidebar from '../../../../../components/ParkSidebar';
 import styled from 'styled-components';
 const Map = ({ coordinates, parkMenu, setParkMenu }) => {
     //pass down coordinates as props.

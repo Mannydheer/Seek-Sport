@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
-import WrappedMap from '../Map/Map';
+import WrappedMap from './components/Map'
 import GoogleAddress from '../GoogleAddress';
 
 
