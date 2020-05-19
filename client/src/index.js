@@ -1,9 +1,8 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App.js';
-import configureStore from './store/store'
-import { Provider } from 'react-redux';
-
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "./App.js";
+import configureStore from "./store/store";
+import { Provider } from "react-redux";
 
 const store = configureStore();
 
@@ -12,7 +11,7 @@ ReactDOM.render(
     <App />
   </Provider>,
 
-  document.getElementById('root')
+  document.getElementById("root")
 );
 
 // If you want your app to work offline and load faster, you can change
