@@ -5,6 +5,8 @@ const bodyParser = require("body-parser");
 const morgan = require("morgan");
 //multer
 const multer = require("multer");
+//logger.
+const { logger } = require("./config/logger");
 
 //mongo
 const MongoClient = require("mongodb").MongoClient;
@@ -287,7 +289,10 @@ const connection = async () => {
   try {
     let connectionResponse = await handleConnection();
     if (connectionResponse) {
-      server.listen(PORT, () => console.info(`Listening on port ${PORT}`));
+      server.listen(PORT, () =>
+        //logger.
+        logger.log("info", `Listening on port ${PORT}`)
+      );
     }
   } catch (err) {
     console.log(err);
