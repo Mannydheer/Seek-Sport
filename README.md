@@ -71,7 +71,7 @@ https://www.youtube.com/watch?v=aU5c4TsWLIk
 ### Only participating users can talk to each other. 
 <img src="Screenshots/ChatRoom.png" alt="ChatRoom">
 
-### Also, users can see who is online/offline within a chat room.
+### ```Also, users can see who is online/offline within a chat room.```
 <img src="Screenshots/offline.png" alt="offline">
 
 
