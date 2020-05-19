@@ -47,7 +47,7 @@ const {
   handleSignUp,
   handleLogin,
   handleGetUser,
-} = require("./controllers/user-controller");
+} = require("./service/authService");
 //google-api controller
 const {
   handlePhoto,
