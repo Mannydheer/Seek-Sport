@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { requestRegisteredUserEvents, retrieveRegisteredUserEvents, retrieveRegisteredUserEventsError } from '../../../components/actions/userActions';
+import { requestRegisteredUserEvents, retrieveRegisteredUserEvents, retrieveRegisteredUserEventsError } from '../../components/actions/userActions';
 import Rooms from './components/Rooms';
 import styled from 'styled-components';
 import ClipLoader from "react-spinners/ClipLoader";

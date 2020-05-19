@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
-import EventDetails from '../../../components/EventDetails';
+import EventDetails from '../../../src/components/EventDetails'
 import ClipLoader from "react-spinners/ClipLoader";
 import { css } from "@emotion/core";
 

@@ -11,7 +11,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Dialog from '@material-ui/core/Dialog';
 import styled from "styled-components";
-import { loginSuccess, loginError, loginRequest } from '../../../components/actions/userActions';
+import { loginSuccess, loginError, loginRequest } from '../../components/actions/userActions';
 import { useDispatch } from 'react-redux';
 //Reference Sebastian Silbermann - Materials UI OpenSource Code
 function Copyright() {

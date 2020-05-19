@@ -7,7 +7,7 @@ import {
     requestChats,
     retrieveChats, retrieveChatsError,
     addMessage, leaveRoom, actualChatParticipants, addChatParticipants, selectedRoom
-} from '../../../components/actions/userActions';
+} from '../../components/actions/userActions'
 
 import { IoMdSend } from 'react-icons/io';
 import ClipLoader from "react-spinners/ClipLoader";

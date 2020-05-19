@@ -10,7 +10,6 @@ const multer = require('multer')
 const MongoClient = require('mongodb').MongoClient;
 const uri = "mongodb+srv://dbUser:YOFwbi6x3P5o3H4d@cluster0-seh3x.mongodb.net/test?authSource=admin&replicaSet=Cluster0-shard-0&w=majority&readPreference=primary&retryWrites=true&ssl=true"
 
-const dbName = 'ParkGames';
 const collectionRooms = 'Rooms'
 const assert = require('assert')
 var ObjectId = require('mongodb').ObjectID;
@@ -43,12 +42,19 @@ const { handlePhoto, handleNearbySearch } = require('./gateways/google-api-reque
 const { handleJoinEvent, handleLeaveEvent, handleCancelEvent } = require('./controllers/join-leave-cancel-event-controller');
 //authorize middleware. (token checking)
 const { auth } = require('./controllers/middleware-controller')
-
+//CONNECTION TO MONGO DB.
+const { handleConnection } = require('./connection/connection');
 
 require('dotenv').config();
+
 //data file for items
 const upload = multer({ dest: './public/uploads/' })
 const PORT = 4000;
+const dbName = 'ParkGames';
+
+
+
+
 var app = express()
 
 //set up socket io.
@@ -59,7 +65,6 @@ const io = socketio(server);
 //this wil run when we have a client connection on our ion instance.
 //this will be used to keep track of clients joining and leaving. (connect and disconnect0)
 
-
 //connect to db
 const client = new MongoClient(uri, {
     useNewUrlParser: true,
@@ -68,10 +73,8 @@ const client = new MongoClient(uri, {
 client.connect(async (err) => {
     if (err) throw { Error: err, message: "error occured connected to DB" }
     console.log("Connected to DB in addUserChat")
-    //db
+
     const db = client.db(dbName)
-
-
 
     io.on('connection', (socket) => {
         console.log('we have a new connections!!!')
@@ -210,7 +213,6 @@ client.connect(async (err) => {
 
 
 
-
 //const server
 app.use(function (req, res, next) {
     res.header(
@@ -281,5 +283,30 @@ app.get('/getChatRoom/:eventId', handleGetChatRoom)
 // app.get('/chat', handleChat)
 
 
-server.listen(PORT, () => console.info(`Listening on port ${PORT}`));
+// ------------------------------CONNECT TO MONGODB ----------------------------
+
+// const connection = async () => {
+//     try {
+//         let connectionResponse = await handleConnection();
+//         console.log(connectionResponse)
+//         if (connectionResponse) {
+//             server.listen(PORT, () => console.info(`Listening on port ${PORT}`));
+//         }
+//     }
+//     catch (err) {
+//         console.log(err)
+//     }
+// }
+// connection();
+
+
+handleConnection().then((response) => {
+    console.log(response)
+    if (!response) {
+        throw new Error("Server failed to start because mongoDB did not connect.")
+    }
+    else {
+        server.listen(PORT, () => console.info(`Listening on ${PORT}`))
+    }
+})
 
