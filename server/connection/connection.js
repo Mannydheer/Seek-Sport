@@ -7,17 +7,14 @@ let connectionHandler = null;
 
 const handleConnection = async () => {
     console.log('connect to mongodb in connection.js')
-
-
     const client = new MongoClient(uri, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     });
-
     try {
+        console.log('Connected to mongoDB in handleConnection.')
         connectionHandler = await client.connect();
         return connectionHandler;
-        console.log('Connected to mongoDB in handleConnection.')
     }
     catch (error) {
         console.log('Error connected to mongoDB')
@@ -25,4 +22,11 @@ const handleConnection = async () => {
 
 }
 
-module.exports = { handleConnection };
+const getConnection = () => {
+    if (connectionHandler) {
+        return connectionHandler
+    }
+
+}
+getConnection()
+module.exports = { handleConnection, getConnection };
