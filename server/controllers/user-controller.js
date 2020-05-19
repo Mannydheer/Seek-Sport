@@ -3,18 +3,14 @@
 const dbName = 'ParkGames';
 const collectionUsers = 'Users'
 const collectionUserEvents = 'UserEvents'
-
 const assert = require('assert')
 var ObjectId = require('mongodb').ObjectID;
-//
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
 //env vairablkes
+
 require('dotenv').config();
-
 const { getConnection } = require('../connection/connection');
-
-
 
 //allows to fetch to an API from backend with fetch method API.
 // ----------------------------------------SIGNUP----------------------------------------
@@ -156,7 +152,7 @@ const handleGetUser = async (req, res, next) => {
     //from middleware.
     let id = req.user.id;
     try {
-        const db = client.db(dbName)
+        const db = getConnection().db(dbName)
         //see if you find the user. 
         let checkForUser = await db.collection(collectionUsers).findOne({ _id: ObjectId(id) })
         res.status(200).json({

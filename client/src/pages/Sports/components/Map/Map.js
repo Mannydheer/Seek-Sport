@@ -50,6 +50,7 @@ const Map = ({ coordinates, parkMenu, setParkMenu }) => {
                     'Content-type': 'application/json'
                 },
             })
+            console.log(hostResponse)
             let allHosts = await hostResponse.json();
             if (hostResponse.status === 200) {
                 dispatch(retrieveHosts(allHosts.hosts))

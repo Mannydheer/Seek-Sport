@@ -2,7 +2,6 @@
 
 //MONGODB
 const { getConnection } = require('../../connection/connection');
-
 const dbName = 'ParkGames';
 const collectionEvents = 'Events'
 const collectionParticipants = 'Participants'

@@ -208,7 +208,7 @@ app.post('/nearbySearch', handleNearbySearch)
 app.post('/parkPhoto', handlePhoto)
 //store the hosting informaiton
 app.post('/hostingInformation', auth, handleHosting)
-app.get('/getParksWithHosts', auth, handleGetHosts)
+app.get('/getParksWithHosts', handleGetHosts)
 //store event information
 app.get('/getEvents', handleGetEvents)
 //user events.

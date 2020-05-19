@@ -293,7 +293,7 @@ const handleHosting = async (req, res, next) => {
 }
 
 
-//@endpoint POST /getParksWithHosts
+//@endpoint GET/getParksWithHosts
 //@desc get all hosts for a park
 //@access PRIVATE - will need to validate token? YES
 
@@ -301,12 +301,16 @@ const handleHosting = async (req, res, next) => {
 
 
 const handleGetHosts = async (req, res, next) => {
+    console.log("inside get hosts.")
+
+
     try {
         const db = getConnection().db(dbName)
         //insert the hosting info into DB
         await db.collection(collectionHosts).find()
             .toArray()
             .then(data => {
+                console.log(data)
                 res.status(200).json({
                     status: 200,
                     message: "Success getting all hosts!",
