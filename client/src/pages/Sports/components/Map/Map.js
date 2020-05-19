@@ -5,10 +5,10 @@ import {
     requestParks, retrieveParks, retrieveParksError,
     requestHosts, retrieveHosts, retrieveHostsError,
     requestEvents, retrieveEvents, retrieveEventsError
-} from '../actions/parkActions';
+} from '../../../../../src/components/actions/parkActions';
 import { useDispatch, useSelector } from 'react-redux';
 //components
-import ParkSidebar from '../ParkSidebar';
+import ParkSidebar from '../../../../components/ParkSidebar/ParkSidebar';
 import styled from 'styled-components';
 const Map = ({ coordinates, parkMenu, setParkMenu }) => {
     //pass down coordinates as props.
@@ -50,6 +50,7 @@ const Map = ({ coordinates, parkMenu, setParkMenu }) => {
                     'Content-type': 'application/json'
                 },
             })
+            console.log(hostResponse)
             let allHosts = await hostResponse.json();
             if (hostResponse.status === 200) {
                 dispatch(retrieveHosts(allHosts.hosts))

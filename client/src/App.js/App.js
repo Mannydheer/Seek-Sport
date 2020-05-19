@@ -1,20 +1,20 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Navbar from '../Navbar';
+import Navbar from '../../src/pages/Navbar'
 import GlobalStyles from '../GlobalStyles';
-import Home from '../Home';
-import Sports from '../Sports';
-import Host from '../Host';
-import { fetchUserProfile } from '../helpers/helpers'
-import { loginSuccess, loginError, loginRequest } from '../actions/userActions';
+import Home from '../../src/pages/Home'
+import Sports from '../../src/pages/Sports'
+import Host from '../../src/pages/Host'
+import { fetchUserProfile } from '../components/helpers/helpers'
+import { loginSuccess, loginError, loginRequest } from '../components/actions/userActions';
 import { useDispatch, useSelector } from 'react-redux';
-import ViewActivity from '../ViewActivity';
-import UserHostedEvents from '../UserHostedEvents';
-import UserActivities from '../UserActivities';
-import Footer from '../Footer';
-import ChatJoin from '../ChatJoin';
-import Chat from '../Chat';
-import Chatbot from '../Chatbot';
+import ViewActivity from '../components/ViewActivity';
+import UserHostedEvents from '../../src/pages/UserHostedEvents';
+import UserActivities from '../../src/pages/UserActivities';
+import Footer from '../../src/pages/Footer';
+import ChatJoin from '../../src/pages/ChatJoin';
+import Chat from '../../src/pages/Chat';
+import Chatbot from '../../src/pages/Chatbot';
 import styled from 'styled-components';
 
 function App() {

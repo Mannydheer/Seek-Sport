@@ -4,7 +4,7 @@ import { NavLink, } from 'react-router-dom';
 import Login from '../Login';
 import Signup from '../Signup';
 import { useDispatch, useSelector } from 'react-redux';
-import { logOutUser } from '../actions/userActions';
+import { logOutUser } from '../../components/actions/userActions'
 
 
 

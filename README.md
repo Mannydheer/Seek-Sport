@@ -1,9 +1,9 @@
 
 ### Seek & Sport
-Seek&Sport - A website application that allows for users to find nearby parks based on an address and then finding people to play sports with.
-
+```Seek&Sport - A website application that allows for users to find nearby parks based on an address and then finding people to play sports with.
 Users can book, join and leave events.
 Also once within an event, can join the chat room to talk with the other particiapnts!
+```
 
 ### Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
@@ -71,26 +71,32 @@ https://www.youtube.com/watch?v=aU5c4TsWLIk
 ### Only participating users can talk to each other. 
 <img src="Screenshots/ChatRoom.png" alt="ChatRoom">
 
-### Also, users can see who is online/offline within a chat room.
+### ```Also, users can see who is online/offline within a chat room.```
 <img src="Screenshots/offline.png" alt="offline">
 
 
 
 ### Prerequisites
+```
 - Mongodb
 -node.js, npm/yarn
-
+```
 ### Built With
+```
 MongoDb - For database.
 Node.js - Backend
 React - FrontEnd
-
+```
 ### Authors
+```
 Manider Dheer.
-
+```
 ### License
+```
 This project is licensed under the MIT License - see the LICENSE.md file for details
-
+```
 ### Acknowledgments
-Big thank you to LucasBassetti - ReactSimpleChatbot.
+```
+Big thank you to Lucas Bassetti - ReactSimpleChatbot.
 Materials UI.
+```

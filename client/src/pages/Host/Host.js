@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
-import ParkDetails from '../ParkDetails';
+import ParkDetails from '../../../src/components/ParkDetails'
+
 import DatePicker from "react-datepicker";
-import { skillLevel, sports } from '../data';
+import { skillLevel, sports } from '../../components/data';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
-import EventDetails from '../EventDetails';
+import EventDetails from '../../../src/components/EventDetails'
 import "react-datepicker/dist/react-datepicker.css";
 
 const useStyles = makeStyles(theme => ({

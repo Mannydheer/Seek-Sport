@@ -10,55 +10,54 @@ const multer = require('multer')
 const MongoClient = require('mongodb').MongoClient;
 const uri = "mongodb+srv://dbUser:YOFwbi6x3P5o3H4d@cluster0-seh3x.mongodb.net/test?authSource=admin&replicaSet=Cluster0-shard-0&w=majority&readPreference=primary&retryWrites=true&ssl=true"
 
-const dbName = 'ParkGames';
 const collectionRooms = 'Rooms'
 const assert = require('assert')
 var ObjectId = require('mongodb').ObjectID;
-
 
 //built in node module
 const http = require('http');
 const socketio = require('socket.io');
 
-
-const {
-    handleHosting,
-    handleGetHosts,
-    handleGetEvents,
+//chat controller.
+const { handleGetChatRoom, } = require('./controllers/handlers/chatController')
+//user events controller.
+const { handleUserActivities, handleUserRegisteredEvents, } = require('./controllers/handlers/UserEventsController')
+//host controller
+const { handleHosting, handleGetHosts } = require('./controllers/handlers/hostController');
+//event controller.
+const { handleGetEvents,
     handleUserEvents,
     handleViewActivityEvents,
     handleCurrentEventParticipants,
     handleSelectedParkEvents,
-    handleUserActivities,
-    handleUserRegisteredEvents,
-    handleGetChatRoom,
-} = require('./controllers/handlers')
+} = require('./controllers/handlers/eventController');
 
 //user login-signup controller.
 const { handleSignUp, handleLogin, handleGetUser } = require('./controllers/user-controller');
 //google-api controller
-const { handlePhoto, handleNearbySearch } = require('./controllers/google-api-controllers');
+const { handlePhoto, handleNearbySearch } = require('./gateways/google-api-requests');
 //join-cancel-leave event controller.
 const { handleJoinEvent, handleLeaveEvent, handleCancelEvent } = require('./controllers/join-leave-cancel-event-controller');
 //authorize middleware. (token checking)
 const { auth } = require('./controllers/middleware-controller')
-
+//CONNECTION TO MONGO DB.
+const { handleConnection, getConnection } = require('./connection/connection');
 
 require('dotenv').config();
+
 //data file for items
 const upload = multer({ dest: './public/uploads/' })
 const PORT = 4000;
+const dbName = 'ParkGames';
+
 var app = express()
 
 //set up socket io.
 const server = http.createServer(app);
 //socket io server.
 const io = socketio(server);
-
 //this wil run when we have a client connection on our ion instance.
 //this will be used to keep track of clients joining and leaving. (connect and disconnect0)
-
-
 //connect to db
 const client = new MongoClient(uri, {
     useNewUrlParser: true,
@@ -67,11 +66,7 @@ const client = new MongoClient(uri, {
 client.connect(async (err) => {
     if (err) throw { Error: err, message: "error occured connected to DB" }
     console.log("Connected to DB in addUserChat")
-    //db
     const db = client.db(dbName)
-
-
-
     io.on('connection', (socket) => {
         console.log('we have a new connections!!!')
         console.log(socket.id, 'SOCKETID')
@@ -88,17 +83,13 @@ client.connect(async (err) => {
             let getRoom = await db.collection(collectionRooms).findOne({ _id: room })
             //if no participants
             //then we can create one... move to the else.
-
-
             //ORDER MATTERS OF THE IF.
             if (getRoom && getRoom.chatParticipants.length > 0) {
-
                 let existingUser = getRoom.chatParticipants.find(user => {
                     if (user.userId === userId) {
                         return user
                     }
                 })
-
                 //if there are participants, check if there is the person trying to join isn't 
                 //already joined.
                 if (existingUser) {
@@ -129,26 +120,21 @@ client.connect(async (err) => {
                         updateChatParticipants: getRoom.chatParticipants,
                         room: room,
                         roomData: getRoom,
-
                     }
                     callback(messageInfo)
-
                     //to show which other users have joined or left.
                     socket.broadcast.emit('users-join-leave', messageInfo)
                     // callback(messageInfo.message)
-
                 }
             }
             //we will now add the person to the room.
             else {
-
                 console.log('HERE IS THE ERROR')
                 await db.collection(collectionRooms).updateOne({ _id: room }, { $push: { chatParticipants: chatMemberDetails } })
                 let getRoom = await db.collection(collectionRooms).findOne({ _id: room })
                 //room is the eventId-First-Room.
                 //user will join room.
                 socket.join(room)
-
                 //send back room message history.
                 // socket.emit('room-message-history', getRoom)
                 let messageInfo = {
@@ -157,15 +143,12 @@ client.connect(async (err) => {
                     updateChatParticipants: getRoom.chatParticipants,
                     room: room,
                     roomData: getRoom,
-
                 }
                 callback(messageInfo)
                 //send back the join and leaver.
                 socket.broadcast.emit('users-join-leave', messageInfo)
-
             }
         })
-
         socket.on('sendMessage', async (data, callback) => {
             //now that we have the message...
             //get particular room 
@@ -175,7 +158,6 @@ client.connect(async (err) => {
             // io.in(data.room).emit('chat-message', data)
             socket.broadcast.emit('chat-message', data)
         })
-
         socket.on('leaveRoom', async (data, callback) => {
             socket.leave(data.room)
             console.log('left room')
@@ -184,8 +166,6 @@ client.connect(async (err) => {
             assert(1, updateChatMember.matchedCount)
             assert(1, updateChatMember.modifiedCount)
             let findChatMembers = await db.collection(collectionRooms).findOne({ _id: data.room })
-
-
             let messageInfo = {
                 message: `${data.name} has left the room. Reload to join`,
                 updateChatParticipants: findChatMembers.chatParticipants,
@@ -194,20 +174,8 @@ client.connect(async (err) => {
             callback(messageInfo)
             socket.broadcast.emit('users-join-leave', messageInfo)
         })
-
     })
 })
-
-
-
-
-
-
-
-
-
-
-
 
 
 //const server
@@ -227,12 +195,7 @@ app.use(express.static('./server/assets'))
 app.use(bodyParser.json())
 app.use(express.urlencoded({ extended: false }))
 app.use('/', express.static(__dirname + '/'))
-// app.use('/uploads', express.static('/uploads'))
-
-
-
-//endpoints.
-// app.post('/fileUpload', , handleFile)
+// --------------------ENDPOINTS-------------------
 //signup
 app.post('/SignUp', upload.single('file'), handleSignUp)
 //login
@@ -273,12 +236,19 @@ app.get('/userRegisteredEvents/:_id', handleUserRegisteredEvents)
 app.get('/getChatRoom/:eventId', handleGetChatRoom)
 
 
+// ------------------------------CONNECT TO MONGODB ----------------------------
 
+const connection = async () => {
+    try {
+        let connectionResponse = await handleConnection();
+        if (connectionResponse) {
+            server.listen(PORT, () => console.info(`Listening on port ${PORT}`));
+        }
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+connection();
 
-
-//CHAT
-// app.get('/chat', handleChat)
-
-
-server.listen(PORT, () => console.info(`Listening on port ${PORT}`));
 
