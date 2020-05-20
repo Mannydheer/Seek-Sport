@@ -18,7 +18,6 @@ const handleConnection = async () => {
     console.log("Error connected to mongoDB");
   }
 };
-
 const getConnection = () => {
   if (connectionHandler) {
     return connectionHandler;

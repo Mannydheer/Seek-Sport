@@ -44,10 +44,15 @@ const {
 
 //user login-signup controller.
 const {
-  handleSignUp,
-  handleLogin,
+  // handleSignUp,
+  // handleLogin,
+  // handleGetUser,
+} = require("./services/authService");
+const {
   handleGetUser,
-} = require("./service/authService");
+  handleLogin,
+  handleSignUp,
+} = require("./controllers/authController");
 //google-api controller
 const {
   handlePhoto,

@@ -32,6 +32,7 @@ function App() {
       try {
         let response = await fetchUserProfile();
         let userResponse = await response.json();
+        console.log(userResponse);
         if (response.status === 200) {
           let name = userResponse.username.split("@")[0];
           dispatch(
