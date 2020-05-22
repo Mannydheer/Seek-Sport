@@ -1,16 +1,5 @@
 "use strict";
-
-const dbName = "ParkGames";
-const collectionUsers = "Users";
-const collectionUserEvents = "UserEvents";
-const assert = require("assert");
-var ObjectId = require("mongodb").ObjectID;
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-//env vairablkes
-
 require("dotenv").config();
-const { getConnection } = require("../connection/connection");
 const {
   getUserById,
   getUserByUserName,
