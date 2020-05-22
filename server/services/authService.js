@@ -36,9 +36,8 @@ const getUserByUserName = async (loginInfoUser) => {
   const checkForUser = await getUserByUserNameRepo(loginInfoUser);
   if (!checkForUser) {
     return;
-  } else {
-    return checkForUser;
   }
+  return checkForUser;
 };
 //Insert new user for Sign up.
 const insertNewUser = async (information) => {
@@ -56,9 +55,33 @@ const createUserEvent = async (userId) => {
   } else return;
 };
 
+//password hashing.
+const hashPassword = async (password) => {
+  const saltRounds = 10;
+  return await bcrypt.hash(password, saltRounds);
+};
+//compare password hash with real.
+const compareHashPassword = async (loginPass, actualPass) => {
+  let match = await bcrypt.compare(loginPass, actualPass);
+  if (match) {
+    return match;
+  }
+  return;
+};
+
+//create jwt token.
+const generateJwtToken = (userId) => {
+  return jwt.sign({ id: userId }, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: "50m",
+  });
+};
+
 module.exports = {
   getUserById,
   getUserByUserName,
   insertNewUser,
   createUserEvent,
+  hashPassword,
+  generateJwtToken,
+  compareHashPassword,
 };

@@ -16,6 +16,9 @@ const {
   getUserByUserName,
   insertNewUser,
   createUserEvent,
+  hashPassword,
+  generateJwtToken,
+  compareHashPassword,
 } = require("../services/authService");
 
 //@endpoint GET /user/profile
@@ -66,35 +69,28 @@ const handleLogin = async (req, res) => {
     try {
       let checkForUser = await getUserByUserName(loginInfo.user);
       if (checkForUser) {
-        bcrypt.compare(loginInfo.pass, checkForUser.password, function (
-          err,
-          result
-        ) {
-          //compare the password:
-          if (result) {
-            const accessToken = jwt.sign(
-              { id: checkForUser._id },
-              process.env.ACCESS_TOKEN_SECRET,
-              { expiresIn: "10m" }
-            );
-            //CHECK SENDING ACCESS TOKEN
-            res.status(200).json({
-              result: result,
-              status: 200,
-              message: "Success. Thanks for logging in.",
-              username: checkForUser.username,
-              _id: checkForUser._id,
-              profileImage: checkForUser.profileImage,
-              accessToken: accessToken,
-            });
-          } else {
-            res.status(404).json({
-              result: result,
-              status: 401,
-              message: "Incorrect password.",
-            });
-          }
-        });
+        let result = await compareHashPassword(
+          loginInfo.pass,
+          checkForUser.password
+        );
+        if (result) {
+          const accessToken = generateJwtToken(checkForUser._id);
+          res.status(200).json({
+            result: result,
+            status: 200,
+            message: "Success. Thanks for logging in.",
+            username: checkForUser.username,
+            _id: checkForUser._id,
+            profileImage: checkForUser.profileImage,
+            accessToken: accessToken,
+          });
+        } else {
+          res.status(404).json({
+            result: result,
+            status: 401,
+            message: "Incorrect password.",
+          });
+        }
       } else {
         res.status(404).json({
           status: 404,
@@ -112,86 +108,56 @@ const handleLogin = async (req, res) => {
 //@endpoint POST /SignUp
 //@desc Sign up user info.
 //@access PUBLIC
-
 const handleSignUp = async (req, res) => {
-  //get from body.
   let filePath = req.file.path;
-  let name = req.body.name;
-  let pass = req.body.pass;
-  //initialize into new var.
+  //new user registration date
+  let register = new Date();
   let signUpInfo = {
-    user: name,
-    pass: pass,
+    user: req.body.name,
+    pass: req.body.pass,
   };
-  //check if any of the fields are empty.
-  if (signUpInfo.user && signUpInfo.pass && req.file) {
-    //logic for pass hashing.
-    const saltRounds = 10;
-    let register = new Date();
-    let hashedPass;
-    bcrypt.hash(signUpInfo.pass, saltRounds, function (err, hash) {
-      if (err) throw err;
-      hashedPass = hash;
-      // Store hash in your password DB.
-    });
-    try {
-      //see if you find the user. //check for existing user
-      let checkForUser = await getUserByUserName(signUpInfo.user);
-      if (!checkForUser) {
-        let information = {
+  try {
+    //see if you find the user. //check for existing user
+    let checkForUser = await getUserByUserName(signUpInfo.user);
+    if (!checkForUser) {
+      let hashedPass = await hashPassword(signUpInfo.pass);
+      let information = {
+        username: signUpInfo.user,
+        password: hashedPass,
+        registrationDate: register,
+        profileImage: filePath,
+      };
+      let r = await insertNewUser(information);
+      let userId = r.ops[0]._id;
+      //give the same _id of the user to the collectionUserEvents.
+      //to keep track of all the events a user is participating in.
+      let userEvent = await createUserEvent(userId);
+      if (r && userEvent) {
+        const accessToken = generateJwtToken(userId);
+        res.status(200).json({
+          status: 200,
+          message: "Success. Thanks for signing up.",
           username: signUpInfo.user,
-          password: hashedPass,
-          registrationDate: register,
+          accessToken: accessToken,
+          _id: userId,
           profileImage: filePath,
-        };
-        let r = await insertNewUser(information);
-        let userId = r.ops[0]._id;
-        let getUser = await getUserByUserName(signUpInfo.user);
-        //give the same _id of the user to the collectionUserEvents.
-        //to keep track of all the events a user is participating in.
-        //This way it is relational.
-        let userEvent = await createUserEvent(userId);
-
-        if (r && getUser && userEvent) {
-          Promise.all([r, getUser, userEvent]).then(() => {
-            //create jwt token here.
-            const accessToken = jwt.sign(
-              { id: getUser._id },
-              process.env.ACCESS_TOKEN_SECRET,
-              { expiresIn: "50m" }
-            );
-            res.status(200).json({
-              status: 200,
-              message: "Success. Thanks for signing up.",
-              username: getUser.username,
-              accessToken: accessToken,
-              _id: getUser._id,
-              profileImage: getUser.profileImage,
-            });
-          });
-        } else {
-          res.status(404).json({
-            status: 401,
-            message: "Something went wrong. Contact Customer Support.",
-          });
-        }
+        });
       } else {
-        //if there is already a user.
         res.status(404).json({
-          status: 404,
-          message: "This user already exists. Please sign in!",
+          status: 401,
+          message: "Something went wrong. Contact Customer Support.",
         });
       }
-    } catch (error) {
-      console.log(error.stack, "Catch Error in handleSignUp");
-      res.status(500).json({ status: 500, message: error.message });
+    } else {
+      //if there is already a user.
+      res.status(404).json({
+        status: 404,
+        message: "This user already exists. Please sign in!",
+      });
     }
-  } else {
-    res.status(401).json({
-      status: 401,
-      message:
-        "Something went wrong with user inputs. Contact Customer Support.",
-    });
+  } catch (error) {
+    console.log(error.stack, "Catch Error in handleSignUp");
+    res.status(500).json({ status: 500, message: error.message });
   }
 };
 module.exports = {
