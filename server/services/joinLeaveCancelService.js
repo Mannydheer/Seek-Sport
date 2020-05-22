@@ -43,7 +43,7 @@ const getMatchingParticipant = (getParticipants, participantUserId) => {
   return getParticipants.participants.find((participant) => {
     if (participant.userId === participantUserId) {
       return participant;
-    } else return;
+    }
   });
 };
 

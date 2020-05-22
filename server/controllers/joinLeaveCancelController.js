@@ -1,5 +1,4 @@
 //env vairables
-require("dotenv").config();
 const {
   //handleJoinEvent.
   getEventById,
@@ -21,53 +20,63 @@ const {
 //@desc join the event selected from ViewActivity component.
 //@access PRIVATE - will need to validate token? YES
 const handleJoinEvent = async (req, res, next) => {
-  const participantDetails = req.body.participantDetails;
-  const eventInformation = req.body.eventInformation;
   try {
-    let getEvent = await getEventById(eventInformation._id);
-    //see if there is a participant ID in that event. If so then there are at least 1 participant.
-    //if there is a participant ID.
-    //check if that participant doesnt already exist... in that event.
-    let getParticipants = await getParticipantsById(getEvent.participantId);
-    //if you get participants. Which you will 100% because if you have a apeticipant ID then there are participants
-    if (getParticipants && getEvent) {
-      //check if any of the participants in the array match the current participant trying to join.
-      let existingParticipant = getMatchingParticipant(
-        getParticipants,
-        participantDetails.userId
-      );
-      //if they do match...
-      if (existingParticipant) {
-        res.status(400).json({
-          status: 400,
-          message: "You are already registered in this event.",
-        });
-      } else {
-        //if you don't find a matching participant.
-        //add the incoming participant to that.
-        let updateParticipant = await addParticipant(
-          eventInformation.participantId,
-          participantDetails
-        );
-        //when signing up, you create a _id = to the userId in the collectionUserEvents.
-        //now we will push the event id in the array in this event to keep track of which events the user JOINED!
-        let updateUserEvent = await addUserEvent(
-          participantDetails.userId,
-          participantDetails.eventId
-        );
-        if (updateUserEvent && updateParticipant) {
-          res
-            .status(200)
-            .json({ status: 200, message: "Successfully joined the event!" });
+    const participantDetails = req.body.participantDetails;
+    const eventInformation = req.body.eventInformation;
+    if (participantDetails && eventInformation) {
+      //ensure we recieved the information.
+      let getEvent = await getEventById(eventInformation._id);
+      if (getEvent.participantId) {
+        //ensure getEvent is not missing participantsId.
+        //see if there is a participant ID in that event. If so then there are at least 1 participant.
+        //if there is a participant ID.
+        //check if that participant doesnt already exist... in that event.
+        let getParticipants = await getParticipantsById(getEvent.participantId);
+        //if you get participants. Which you will 100% because if you have a apeticipant ID then there are participants
+        if (getParticipants && getEvent) {
+          //check if any of the participants in the array match the current participant trying to join.
+          let existingParticipant = getMatchingParticipant(
+            getParticipants,
+            participantDetails.userId
+          );
+          //if they do match...
+          if (existingParticipant) {
+            return res.status(409).json({
+              status: 409,
+              message: "You are already registered in this event.",
+            });
+          }
+          //if you don't find a matching participant.
+          //add the incoming participant to that.
+          let updateParticipant = await addParticipant(
+            eventInformation.participantId,
+            participantDetails
+          );
+          //when signing up, you create a _id = to the userId in the collectionUserEvents.
+          //now we will push the event id in the array in this event to keep track of which events the user JOINED!
+          let updateUserEvent = await addUserEvent(
+            participantDetails.userId,
+            participantDetails.eventId
+          );
+          if (updateUserEvent && updateParticipant) {
+            res
+              .status(204)
+              .json({ status: 204, message: "Successfully joined the event!" });
+          }
         }
       }
+    } else {
+      res.status(400).json({
+        status: 400,
+        message:
+          "Information was not received correctly. Try refreshing the page.",
+      });
     }
   } catch (error) {
     console.log(error.stack, "Catch Error in handleJoinEvent");
     res.status(500).json({ status: 500, message: error.message });
   }
 };
-
 //@endpoint POST /leaveEvent
 //@desc leave the event selected from ViewActivity comp.
 //@access PRIVATE - will need to validate token? YES

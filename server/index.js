@@ -1,4 +1,5 @@
 "use strict";
+require("dotenv").config();
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -68,8 +69,6 @@ const {
 const { auth } = require("./controllers/middleware-controller");
 //CONNECTION TO MONGO DB.
 const { handleConnection, getConnection } = require("./connection/connection");
-
-require("dotenv").config();
 
 //data file for items
 const upload = multer({ dest: "./public/uploads/" });
