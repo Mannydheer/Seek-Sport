@@ -7,12 +7,15 @@ const {
   getParticipantsByIdRepo,
   addParticipantRepo,
   addUserEventRepo,
+  removeParticipantRepo,
+  removeUserEventRepo,
 } = require("../repositories/joinLeaveCancelRepository");
 
 //------------------SERVICE-----------------------
 // the brains of the application, they control any payload manipulation/validation
 //---------------------------------------------------
 
+//-----------------------------handleJoinEvent--------------------------------
 //get a user by _id in the user collection.
 const getEventById = async (eventId) => {
   // //grab the event
@@ -25,9 +28,6 @@ const getEventById = async (eventId) => {
 
 //getParticipants for that selected event.
 const getParticipantsById = async (eventParticipantId) => {
-  //see if there is a participant ID in that event. If so then there are at least 1 participant.
-  //if there is a participant ID.
-  //check if that participant doesnt already exist... in that event.
   const getParticipants = await getParticipantsByIdRepo(eventParticipantId);
   if (!getParticipants) {
     return;
@@ -59,6 +59,22 @@ const addParticipant = async (eventParticipantId, participantDetails) => {
   }
   return;
 };
+const removeParticipant = async (
+  eventParticipantId,
+  participantDetailsUserId
+) => {
+  let updatedParticipantWithRemoval = await removeParticipantRepo(
+    eventParticipantId,
+    participantDetailsUserId
+  );
+  if (
+    updatedParticipantWithRemoval.matchedCount === 1 &&
+    updatedParticipantWithRemoval.modifiedCount === 1
+  ) {
+    return updatedParticipantWithRemoval;
+  }
+  return;
+};
 
 const addUserEvent = async (
   participantDetailsUserId,
@@ -73,10 +89,31 @@ const addUserEvent = async (
   }
   return;
 };
+const removeUserEvent = async (
+  participantDetailsUserId,
+  participantDetailsEventId
+) => {
+  let removedUserEvent = await removeUserEventRepo(
+    participantDetailsUserId,
+    participantDetailsEventId
+  );
+  if (
+    removedUserEvent.matchedCount === 1 &&
+    removedUserEvent.modifiedCount === 1
+  ) {
+    return removedUserEvent;
+  }
+  return;
+};
+
+//-----------------------------handleLeaveEvent--------------------------------
+
 module.exports = {
   getEventById,
   getParticipantsById,
   getMatchingParticipant,
   addParticipant,
   addUserEvent,
+  removeParticipant,
+  removeUserEvent,
 };

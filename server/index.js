@@ -56,10 +56,13 @@ const {
 //join-cancel-leave event controller.
 const {
   // handleJoinEvent,
-  handleLeaveEvent,
+  // handleLeaveEvent,
   handleCancelEvent,
 } = require("./controllers/join-leave-cancel-event-controller");
-const { handleJoinEvent } = require("./controllers/joinLeaveCancelController");
+const {
+  handleJoinEvent,
+  handleLeaveEvent,
+} = require("./controllers/joinLeaveCancelController");
 //authorize middleware. (token checking)
 const { auth } = require("./controllers/middleware-controller");
 //CONNECTION TO MONGO DB.

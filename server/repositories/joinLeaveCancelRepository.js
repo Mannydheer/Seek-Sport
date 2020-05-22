@@ -34,6 +34,21 @@ const addParticipantRepo = async (eventParticipantId, participantDetails) => {
     );
 };
 
+//handleLeaveEvent - remove a participant.
+const removeParticipantRepo = async (
+  eventParticipantId,
+  participantDetailsUserId
+) => {
+  const db = getConnection().db(dbName);
+
+  return await db
+    .collection(collectionParticipants)
+    .updateOne(
+      { _id: ObjectId(eventParticipantId) },
+      { $pull: { participants: { userId: participantDetailsUserId } } }
+    );
+};
+
 const addUserEventRepo = async (
   participantDetailsUserId,
   participantDetailsEventId
@@ -48,9 +63,24 @@ const addUserEventRepo = async (
     );
 };
 
+const removeUserEventRepo = async (
+  participantDetailsUserId,
+  participantDetailsEventId
+) => {
+  const db = getConnection().db(dbName);
+  return await db
+    .collection(collectionUserEvents)
+    .updateOne(
+      { _id: ObjectId(participantDetailsUserId) },
+      { $pull: { events: participantDetailsEventId } }
+    );
+};
+
 module.exports = {
   getEventByIdRepo,
   getParticipantsByIdRepo,
   addParticipantRepo,
   addUserEventRepo,
+  removeParticipantRepo,
+  removeUserEventRepo,
 };
