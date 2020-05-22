@@ -1,16 +1,5 @@
 "use strict";
-
-const dbName = "ParkGames";
-const collectionUsers = "Users";
-const collectionUserEvents = "UserEvents";
-const assert = require("assert");
-var ObjectId = require("mongodb").ObjectID;
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-//env vairablkes
-
 require("dotenv").config();
-const { getConnection } = require("../connection/connection");
 const {
   getUserById,
   getUserByUserName,
@@ -148,6 +137,7 @@ const handleSignUp = async (req, res) => {
           message: "Something went wrong. Contact Customer Support.",
         });
       }
+      //
     } else {
       //if there is already a user.
       res.status(404).json({
