@@ -22,4 +22,35 @@ const getParticipantsByIdRepo = async (eventParticipantId) => {
     .collection(collectionParticipants)
     .findOne({ _id: ObjectId(eventParticipantId) });
 };
-module.exports = { getEventByIdRepo, getParticipantsByIdRepo };
+
+const addParticipantRepo = async (eventParticipantId, participantDetails) => {
+  const db = getConnection().db(dbName);
+
+  return await db
+    .collection(collectionParticipants)
+    .updateOne(
+      { _id: ObjectId(eventParticipantId) },
+      { $push: { participants: participantDetails } }
+    );
+};
+
+const addUserEventRepo = async (
+  participantDetailsUserId,
+  participantDetailsEventId
+) => {
+  const db = getConnection().db(dbName);
+
+  return await db
+    .collection(collectionUserEvents)
+    .updateOne(
+      { _id: ObjectId(participantDetailsUserId) },
+      { $push: { events: participantDetailsEventId } }
+    );
+};
+
+module.exports = {
+  getEventByIdRepo,
+  getParticipantsByIdRepo,
+  addParticipantRepo,
+  addUserEventRepo,
+};

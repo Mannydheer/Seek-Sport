@@ -5,6 +5,8 @@ require("dotenv").config();
 const {
   getEventByIdRepo,
   getParticipantsByIdRepo,
+  addParticipantRepo,
+  addUserEventRepo,
 } = require("../repositories/joinLeaveCancelRepository");
 
 //------------------SERVICE-----------------------
@@ -41,4 +43,40 @@ const getMatchingParticipant = (getParticipants, participantUserId) => {
     } else return;
   });
 };
-module.exports = { getEventById, getParticipantsById, getMatchingParticipant };
+
+//add a participant if no match meaning he is not yet a partciiapnt.
+
+const addParticipant = async (eventParticipantId, participantDetails) => {
+  let updatedParticipant = await addParticipantRepo(
+    eventParticipantId,
+    participantDetails
+  );
+  if (
+    updatedParticipant.matchedCount === 1 &&
+    updatedParticipant.modifiedCount === 1
+  ) {
+    return updatedParticipant;
+  }
+  return;
+};
+
+const addUserEvent = async (
+  participantDetailsUserId,
+  participantDetailsEventId
+) => {
+  let addedUserEvent = await addUserEventRepo(
+    participantDetailsUserId,
+    participantDetailsEventId
+  );
+  if (addedUserEvent.matchedCount === 1 && addedUserEvent.modifiedCount === 1) {
+    return addedUserEvent;
+  }
+  return;
+};
+module.exports = {
+  getEventById,
+  getParticipantsById,
+  getMatchingParticipant,
+  addParticipant,
+  addUserEvent,
+};

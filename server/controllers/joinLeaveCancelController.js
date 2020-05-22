@@ -13,6 +13,8 @@ const {
   getEventById,
   getParticipantsById,
   getMatchingParticipant,
+  addParticipant,
+  addUserEvent,
 } = require("../services/joinLeaveCancelService");
 
 //@endpoint POST /joinEvent
@@ -38,9 +40,9 @@ const handleJoinEvent = async (req, res, next) => {
         getParticipants,
         participantDetails.userId
       );
-      console.log(existingParticipant, "exisitng");
       //if they do match...
       if (existingParticipant) {
+        console.log("already registered");
         res.status(400).json({
           status: 400,
           message: "You are already registered in this event.",
@@ -49,29 +51,21 @@ const handleJoinEvent = async (req, res, next) => {
         //if you don't find a matching participant.
         //add the incoming participant to that.
         //adding participants
-        let updateParticipant = await db
-          .collection(collectionParticipants)
-          .updateOne(
-            { _id: ObjectId(eventInformation.participantId) },
-            { $push: { participants: participantDetails } }
-          );
-        assert(1, updateParticipant.matchedCount);
-        assert(1, updateParticipant.modifiedCount);
-
+        let updateParticipant = await addParticipant(
+          eventInformation.participantId,
+          participantDetails
+        );
         //when signing up, you create a _id = to the userId in the collectionUserEvents.
         //now we will push the event id in the array in this event to keep track of which events the user JOINED!
-        let addUserEvent = await db
-          .collection(collectionUserEvents)
-          .updateOne(
-            { _id: ObjectId(participantDetails.userId) },
-            { $push: { events: participantDetails.eventId } }
-          );
-        assert(1, addUserEvent.matchedCount);
-        assert(1, addUserEvent.modifiedCount);
-
-        res
-          .status(200)
-          .json({ status: 200, message: "Successfully joined the event!" });
+        let updateUserEvent = await addUserEvent(
+          participantDetails.userId,
+          participantDetails.eventId
+        );
+        if (updateUserEvent && updateParticipant) {
+          res
+            .status(200)
+            .json({ status: 200, message: "Successfully joined the event!" });
+        }
       }
     }
   } catch (error) {
