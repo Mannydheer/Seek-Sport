@@ -148,6 +148,7 @@ const handleSignUp = async (req, res) => {
           message: "Something went wrong. Contact Customer Support.",
         });
       }
+      //
     } else {
       //if there is already a user.
       res.status(404).json({
