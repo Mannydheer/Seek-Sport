@@ -7,12 +7,12 @@ const collectionUserEvents = "UserEvents";
 const collectionRooms = "Rooms";
 const assert = require("assert");
 var ObjectId = require("mongodb").ObjectID;
-const { getConnection } = require("../connection/connection");
 //env vairables
 require("dotenv").config();
 const {
   getEventById,
   getParticipantsById,
+  getMatchingParticipant,
 } = require("../services/joinLeaveCancelService");
 
 //@endpoint POST /joinEvent
@@ -24,21 +24,21 @@ const handleJoinEvent = async (req, res, next) => {
   try {
     //get the event.
     let getEvent = await getEventById(eventInformation._id);
+    // console.log(getEvent, "get Event");
     //see if there is a participant ID in that event. If so then there are at least 1 participant.
     //if there is a participant ID.
     //check if that participant doesnt already exist... in that event.
     let getParticipants = await getParticipantsById(getEvent.participantId);
+    // console.log(getParticipants, "getparticipants");
     //if you get participants. Which you will 100% because if you have a apeticipant ID then there are participants
     //Look at if case just before.
-    if (getParticipants) {
+    if (getParticipants && getEvent) {
       //check if any of the participants in the array match the current participant trying to join.
-      let existingParticipant = getParticipants.participants.find(
-        (participant) => {
-          if (participant.userId == participantDetails.userId) {
-            return true;
-          }
-        }
+      let existingParticipant = getMatchingParticipant(
+        getParticipants,
+        participantDetails.userId
       );
+      console.log(existingParticipant, "exisitng");
       //if they do match...
       if (existingParticipant) {
         res.status(400).json({

@@ -17,9 +17,8 @@ const getEventById = async (eventId) => {
   const checkForEvent = await getEventByIdRepo(eventId);
   if (!checkForEvent) {
     return;
-  } else {
-    return checkForEvent;
   }
+  return checkForEvent;
 };
 
 //getParticipants for that selected event.
@@ -28,6 +27,18 @@ const getParticipantsById = async (eventParticipantId) => {
   //if there is a participant ID.
   //check if that participant doesnt already exist... in that event.
   const getParticipants = await getParticipantsByIdRepo(eventParticipantId);
+  if (!getParticipants) {
+    return;
+  }
+  return getParticipants;
 };
 
-module.exports = { getEventById, getParticipantsById };
+//find matching participant
+const getMatchingParticipant = (getParticipants, participantUserId) => {
+  return getParticipants.participants.find((participant) => {
+    if (participant.userId === participantUserId) {
+      return participant;
+    } else return;
+  });
+};
+module.exports = { getEventById, getParticipantsById, getMatchingParticipant };
