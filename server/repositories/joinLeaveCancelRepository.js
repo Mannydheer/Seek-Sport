@@ -72,8 +72,28 @@ const removeUserEventRepo = async (
     .collection(collectionUserEvents)
     .updateOne(
       { _id: ObjectId(participantDetailsUserId) },
-      { $pull: { events: participantDetailsEventId } }
+      { $pull: { events: ObjectId(participantDetailsEventId) } }
     );
+};
+
+const deletedRoomRepo = async (eventId) => {
+  const db = getConnection().db(dbName);
+  return await db
+    .collection(collectionRooms)
+    .deleteOne({ _id: `${eventId}-Room-1` });
+};
+const deletedEventRepo = async (eventId) => {
+  const db = getConnection().db(dbName);
+  return await db
+    .collection(collectionEvents)
+    .deleteOne({ _id: ObjectId(eventId) });
+};
+
+const deleteParticipantsRepo = async (participantId) => {
+  const db = getConnection().db(dbName);
+  return db.collection(collectionParticipants).deleteOne({
+    _id: ObjectId(participantId),
+  });
 };
 
 module.exports = {
@@ -83,4 +103,7 @@ module.exports = {
   addUserEventRepo,
   removeParticipantRepo,
   removeUserEventRepo,
+  deletedRoomRepo,
+  deleteParticipantsRepo,
+  deletedEventRepo,
 };

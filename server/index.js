@@ -57,11 +57,12 @@ const {
 const {
   // handleJoinEvent,
   // handleLeaveEvent,
-  handleCancelEvent,
+  // handleCancelEvent,
 } = require("./controllers/join-leave-cancel-event-controller");
 const {
   handleJoinEvent,
   handleLeaveEvent,
+  handleCancelEvent,
 } = require("./controllers/joinLeaveCancelController");
 //authorize middleware. (token checking)
 const { auth } = require("./controllers/middleware-controller");

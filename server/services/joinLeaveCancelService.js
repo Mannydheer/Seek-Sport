@@ -9,6 +9,9 @@ const {
   addUserEventRepo,
   removeParticipantRepo,
   removeUserEventRepo,
+  deletedRoomRepo,
+  deleteParticipantsRepo,
+  deletedEventRepo,
 } = require("../repositories/joinLeaveCancelRepository");
 
 //------------------SERVICE-----------------------
@@ -89,6 +92,7 @@ const addUserEvent = async (
   }
   return;
 };
+
 const removeUserEvent = async (
   participantDetailsUserId,
   participantDetailsEventId
@@ -106,7 +110,30 @@ const removeUserEvent = async (
   return;
 };
 
-//-----------------------------handleLeaveEvent--------------------------------
+//------------------------handleCancelEvent-----------------------
+
+const deleteRoom = async (eventId) => {
+  let deletedRoom = await deletedRoomRepo(eventId);
+  if (deletedRoom.deletedCount === 1) {
+    return deletedRoom;
+  }
+  return;
+};
+const deleteEvent = async (eventId) => {
+  let deletedEvent = await deletedEventRepo(eventId);
+  if (deletedEvent.deletedCount === 1) {
+    return deletedEvent;
+  }
+  return;
+};
+
+const deleteParticipants = async (participantsId) => {
+  let deletedParticipants = await deleteParticipantsRepo(participantsId);
+  if (deleteParticipants.deletedCount === 1) {
+    return deletedParticipants;
+  }
+  return;
+};
 
 module.exports = {
   getEventById,
@@ -116,4 +143,7 @@ module.exports = {
   addUserEvent,
   removeParticipant,
   removeUserEvent,
+  deleteRoom,
+  deleteParticipants,
+  deleteEvent,
 };
