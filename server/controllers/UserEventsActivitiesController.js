@@ -22,7 +22,10 @@ const handleUserActivities = async (req, res, next) => {
   try {
     let userId = req.params.userId;
     if (!userId) {
-      return;
+      res.status(400).json({
+        status: 400,
+        message: "Missing user credentials in handleUserActivities.",
+      });
     }
     let userData = await getUserFromUserEvents(userId);
     //if you have never signed up for any events yet.
@@ -37,7 +40,10 @@ const handleUserActivities = async (req, res, next) => {
     let allEvents = allEventsArray(userData);
     let eventData = await getAllEventsUserRegisteredFor(allEvents, userId);
     if (!eventData) {
-      return;
+      res.status(400).json({
+        status: 400,
+        message: "Currently not registered for any events.",
+      });
     }
     let filteredEventData = filterEventData(eventData);
     if (filteredEventData) {
@@ -67,7 +73,10 @@ const handleUserRegisteredEvents = async (req, res, next) => {
   try {
     const userId = req.params._id;
     if (!userId) {
-      return;
+      res.status(400).json({
+        status: 400,
+        message: "Missing user credentials in handleUserRegisteredEvents.",
+      });
     }
     let userData = await getUserFromUserEvents(userId);
     if (!userData.events) {
@@ -80,7 +89,11 @@ const handleUserRegisteredEvents = async (req, res, next) => {
     let allEvents = allEventsArray(userData);
     let eventData = await getAllEventsUserRegisteredFor(allEvents, userId);
     if (!eventData) {
-      return;
+      res.status(400).json({
+        status: 400,
+        message:
+          "Currently not registered for any events in handleUserRegisteredEvents.",
+      });
     }
     res.status(200).json({
       status: 200,
