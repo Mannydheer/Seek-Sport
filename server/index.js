@@ -1,4 +1,5 @@
 "use strict";
+require("dotenv").config();
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -44,11 +45,6 @@ const {
 
 //user login-signup controller.
 const {
-  // handleSignUp,
-  // handleLogin,
-  // handleGetUser,
-} = require("./services/authService");
-const {
   handleGetUser,
   handleLogin,
   handleSignUp,
@@ -63,13 +59,11 @@ const {
   handleJoinEvent,
   handleLeaveEvent,
   handleCancelEvent,
-} = require("./controllers/join-leave-cancel-event-controller");
+} = require("./controllers/joinLeaveCancelController");
 //authorize middleware. (token checking)
 const { auth } = require("./controllers/middleware-controller");
 //CONNECTION TO MONGO DB.
 const { handleConnection, getConnection } = require("./connection/connection");
-
-require("dotenv").config();
 
 //data file for items
 const upload = multer({ dest: "./public/uploads/" });
