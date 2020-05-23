@@ -1,18 +1,7 @@
-"use strict";
-const dbName = "ParkGames";
-const collectionEvents = "Events";
-const collectionParticipants = "Participants";
-const { getConnection } = require("../../connection/connection");
-
 const {
   getEventById,
   getParticipantsById,
 } = require("../../services/joinLeaveCancelService");
-
-var ObjectId = require("mongodb").ObjectID;
-//env vairablkes
-require("dotenv").config();
-
 //@endpoint GET /getChatRoom
 //@desc get chat room ID for specified EVENT.
 //@access PRIVATE - will need to validate token? YES - add...
@@ -26,11 +15,6 @@ const handleGetChatRoom = async (req, res, next) => {
     }
     // const db = getConnection().db(dbName);
     let eventData = await getEventById(eventId);
-    // let eventData = await db
-    //   .collection(collectionEvents)
-    //   .findOne({ _id: ObjectId(eventId) });
-    //since we are making a participant ID as soon as we host an event.
-    //so check if there is no event.
     if (!eventData) {
       return res
         .status(404)
@@ -43,10 +27,6 @@ const handleGetChatRoom = async (req, res, next) => {
         message: "There are no participants for this event.",
       });
     }
-    // let participantData = await db
-    //   .collection(collectionParticipants)
-    //   .findOne({ _id: ObjectId(eventData.participantId) });
-    //since the participantId is the room ID...
     res.status(200).json({
       status: 200,
       message:
@@ -59,7 +39,6 @@ const handleGetChatRoom = async (req, res, next) => {
     res.status(500).json({ status: 500, message: error.message });
   }
 };
-
 module.exports = {
   handleGetChatRoom,
 };
