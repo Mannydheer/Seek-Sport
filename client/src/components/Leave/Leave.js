@@ -55,6 +55,7 @@ export default function Leave({ setJoined, joined, event }) {
           }),
         });
         let leaveResponse = await response.json();
+        console.log(leaveResponse);
         if (leaveResponse.status === 200) {
           // setRefetchParticipants(true)
           setOpen(false);

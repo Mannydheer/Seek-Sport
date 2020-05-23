@@ -5,7 +5,6 @@ const collectionEvents = "Events";
 const collectionParticipants = "Participants";
 const collectionUserEvents = "UserEvents";
 const collectionRooms = "Rooms";
-const assert = require("assert");
 var ObjectId = require("mongodb").ObjectID;
 const { getConnection } = require("../connection/connection");
 
@@ -59,7 +58,7 @@ const addUserEventRepo = async (
     .collection(collectionUserEvents)
     .updateOne(
       { _id: ObjectId(participantDetailsUserId) },
-      { $push: { events: participantDetailsEventId } }
+      { $push: { events: ObjectId(participantDetailsEventId) } }
     );
 };
 

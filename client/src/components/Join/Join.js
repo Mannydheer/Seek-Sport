@@ -63,7 +63,8 @@ export default function Join({ setJoined, joined, event }) {
           }),
         });
         let joinResponse = await response.json();
-        if (joinResponse.status === 204) {
+        console.log(joinResponse);
+        if (joinResponse.status === 200) {
           //double check why it happens for only one.
           setJoined(true);
           setOpen(false);
