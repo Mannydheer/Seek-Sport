@@ -60,4 +60,39 @@ const handleUserActivities = async (req, res, next) => {
   }
 };
 
-module.exports = { handleUserActivities };
+//@endpoint GET /userRegisteredEvents/:_id
+//@desc get registered events associated with current user logged in.
+//@access PRIVATE - will need to validate token? YES
+const handleUserRegisteredEvents = async (req, res, next) => {
+  try {
+    const userId = req.params._id;
+    if (!userId) {
+      return;
+    }
+    let userData = await getUserFromUserEvents(userId);
+    if (!userData.events) {
+      return res.status(404).json({
+        status: 404,
+        message: "There are no registered events under this user.",
+      });
+    }
+    //now we have array of event Ids... we can get back all ids.
+    let allEvents = allEventsArray(userData);
+    let eventData = await getAllEventsUserRegisteredFor(allEvents, userId);
+    if (!eventData) {
+      return;
+    }
+    res.status(200).json({
+      status: 200,
+      message:
+        "Success getting all registered events associated with the user!",
+      userRegisteredEvents: allEvents.events,
+      eventInfo: eventData,
+    });
+  } catch (error) {
+    console.log(error.stack, "Catch Error in handleUserRegisteredEvents ");
+    res.status(500).json({ status: 500, message: error.message });
+  }
+};
+
+module.exports = { handleUserRegisteredEvents, handleUserActivities };

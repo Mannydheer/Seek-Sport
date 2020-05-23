@@ -27,10 +27,11 @@ const { handleGetChatRoom } = require("./controllers/handlers/chatController");
 //user events controller.
 const {
   // handleUserActivities,
-  handleUserRegisteredEvents,
+  // handleUserRegisteredEvents,
 } = require("./controllers/handlers/UserEventsController");
 //host controller
 const {
+  handleUserRegisteredEvents,
   handleUserActivities,
 } = require("./controllers/UserEventsActivitiesController");
 const {

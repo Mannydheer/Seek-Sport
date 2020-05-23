@@ -72,44 +72,44 @@ require("dotenv").config();
 //@endpoint GET /userRegisteredEvents/:_id
 //@desc get registered events associated with current user logged in.
 //@access PRIVATE - will need to validate token? YES
-const handleUserRegisteredEvents = async (req, res, next) => {
-  const id = req.params._id;
-  try {
-    const db = getConnection().db(dbName);
-    //insert the hosting info into DB
-    let allData = await db
-      .collection(collectionUserEvents)
-      .findOne({ _id: ObjectId(id) });
-    if (!allData.events) {
-      res.status(404).json({
-        status: 404,
-        message: "There are no registered events under this user.",
-      });
-    } else {
-      //now we have array of event Ids... we can get back all ids.
-      let allEvents = [];
-      allData.events.forEach((data) => {
-        allEvents.push(ObjectId(data));
-      });
-      let getEvents = await db
-        .collection(collectionEvents)
-        .find({ _id: { $in: allEvents } })
-        .toArray();
+// const handleUserRegisteredEvents = async (req, res, next) => {
+//   const id = req.params._id;
+//   try {
+//     const db = getConnection().db(dbName);
+//     //insert the hosting info into DB
+//     let allData = await db
+//       .collection(collectionUserEvents)
+//       .findOne({ _id: ObjectId(id) });
+//     if (!allData.events) {
+//       res.status(404).json({
+//         status: 404,
+//         message: "There are no registered events under this user.",
+//       });
+//     } else {
+//       //now we have array of event Ids... we can get back all ids.
+//       let allEvents = [];
+//       allData.events.forEach((data) => {
+//         allEvents.push(ObjectId(data));
+//       });
+//       let getEvents = await db
+//         .collection(collectionEvents)
+//         .find({ _id: { $in: allEvents } })
+//         .toArray();
 
-      res.status(200).json({
-        status: 200,
-        message:
-          "Success getting all registered events associated with the user!",
-        userRegisteredEvents: allData.events,
-        eventInfo: getEvents,
-      });
-    }
-  } catch (error) {
-    console.log(error.stack, "Catch Error in handleUserRegisteredEvents ");
-    res.status(500).json({ status: 500, message: error.message });
-  }
-};
-module.exports = {
-  // handleUserActivities,
-  handleUserRegisteredEvents,
-};
+//       res.status(200).json({
+//         status: 200,
+//         message:
+//           "Success getting all registered events associated with the user!",
+//         userRegisteredEvents: allData.events,
+//         eventInfo: getEvents,
+//       });
+//     }
+//   } catch (error) {
+//     console.log(error.stack, "Catch Error in handleUserRegisteredEvents ");
+//     res.status(500).json({ status: 500, message: error.message });
+//   }
+// };
+// module.exports = {
+//   // handleUserActivities,
+//   handleUserRegisteredEvents,
+// };
