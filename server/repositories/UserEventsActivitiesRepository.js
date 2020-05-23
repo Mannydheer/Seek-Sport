@@ -14,5 +14,14 @@ const getUserFromUserEventsRepo = async (userId) => {
     .collection(collectionUserEvents)
     .findOne({ _id: ObjectId(userId) });
 };
+const getAllEventsUserRegisteredForRepo = async (allEvents) => {
+  return await db
+    .collection(collectionEvents)
+    .find({ _id: { $in: allEvents } })
+    .toArray();
+};
 
-module.exports = { getUserFromUserEventsRepo };
+module.exports = {
+  getUserFromUserEventsRepo,
+  getAllEventsUserRegisteredForRepo,
+};

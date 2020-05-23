@@ -1,5 +1,6 @@
 const {
   getUserFromUserEventsRepo,
+  getAllEventsUserRegisteredForRepo,
 } = require("../repositories/UserEventsActivitiesRepository");
 var ObjectId = require("mongodb").ObjectID;
 
@@ -19,4 +20,29 @@ const allEventsArray = (userData) => {
   return allEvents;
 };
 
-module.exports = { getUserFromUserEvents, allEventsArray };
+const getAllEventsUserRegisteredFor = async (allEvents) => {
+  let eventData = await getAllEventsUserRegisteredForRepo(allEvents);
+  if (eventData.length > 0) {
+    return eventData;
+  }
+  return;
+};
+
+const filterEventData = () => {
+  let filteredEvents = eventData.filter((event) => {
+    if (event.userId !== userId) {
+      return event;
+    }
+  });
+  if (filteredEvents) {
+    return filteredEvents;
+  }
+  return;
+};
+
+module.exports = {
+  getUserFromUserEvents,
+  allEventsArray,
+  getAllEventsUserRegisteredFor,
+  filterEventData,
+};

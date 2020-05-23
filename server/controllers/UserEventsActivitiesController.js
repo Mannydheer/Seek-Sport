@@ -11,6 +11,8 @@ var ObjectId = require("mongodb").ObjectID;
 const {
   getUserFromUserEvents,
   allEventsArray,
+  getAllEventsUserRegisteredFor,
+  filterEventData,
 } = require("../services/UserEventsActivitiesService");
 
 //@endpoint GET /userActivities
@@ -35,28 +37,24 @@ const handleUserActivities = async (req, res, next) => {
     }
     //if you registered for events.
     let allEvents = allEventsArray(userData);
-    let eventData = await db
-      .collection(collectionEvents)
-      .find({ _id: { $in: allEvents } })
-      .toArray();
-    if (eventData.length > 0) {
-      let filteredEventData = eventData.filter((event) => {
-        if (event.userId !== userId) {
-          return event;
-        }
-      });
-      res.status(200).json({
+    let eventData = await getAllEventsUserRegisteredFor(allEvents);
+    if (!eventData) {
+      return;
+    }
+    let filteredEventData = filterEventData(eventData);
+    if (filteredEventData) {
+      return res.status(200).json({
         status: 200,
         message: "Success getting all events you have registered for!",
         events: filteredEventData,
       });
-    } else {
-      res.status(400).json({
-        status: 400,
-        message:
-          "Seems like you have no registered to any events! Head to the home page to find activities!",
-      });
     }
+    return res.status(400).json({
+      status: 400,
+      message:
+        "Seems like you have no registered to any events! Head to the home page to find activities!",
+    });
+
     //find all the events that you have registered for.
   } catch (error) {
     console.log(error.stack, "Catch Error in handleSelectedParkEvents");
