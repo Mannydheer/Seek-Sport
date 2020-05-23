@@ -1,7 +1,4 @@
-const { getConnection } = require("../connection/connection");
 //env vairables
-require("dotenv").config();
-
 const {
   getEventByIdRepo,
   getParticipantsByIdRepo,

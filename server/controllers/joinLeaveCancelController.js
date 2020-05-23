@@ -23,55 +23,57 @@ const handleJoinEvent = async (req, res, next) => {
   try {
     const participantDetails = req.body.participantDetails;
     const eventInformation = req.body.eventInformation;
-    if (participantDetails && eventInformation) {
-      //ensure we recieved the information.
-      let getEvent = await getEventById(eventInformation._id);
-      if (getEvent.participantId) {
-        //ensure getEvent is not missing participantsId.
-        //see if there is a participant ID in that event. If so then there are at least 1 participant.
-        //if there is a participant ID.
-        //check if that participant doesnt already exist... in that event.
-        let getParticipants = await getParticipantsById(getEvent.participantId);
-        //if you get participants. Which you will 100% because if you have a apeticipant ID then there are participants
-        if (getParticipants && getEvent) {
-          //check if any of the participants in the array match the current participant trying to join.
-          let existingParticipant = getMatchingParticipant(
-            getParticipants,
-            participantDetails.userId
-          );
-          //if they do match...
-          if (existingParticipant) {
-            return res.status(409).json({
-              status: 409,
-              message: "You are already registered in this event.",
-            });
-          }
-          //if you don't find a matching participant.
-          //add the incoming participant to that.
-          let updateParticipant = await addParticipant(
-            eventInformation.participantId,
-            participantDetails
-          );
-          //when signing up, you create a _id = to the userId in the collectionUserEvents.
-          //now we will push the event id in the array in this event to keep track of which events the user JOINED!
-          let updateUserEvent = await addUserEvent(
-            participantDetails.userId,
-            participantDetails.eventId
-          );
-          if (updateUserEvent && updateParticipant) {
-            res
-              .status(204)
-              .json({ status: 204, message: "Successfully joined the event!" });
-          }
-        }
-      }
-    } else {
-      res.status(400).json({
-        status: 400,
-        message:
-          "Information was not received correctly. Try refreshing the page.",
+    //ensure we recieved the information.
+    if (
+      !eventInformation._id ||
+      !eventInformation.participantId ||
+      !participantDetails.userId ||
+      !participantDetails.eventId
+    ) {
+      return;
+    }
+    let getEvent = await getEventById(eventInformation._id);
+    //ensure getEvent is not missing participantsId.
+    //see if there is a participant ID in that event. If so then there are at least 1 participant.
+    //if there is a participant ID.
+    //check if that participant doesnt already exist... in that event.
+    if (!getEvent.participantId) {
+      return;
+    }
+    let getParticipants = await getParticipantsById(getEvent.participantId);
+    if (!getParticipants) {
+      return;
+    }
+    //if you get participants. Which you will 100% because if you have a apeticipant ID then there are participants
+    //check if any of the participants in the array match the current participant trying to join.
+    let existingParticipant = getMatchingParticipant(
+      getParticipants,
+      participantDetails.userId
+    );
+    //if they do match...
+    if (existingParticipant) {
+      return res.status(409).json({
+        status: 409,
+        message: "You are already registered in this event.",
       });
     }
+    //if you don't find a matching participant.
+    //add the incoming participant to that.
+    let updateParticipant = await addParticipant(
+      eventInformation.participantId,
+      participantDetails
+    );
+    //when signing up, you create a _id = to the userId in the collectionUserEvents.
+    //now we will push the event id in the array in this event to keep track of which events the user JOINED!
+    let updateUserEvent = await addUserEvent(
+      participantDetails.userId,
+      participantDetails.eventId
+    );
+    if (updateUserEvent && updateParticipant) {
+      res
+        .status(204)
+        .json({ status: 204, message: "Successfully joined the event!" });
+    } else return;
   } catch (error) {
     console.log(error.stack, "Catch Error in handleJoinEvent");
     res.status(500).json({ status: 500, message: error.message });
@@ -84,6 +86,14 @@ const handleLeaveEvent = async (req, res, next) => {
   const participantDetails = req.body.participantDetails;
   const eventInformation = req.body.eventInformation;
   try {
+    if (
+      //checking if any of these variables are empty.
+      !participantDetails.userId ||
+      !eventInformation._id ||
+      !eventInformation.participantId
+    ) {
+      return;
+    }
     //now you have the participant ID from eventInformation.
     //find the participant collect from the event ParticipantId key.
     //now within that, remove the participant
@@ -110,12 +120,18 @@ const handleLeaveEvent = async (req, res, next) => {
 //@desc cancel the event selected
 //@access PRIVATE - will need to validate token? YES
 const handleCancelEvent = async (req, res, next) => {
-  const eventId = req.body.eventId;
   try {
+    const eventId = req.body.eventId;
+    if (!eventId) {
+      return;
+    }
     let getEvent = await getEventById(eventId); //get the event for participantId.
     let deletedRoom = await deleteRoom(eventId); //for chat system.
     let deletedEvent = await deleteEvent(eventId); //delet
     let getParticipants = await getParticipantsById(getEvent.participantId);
+    if (!getParticipants) {
+      return;
+    }
     let removeUserAsParticipant = await getParticipants.participants.forEach(
       async (participant) => {
         await removeUserEvent(participant.userId, eventId);
@@ -134,11 +150,5 @@ const handleCancelEvent = async (req, res, next) => {
   //now for each user, we need to find the event being canceled in their array and delete it.
   //now we need to find all users from the collectionUserEvents and delete the event.
 };
-//
-// await db
-//   .collection(collectionUserEvents)
-//   .findOneAndUpdate(
-//     { _id: ObjectId(participant.userId) },
-//     { $pull: { events: ObjectId(eventId) } }
-//   );
+
 module.exports = { handleJoinEvent, handleLeaveEvent, handleCancelEvent };

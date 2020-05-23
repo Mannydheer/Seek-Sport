@@ -56,11 +56,6 @@ const {
 } = require("./gateways/google-api-requests");
 //join-cancel-leave event controller.
 const {
-  // handleJoinEvent,
-  // handleLeaveEvent,
-  // handleCancelEvent,
-} = require("./controllers/join-leave-cancel-event-controller");
-const {
   handleJoinEvent,
   handleLeaveEvent,
   handleCancelEvent,
