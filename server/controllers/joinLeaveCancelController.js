@@ -30,7 +30,10 @@ const handleJoinEvent = async (req, res, next) => {
       !participantDetails.userId ||
       !participantDetails.eventId
     ) {
-      return;
+      res.status(400).json({
+        status: 400,
+        message: "Missing information from event or participant.",
+      });
     }
     let getEvent = await getEventById(eventInformation._id);
     //ensure getEvent is not missing participantsId.
@@ -38,11 +41,16 @@ const handleJoinEvent = async (req, res, next) => {
     //if there is a participant ID.
     //check if that participant doesnt already exist... in that event.
     if (!getEvent.participantId) {
-      return;
+      res
+        .status(400)
+        .json({ status: 400, message: "Missing event participant Id." });
     }
     let getParticipants = await getParticipantsById(getEvent.participantId);
     if (!getParticipants) {
-      return;
+      res.status(400).json({
+        status: 400,
+        message: "Failed getting participants in handleJoinEvent function.",
+      });
     }
     //if you get participants. Which you will 100% because if you have a apeticipant ID then there are participants
     //check if any of the participants in the array match the current participant trying to join.
@@ -70,7 +78,6 @@ const handleJoinEvent = async (req, res, next) => {
       participantDetails.eventId
     );
     if (updateUserEvent && updateParticipant) {
-      console.log("response in joined");
       res
         .status(200)
         .json({ status: 200, message: "Successfully joined the event!" });
@@ -93,7 +100,10 @@ const handleLeaveEvent = async (req, res, next) => {
       !eventInformation._id ||
       !eventInformation.participantId
     ) {
-      return;
+      res.status(400).json({
+        status: 400,
+        message: "Missing information from event or participant.",
+      });
     }
     //now you have the participant ID from eventInformation.
     //find the participant collect from the event ParticipantId key.
@@ -125,7 +135,10 @@ const handleCancelEvent = async (req, res, next) => {
   try {
     const eventId = req.body.eventId;
     if (!eventId) {
-      return;
+      res.status(400).json({
+        status: 400,
+        message: "Missing information from event inside handleCancelEvent.",
+      });
     }
     let getEvent = await getEventById(eventId); //get the event for participantId.
     let deletedRoom = await deleteRoom(eventId); //for chat system.
