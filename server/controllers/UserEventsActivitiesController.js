@@ -20,8 +20,6 @@ const {
 //@access PRIVATE - will need to validate token? YES
 const handleUserActivities = async (req, res, next) => {
   try {
-    const db = getConnection().db(dbName);
-
     let userId = req.params.userId;
     if (!userId) {
       return;
