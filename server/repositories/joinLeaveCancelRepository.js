@@ -5,7 +5,6 @@ const collectionEvents = "Events";
 const collectionParticipants = "Participants";
 const collectionUserEvents = "UserEvents";
 const collectionRooms = "Rooms";
-const assert = require("assert");
 var ObjectId = require("mongodb").ObjectID;
 const { getConnection } = require("../connection/connection");
 

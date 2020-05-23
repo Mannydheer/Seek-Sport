@@ -26,10 +26,13 @@ const socketio = require("socket.io");
 const { handleGetChatRoom } = require("./controllers/handlers/chatController");
 //user events controller.
 const {
-  handleUserActivities,
+  // handleUserActivities,
   handleUserRegisteredEvents,
 } = require("./controllers/handlers/UserEventsController");
 //host controller
+const {
+  handleUserActivities,
+} = require("./controllers/UserEventsActivitiesController");
 const {
   handleHosting,
   handleGetHosts,
