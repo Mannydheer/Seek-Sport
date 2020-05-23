@@ -34,7 +34,6 @@ const filterEventData = (eventData, userId) => {
       return event;
     }
   });
-  console.log(filteredEvents, "filtered events");
   if (filteredEvents) {
     return filteredEvents;
   }

@@ -18,24 +18,25 @@ const handleGetUser = async (req, res, next) => {
   try {
     let id = req.user.id;
     if (!id) {
-      res.status(400).json({
+      return res.status(400).json({
         status: 400,
         message: "Verification Failed. User invalid. Try refreshing the page.",
       });
-    } else {
-      const checkForUser = await getUserById(id);
-      if (!checkForUser) {
-        res.status(400).json({ status: 400, message: "User not found." });
-      }
-      res.status(200).json({
-        status: 200,
-        message: "User remains signed in. Token verification accepted.",
-        username: checkForUser.username,
-        _id: checkForUser._id,
-        profileImage: checkForUser.profileImage,
-        accessToken: accessToken,
-      });
     }
+    const checkForUser = await getUserById(id);
+    if (!checkForUser) {
+      return res.status(400).json({ status: 400, message: "User not found." });
+    }
+    const accessToken = generateJwtToken(checkForUser._id);
+    res.status(200).json({
+      status: 200,
+      message: "User remains signed in. Token verification accepted.",
+      username: checkForUser.username,
+      _id: checkForUser._id,
+      profileImage: checkForUser.profileImage,
+      accessToken: accessToken,
+    });
+
     //if you do, success.
   } catch (error) {
     console.log(error.stack, "Catch Error in handleGetUser");

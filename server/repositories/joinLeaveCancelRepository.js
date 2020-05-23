@@ -58,7 +58,7 @@ const addUserEventRepo = async (
     .collection(collectionUserEvents)
     .updateOne(
       { _id: ObjectId(participantDetailsUserId) },
-      { $push: { events: participantDetailsEventId } }
+      { $push: { events: ObjectId(participantDetailsEventId) } }
     );
 };
 

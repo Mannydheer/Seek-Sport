@@ -70,9 +70,10 @@ const handleJoinEvent = async (req, res, next) => {
       participantDetails.eventId
     );
     if (updateUserEvent && updateParticipant) {
+      console.log("response in joined");
       res
-        .status(204)
-        .json({ status: 204, message: "Successfully joined the event!" });
+        .status(200)
+        .json({ status: 200, message: "Successfully joined the event!" });
     } else return;
   } catch (error) {
     console.log(error.stack, "Catch Error in handleJoinEvent");
@@ -106,6 +107,7 @@ const handleLeaveEvent = async (req, res, next) => {
       eventInformation._id
     );
     if (updateParticipant && updateUserEvent) {
+      console.log("response in leave");
       res
         .status(200)
         .json({ status: 200, message: "Successfully left the event!" });
