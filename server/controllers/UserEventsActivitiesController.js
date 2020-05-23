@@ -35,7 +35,7 @@ const handleUserActivities = async (req, res, next) => {
     }
     //if you registered for events.
     let allEvents = allEventsArray(userData);
-    let eventData = await getAllEventsUserRegisteredFor(allEvents);
+    let eventData = await getAllEventsUserRegisteredFor(allEvents, userId);
     if (!eventData) {
       return;
     }

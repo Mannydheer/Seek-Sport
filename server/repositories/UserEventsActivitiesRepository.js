@@ -15,6 +15,7 @@ const getUserFromUserEventsRepo = async (userId) => {
     .findOne({ _id: ObjectId(userId) });
 };
 const getAllEventsUserRegisteredForRepo = async (allEvents) => {
+  const db = getConnection().db(dbName);
   return await db
     .collection(collectionEvents)
     .find({ _id: { $in: allEvents } })

@@ -28,12 +28,13 @@ const getAllEventsUserRegisteredFor = async (allEvents) => {
   return;
 };
 
-const filterEventData = () => {
+const filterEventData = (eventData, userId) => {
   let filteredEvents = eventData.filter((event) => {
     if (event.userId !== userId) {
       return event;
     }
   });
+  console.log(filteredEvents, "filtered events");
   if (filteredEvents) {
     return filteredEvents;
   }
