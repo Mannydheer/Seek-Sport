@@ -6,24 +6,25 @@ const dbName = "ParkGames";
 const collectionEvents = "Events";
 const collectionParticipants = "Participants";
 var ObjectId = require("mongodb").ObjectID;
-//env vairablkes
-require("dotenv").config();
 
+const { getAllEvents } = require("../../services/eventService");
+
+//@endpoint GET /getEvents
+//@desc all events on the map.
+//@access PUBLIC
 const handleGetEvents = async (req, res, next) => {
   try {
-    const db = getConnection().db(dbName);
-    //insert the hosting info into DB
-    await db
-      .collection(collectionEvents)
-      .find()
-      .toArray()
-      .then((data) => {
-        res.status(200).json({
-          status: 200,
-          message: "Success getting all events!",
-          events: data,
-        });
+    let allEvents = await getAllEvents();
+    if (allEvents) {
+      return res.status(200).json({
+        status: 200,
+        message: "Success getting all events!",
+        events: allEvents,
       });
+    }
+    return res
+      .status(400)
+      .json({ status: 400, message: "Unable to get all events." });
   } catch (error) {
     console.log(error.stack, "Catch Error in handleEvents");
     res.status(500).json({ status: 500, message: error.message });
@@ -121,12 +122,10 @@ const handleCurrentEventParticipants = async (req, res, next) => {
       .collection(collectionParticipants)
       .findOne({ _id: ObjectId(participantId) });
     if (!participantData) {
-      res
-        .status(400)
-        .json({
-          status: 400,
-          message: "Currently no participants registered for this event.",
-        });
+      res.status(400).json({
+        status: 400,
+        message: "Currently no participants registered for this event.",
+      });
     } else {
       res.status(200).json({
         status: 200,
