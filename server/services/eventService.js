@@ -2,6 +2,7 @@ const {
   getAllEventsRepo,
   getEventsAssociatedWithUserRepo,
 } = require("../repositories/eventRepository");
+var ObjectId = require("mongodb").ObjectID;
 
 const getAllEvents = async () => {
   let allEvents = await getAllEventsRepo();
@@ -19,4 +20,16 @@ const getEventsAssociatedWithUser = async (_id) => {
   return;
 };
 
-module.exports = { getAllEvents, getEventsAssociatedWithUser };
+const allParticipantsArray = (allData) => {
+  let allParticipants = [];
+  allData.forEach((data) => {
+    allParticipants.push(ObjectId(data.participantId));
+  });
+  return allParticipants;
+};
+
+module.exports = {
+  getAllEvents,
+  getEventsAssociatedWithUser,
+  allParticipantsArray,
+};
