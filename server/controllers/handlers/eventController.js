@@ -1,12 +1,3 @@
-"use strict";
-
-//MONGODB
-const { getConnection } = require("../../connection/connection");
-const dbName = "ParkGames";
-const collectionEvents = "Events";
-const collectionParticipants = "Participants";
-var ObjectId = require("mongodb").ObjectID;
-
 const {
   getAllEvents,
   getEventsAssociatedWithUser,
@@ -123,8 +114,6 @@ const handleSelectedParkEvents = async (req, res, next) => {
     if (!parkId) {
       return res.status(400).json({ status: 400, message: "Missing park Id." });
     }
-    // const db = getConnection().db(dbName);
-    //insert the hosting info into DB
     let allEventsForAssociatedPark = await getEventsAssociatedWithPark(parkId);
     if (!allEventsForAssociatedPark) {
       return res
