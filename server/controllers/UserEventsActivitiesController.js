@@ -1,13 +1,3 @@
-"use strict";
-
-//MONGODB
-const { getConnection } = require("../connection/connection");
-
-const dbName = "ParkGames";
-const collectionEvents = "Events";
-const collectionUserEvents = "UserEvents";
-var ObjectId = require("mongodb").ObjectID;
-
 const {
   getUserFromUserEvents,
   allEventsArray,

@@ -38,7 +38,6 @@ const {
 const {
   handleGetEvents,
   handleUserEvents,
-  handleViewActivityEvents,
   handleCurrentEventParticipants,
   handleSelectedParkEvents,
 } = require("./controllers/handlers/eventController");
@@ -262,9 +261,6 @@ app.post("/joinEvent", auth, handleJoinEvent);
 app.post("/leaveEvent", auth, handleLeaveEvent);
 //cancel event.
 app.post("/cancelEvent", auth, handleCancelEvent);
-
-//viewActivityEvents
-app.post("/viewActivityEvents", auth, handleViewActivityEvents);
 //selectedPark
 app.get(
   "/currentEventParticipants/:participantId",

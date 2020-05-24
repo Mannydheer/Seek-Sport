@@ -86,13 +86,11 @@ const handleHosting = async (req, res, next) => {
             assert(1, r2.modifiedCount);
             assert(1, r2.matchedCount);
 
-            let r3 = await db
-              .collection(collectionRooms)
-              .insertOne({
-                _id: `${eventId}-Room-1`,
-                participantId: participantId,
-                chatParticipants: [],
-              });
+            let r3 = await db.collection(collectionRooms).insertOne({
+              _id: `${eventId}-Room-1`,
+              participantId: participantId,
+              chatParticipants: [],
+            });
             assert(1, r3.insertedCount);
 
             let addUserEvent = await db
@@ -313,13 +311,11 @@ const handleHosting = async (req, res, next) => {
       //also need to reupdate the room.
       //also if a there is a new reservation by the host, a room document needs to be recreated.
 
-      let r3 = await db
-        .collection(collectionRooms)
-        .insertOne({
-          _id: `${eventId}-Room-1`,
-          participantId: participantId,
-          chatParticipants: [],
-        });
+      let r3 = await db.collection(collectionRooms).insertOne({
+        _id: `${eventId}-Room-1`,
+        participantId: participantId,
+        chatParticipants: [],
+      });
       assert(1, r3.insertedCount);
       //also a host should be registered in his own events.
       //inside the collectionUserEvents.
@@ -338,12 +334,10 @@ const handleHosting = async (req, res, next) => {
         hostingInformation: hostingInformation,
       });
     } else {
-      res
-        .status(400)
-        .json({
-          status: 400,
-          message: "Booking was not valid - time conflicts.",
-        });
+      res.status(400).json({
+        status: 400,
+        message: "Booking was not valid - time conflicts.",
+      });
     }
     //if you do, success.
   } catch (error) {
