@@ -1,4 +1,7 @@
-const { getAllEventsRepo } = require("../repositories/eventRepository");
+const {
+  getAllEventsRepo,
+  getEventsAssociatedWithUserRepo,
+} = require("../repositories/eventRepository");
 
 const getAllEvents = async () => {
   let allEvents = await getAllEventsRepo();
@@ -8,4 +11,12 @@ const getAllEvents = async () => {
   return;
 };
 
-module.exports = { getAllEvents };
+const getEventsAssociatedWithUser = async (_id) => {
+  let eventData = await getEventsAssociatedWithUserRepo(_id);
+  if (eventData.length > 0) {
+    return eventData;
+  }
+  return;
+};
+
+module.exports = { getAllEvents, getEventsAssociatedWithUser };

@@ -7,7 +7,10 @@ const collectionEvents = "Events";
 const collectionParticipants = "Participants";
 var ObjectId = require("mongodb").ObjectID;
 
-const { getAllEvents } = require("../../services/eventService");
+const {
+  getAllEvents,
+  getEventsAssociatedWithUser,
+} = require("../../services/eventService");
 
 //@endpoint GET /getEvents
 //@desc all events on the map.
@@ -35,17 +38,22 @@ const handleGetEvents = async (req, res, next) => {
 //@desc get events associated with current user logged in.
 //@access PRIVATE - will need to validate token? YES
 const handleUserEvents = async (req, res, next) => {
-  const _id = req.params._id;
-
+  console.log("INSIDE ************");
   try {
+    const _id = req.params._id;
+    if (!_id) {
+      res.status(400).json({ status: 400, message: "Missing id." });
+    }
     const db = getConnection().db(dbName);
     //insert the hosting info into DB
-    let allData = await db
-      .collection(collectionEvents)
-      .find({ userId: _id })
-      .toArray();
+    let allData = await getEventsAssociatedWithUser(_id);
+    console.log(allData, "THIS IS ALL DATA");
+    // await db
+    //   .collection(collectionEvents)
+    //   .find({ userId: _id })
+    //   .toArray();
     if (!allData) {
-      res
+      return res
         .status(404)
         .json({ status: 404, message: "There are no events booked." });
     } else {

@@ -12,4 +12,9 @@ const getAllEventsRepo = async () => {
   return await db.collection(collectionEvents).find().toArray();
 };
 
-module.exports = { getAllEventsRepo };
+const getEventsAssociatedWithUserRepo = async (_id) => {
+  const db = getConnection().db(dbName);
+  return await db.collection(collectionEvents).find({ userId: _id }).toArray();
+};
+
+module.exports = { getAllEventsRepo, getEventsAssociatedWithUserRepo };
