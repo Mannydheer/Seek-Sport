@@ -17,4 +17,17 @@ const getEventsAssociatedWithUserRepo = async (_id) => {
   return await db.collection(collectionEvents).find({ userId: _id }).toArray();
 };
 
-module.exports = { getAllEventsRepo, getEventsAssociatedWithUserRepo };
+const getParticipantDataRepo = async (participants) => {
+  const db = getConnection().db(dbName);
+  //In the participants collection, find all the documents that ids equal to the participant array passed.
+  return await db
+    .collection(collectionParticipants)
+    .find({ _id: { $in: participants } })
+    .toArray();
+};
+
+module.exports = {
+  getAllEventsRepo,
+  getEventsAssociatedWithUserRepo,
+  getParticipantDataRepo,
+};

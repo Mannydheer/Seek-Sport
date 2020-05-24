@@ -11,6 +11,7 @@ const {
   getAllEvents,
   getEventsAssociatedWithUser,
   allParticipantsArray,
+  getParticipantData,
 } = require("../../services/eventService");
 
 //@endpoint GET /getEvents
@@ -42,31 +43,28 @@ const handleUserEvents = async (req, res, next) => {
   try {
     const _id = req.params._id;
     if (!_id) {
-      res.status(400).json({ status: 400, message: "Missing id." });
+      return res.status(400).json({ status: 400, message: "Missing id." });
     }
-    const db = getConnection().db(dbName);
-    //insert the hosting info into DB
     let allData = await getEventsAssociatedWithUser(_id);
-
     if (!allData) {
       return res
         .status(404)
         .json({ status: 404, message: "There are no events booked." });
     }
+    //function will push all participantId for each event into an array.
     let participants = await allParticipantsArray(allData);
-
-    // let participants = [];
-    // allData.forEach((data) => {
-    //   participants.push(ObjectId(data.participantId));
-    // });
-    let participantData = await db
-      .collection(collectionParticipants)
-      .find({ _id: { $in: participants } })
-      .toArray();
-
-    res.status(200).json({
+    //this will return all participants for each event. Now there is access to all participants for each event the user is participanting in.
+    let participantData = await getParticipantData(participants);
+    if (!participantData) {
+      return res.status(404).json({
+        status: 404,
+        message: "There are no participants for this event.",
+      });
+    }
+    return res.status(200).json({
       status: 200,
-      message: "Success getting all events associated with the user!",
+      message:
+        "Success getting all events & participants associated with the user!",
       events: allData,
       participants: participantData,
     });

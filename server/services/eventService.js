@@ -1,6 +1,7 @@
 const {
   getAllEventsRepo,
   getEventsAssociatedWithUserRepo,
+  getParticipantDataRepo,
 } = require("../repositories/eventRepository");
 var ObjectId = require("mongodb").ObjectID;
 
@@ -28,8 +29,17 @@ const allParticipantsArray = (allData) => {
   return allParticipants;
 };
 
+const getParticipantData = async (participants) => {
+  let participantData = await getParticipantDataRepo(participants);
+  if (participantData.length > 0) {
+    return participantData;
+  }
+  return;
+};
+
 module.exports = {
   getAllEvents,
   getEventsAssociatedWithUser,
   allParticipantsArray,
+  getParticipantData,
 };
