@@ -151,27 +151,31 @@ const handleCurrentEventParticipants = async (req, res, next) => {
     res.status(500).json({ status: 500, message: error.message });
   }
 };
+
 //@endpoint GET /selectedParkEvents
 //@desc get all events associated with the selected park.
 //@access PRIVATE - will need to validate token? YES
 //NOTES - CHECK HANDLEGETEVENTS
 const handleSelectedParkEvents = async (req, res, next) => {
-  let parkId = req.params.parkId;
   //connect to db
   try {
-    const db = getConnection().db(dbName);
+    let parkId = req.params.parkId;
+    if (!parkId) {
+      return res.status(400).json({ status: 400, message: "Missing park Id." });
+    }
+    // const db = getConnection().db(dbName);
     //insert the hosting info into DB
-    await db
-      .collection(collectionEvents)
-      .find({ parkId: parkId })
-      .toArray()
-      .then((data) => {
-        res.status(200).json({
-          status: 200,
-          message: "Success getting all events for selected park!",
-          events: data,
-        });
-      });
+    let allEventsForAssociatedPark = await getEventsAssociatedWithPark(parkId);
+    if (!allEventsForAssociatedPark) {
+      return res
+        .status(400)
+        .json({ status: 400, message: "No events associated with this park." });
+    }
+    return res.status(200).json({
+      status: 200,
+      message: "Success getting all events for selected park!",
+      events: allEventsForAssociatedPark,
+    });
   } catch (error) {
     console.log(error.stack, "Catch Error in handleSelectedParkEvents");
     res.status(500).json({ status: 500, message: error.message });
