@@ -12,7 +12,12 @@ const {
   getEventsAssociatedWithUser,
   allParticipantsArray,
   getParticipantData,
+  getEventsAssociatedWithPark,
 } = require("../../services/eventService");
+
+const {
+  getParticipantsById,
+} = require("../../services/joinLeaveCancelService");
 
 //@endpoint GET /getEvents
 //@desc all events on the map.
@@ -78,64 +83,68 @@ const handleUserEvents = async (req, res, next) => {
 //@desc get all events associated with that park.
 //@access PRIVATE - will need to validate token? YES
 const handleViewActivityEvents = async (req, res, next) => {
-  let parkId = req.body.selectedPark;
-  try {
-    const db = getConnection().db(dbName);
-    //insert the hosting info into DB
-    let allData = await db
-      .collection(collectionEvents)
-      .find({ parkId: parkId })
-      .toArray();
-
-    if (!allData) {
-      res
-        .status(404)
-        .json({ status: 404, message: "There are no events booked." });
-    } else {
-      let participants = [];
-      allData.forEach((data) => {
-        participants.push(ObjectId(data.participantId));
-      });
-      let participantData = await db
-        .collection(collectionParticipants)
-        .find({ _id: { $in: participants } })
-        .toArray();
-
-      res.status(200).json({
-        status: 200,
-        message: "Success getting all events associated with the user!",
-        participants: participantData,
-      });
-    }
-  } catch (error) {
-    console.log(error.stack, "Catch Error in handleViewActivityevents");
-    res.status(500).json({ status: 500, message: error.message });
-  }
+  // try {
+  //   let parkId = req.body.selectedPark;
+  //   if (!parkId) {
+  //     return res.status(400).json({ status: 400, message: "Missing park Id." });
+  //   }
+  //   const db = getConnection().db(dbName);
+  //   let allEventsForAssociatedPark = await getEventsAssociatedWithPark(parkId);
+  //   // await db
+  //   //   .collection(collectionEvents)
+  //   //   .find({ parkId: parkId })
+  //   //   .toArray();
+  //   if (!allEventsForAssociatedPark) {
+  //     res
+  //       .status(404)
+  //       .json({ status: 404, message: "There are no events booked." });
+  //   } else {
+  //     let participants = [];
+  //     allEventsForAssociatedPark.forEach((data) => {
+  //       participants.push(ObjectId(data.participantId));
+  //     });
+  //     let participantData = await db
+  //       .collection(collectionParticipants)
+  //       .find({ _id: { $in: participants } })
+  //       .toArray();
+  //     res.status(200).json({
+  //       status: 200,
+  //       message: "Success getting all events associated with the user!",
+  //       participants: participantData,
+  //     });
+  //   }
+  // } catch (error) {
+  //   console.log(error.stack, "Catch Error in handleViewActivityevents");
+  //   res.status(500).json({ status: 500, message: error.message });
+  // }
 };
 
-//@endpoint POST /viewActivityEvents
+//@endpoint POST /currentEventParticipants/:participantId,
 //@desc get all events associated with that park.
 //@access PRIVATE - will need to validate token? YES
 const handleCurrentEventParticipants = async (req, res, next) => {
-  let participantId = req.params.participantId;
   try {
-    const db = getConnection().db(dbName);
+    let participantId = req.params.participantId;
+
+    if (!participantId) {
+      return res
+        .status(400)
+        .json({ status: 400, message: "Missing participant Id." });
+    }
     //insert the hosting info into DB
-    let participantData = await db
-      .collection(collectionParticipants)
-      .findOne({ _id: ObjectId(participantId) });
+    let participantData = await getParticipantsById(participantId);
     if (!participantData) {
-      res.status(400).json({
+      return res.status(400).json({
         status: 400,
         message: "Currently no participants registered for this event.",
       });
-    } else {
-      res.status(200).json({
-        status: 200,
-        message: "Success getting participants for single event.",
-        eventParticipants: participantData.participants,
-      });
     }
+    return res.status(200).json({
+      status: 200,
+      message: "Success getting participants for single event.",
+      eventParticipants: participantData.participants,
+    });
+
     //
   } catch (error) {
     console.log(error.stack, "Catch Error in handleViewActivityevents");

@@ -26,8 +26,18 @@ const getParticipantDataRepo = async (participants) => {
     .toArray();
 };
 
+const getEventsAssociatedWithParkRepo = async (parkId) => {
+  const db = getConnection().db(dbName);
+
+  return await db
+    .collection(collectionEvents)
+    .find({ parkId: parkId })
+    .toArray();
+};
+
 module.exports = {
   getAllEventsRepo,
   getEventsAssociatedWithUserRepo,
   getParticipantDataRepo,
+  getEventsAssociatedWithParkRepo,
 };
