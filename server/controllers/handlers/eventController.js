@@ -79,46 +79,6 @@ const handleUserEvents = async (req, res, next) => {
   }
 };
 
-//@endpoint POST /viewActivityEvents
-//@desc get all events associated with that park.
-//@access PRIVATE - will need to validate token? YES
-const handleViewActivityEvents = async (req, res, next) => {
-  // try {
-  //   let parkId = req.body.selectedPark;
-  //   if (!parkId) {
-  //     return res.status(400).json({ status: 400, message: "Missing park Id." });
-  //   }
-  //   const db = getConnection().db(dbName);
-  //   let allEventsForAssociatedPark = await getEventsAssociatedWithPark(parkId);
-  //   // await db
-  //   //   .collection(collectionEvents)
-  //   //   .find({ parkId: parkId })
-  //   //   .toArray();
-  //   if (!allEventsForAssociatedPark) {
-  //     res
-  //       .status(404)
-  //       .json({ status: 404, message: "There are no events booked." });
-  //   } else {
-  //     let participants = [];
-  //     allEventsForAssociatedPark.forEach((data) => {
-  //       participants.push(ObjectId(data.participantId));
-  //     });
-  //     let participantData = await db
-  //       .collection(collectionParticipants)
-  //       .find({ _id: { $in: participants } })
-  //       .toArray();
-  //     res.status(200).json({
-  //       status: 200,
-  //       message: "Success getting all events associated with the user!",
-  //       participants: participantData,
-  //     });
-  //   }
-  // } catch (error) {
-  //   console.log(error.stack, "Catch Error in handleViewActivityevents");
-  //   res.status(500).json({ status: 500, message: error.message });
-  // }
-};
-
 //@endpoint POST /currentEventParticipants/:participantId,
 //@desc get all events associated with that park.
 //@access PRIVATE - will need to validate token? YES
@@ -185,7 +145,6 @@ const handleSelectedParkEvents = async (req, res, next) => {
 module.exports = {
   handleGetEvents,
   handleUserEvents,
-  handleViewActivityEvents,
   handleCurrentEventParticipants,
   handleSelectedParkEvents,
 };
