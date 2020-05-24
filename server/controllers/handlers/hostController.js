@@ -12,8 +12,7 @@ const collectionRooms = "Rooms";
 const assert = require("assert");
 var ObjectId = require("mongodb").ObjectID;
 
-//env vairablkes
-require("dotenv").config();
+const { getHost } = require("../../services/hostService");
 
 //@endpoint POST /hostingInformation
 //@desc store the info into the database of the reservating
@@ -22,29 +21,29 @@ require("dotenv").config();
 // ------------------- HOSTING ---------------------
 
 const handleHosting = async (req, res, next) => {
-  //authorization through token gets validated first.
-
-  let hostingInformation = req.body.hostingInformation;
-  let eventInformation = req.body.eventInformation;
-  let startDate = eventInformation.time;
-  let duration = eventInformation.duration;
-
   //pseudocode for time coonflicts.
   //first find all the events associated with that USERID and at the SAME PARK.
   //if there are none, everything passes and you can book at that park.
   //if found, loop through their events at that park and check if there are any time clashes.
   //if time clashes send back message saying you have already booked at that time.
-
   //connect to db
-
   try {
+    let hostingInformation = req.body.hostingInformation;
+    let eventInformation = req.body.eventInformation;
+    let startDate = eventInformation.time;
+    let duration = eventInformation.duration;
+    if (!hostingInformation || !eventInformation || !startDate || !duration) {
+      return res.status(400).json({
+        status: 400,
+        message: "Missing information in order to host.",
+      });
+    }
     const db = getConnection().db(dbName);
     //first see if the host already exists.
-    let findhost = await db
-      .collection(collectionHosts)
-      .findOne({ userId: hostingInformation.userId });
-    // let userHost = await db.collection(collectionUsers).findOne({ _id: ObjectId(hostingInformation.userId) })
-
+    let findhost = await getHost(hostingInformation.userId);
+    // await db
+    //   .collection(collectionHosts)
+    //   .findOne({ userId: hostingInformation.userId });
     let validBooking = false;
     let validBookingAllEvents = false;
 
