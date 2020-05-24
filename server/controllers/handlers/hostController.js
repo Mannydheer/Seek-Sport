@@ -12,7 +12,11 @@ const collectionRooms = "Rooms";
 const assert = require("assert");
 var ObjectId = require("mongodb").ObjectID;
 
-const { getHost } = require("../../services/hostService");
+const {
+  getHost,
+  createNewHost,
+  createNewEvent,
+} = require("../../services/hostService");
 
 //@endpoint POST /hostingInformation
 //@desc store the info into the database of the reservating
@@ -41,79 +45,87 @@ const handleHosting = async (req, res, next) => {
     const db = getConnection().db(dbName);
     //first see if the host already exists.
     let findhost = await getHost(hostingInformation.userId);
-    // await db
-    //   .collection(collectionHosts)
-    //   .findOne({ userId: hostingInformation.userId });
     let validBooking = false;
     let validBookingAllEvents = false;
-
     //if you dont find a host.
     //will only run once... see if you can refactor this..
     if (!findhost) {
       //make a new host because there are no event related to this host.
       //insert the hosting info into DB
-      await db
-        .collection(collectionHosts)
-        .insertOne(hostingInformation)
-        //then get back the _id of the host and insert into the event.
-        .then(async (data) => {
-          //give the event key the refernece to the hostId.
-          //data.ops[0]._id is the hosts object ID.
-          try {
-            eventInformation.hostId = data.ops[0]._id;
-            let eventInfo = await db
-              .collection(collectionEvents)
-              .insertOne(eventInformation);
-            //insert as participant.
-            let eventId = eventInfo.ops[0]._id;
-            //then we need to make the host a participant as well.
-            //also since this will only happen once, will add also the host information as a participant.
-            //push the details of the participant a document.
-            hostingInformation.parkId = eventInformation.parkId;
-            let r = await db
-              .collection(collectionParticipants)
-              .insertOne({ participants: [hostingInformation] });
-            assert(1, r.insertedCount);
-            //then assign the event with that participants Id object
-            let participantId = r.ops[0]._id;
-            let r2 = await db
-              .collection(collectionEvents)
-              .updateOne(
-                { _id: ObjectId(eventId) },
-                { $set: { participantId: participantId } }
-              );
-            assert(1, r2.modifiedCount);
-            assert(1, r2.matchedCount);
+      let hostInserted = await createNewHost(hostingInformation);
+      if (!hostInserted) {
+        return res
+          .status(400)
+          .json({ status: 400, message: "Unable to create a new host." });
+      }
+      // await db
+      //   .collection(collectionHosts)
+      //   .insertOne(hostingInformation)
+      //then get back the _id of the host and insert into the event.
+      // .then(async (data) => {
+      //give the event key the refernece to the hostId.
+      //data.ops[0]._id is the hosts object ID.
+      try {
+        eventInformation.hostId = hostInserted.ops[0]._id;
+        let eventInfo = await createNewEvent(eventInformation);
+        // await db
+        //   .collection(collectionEvents)
+        //   .insertOne(eventInformation);
+        if (!eventInfo) {
+          return res
+            .status(400)
+            .json({ status: 400, message: "Failed to create new event." });
+        }
+        //insert as participant.
+        let eventId = eventInfo.ops[0]._id;
+        //then we need to make the host a participant as well.
+        //also since this will only happen once, will add also the host information as a participant.
+        //push the details of the participant a document.
+        hostingInformation.parkId = eventInformation.parkId;
+        let r = await db
+          .collection(collectionParticipants)
+          .insertOne({ participants: [hostingInformation] });
+        assert(1, r.insertedCount);
+        //then assign the event with that participants Id object
+        let participantId = r.ops[0]._id;
+        let r2 = await db
+          .collection(collectionEvents)
+          .updateOne(
+            { _id: ObjectId(eventId) },
+            { $set: { participantId: participantId } }
+          );
+        assert(1, r2.modifiedCount);
+        assert(1, r2.matchedCount);
 
-            let r3 = await db.collection(collectionRooms).insertOne({
-              _id: `${eventId}-Room-1`,
-              participantId: participantId,
-              chatParticipants: [],
-            });
-            assert(1, r3.insertedCount);
-
-            let addUserEvent = await db
-              .collection(collectionUserEvents)
-              .updateOne(
-                { _id: ObjectId(hostingInformation.userId) },
-                { $push: { events: eventId } }
-              );
-            assert(1, addUserEvent.matchedCount);
-            assert(1, addUserEvent.modifiedCount);
-
-            res.status(200).json({
-              status: 200,
-              message:
-                "New Host Reservation successful. Thanks for booking! Also you were added as a participant",
-              hostingInformation: hostingInformation,
-            });
-          } catch (err) {
-            console.log(
-              err,
-              "error occured inside handlehsoting catch in the .then async"
-            );
-          }
+        let r3 = await db.collection(collectionRooms).insertOne({
+          _id: `${eventId}-Room-1`,
+          participantId: participantId,
+          chatParticipants: [],
         });
+        assert(1, r3.insertedCount);
+
+        let addUserEvent = await db
+          .collection(collectionUserEvents)
+          .updateOne(
+            { _id: ObjectId(hostingInformation.userId) },
+            { $push: { events: eventId } }
+          );
+        assert(1, addUserEvent.matchedCount);
+        assert(1, addUserEvent.modifiedCount);
+
+        res.status(200).json({
+          status: 200,
+          message:
+            "New Host Reservation successful. Thanks for booking! Also you were added as a participant",
+          hostingInformation: hostingInformation,
+        });
+      } catch (err) {
+        console.log(
+          err,
+          "error occured inside handlehsoting catch in the .then async"
+        );
+      }
+      // });
     }
     //if a matching host is found in the Hosts collection.
     else {

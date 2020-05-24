@@ -17,4 +17,14 @@ const getHostRepo = async (hostUserId) => {
   return await db.collection(collectionHosts).findOne({ userId: hostUserId });
 };
 
-module.exports = { getHostRepo };
+const createNewHostRepo = async (hostingInformation) => {
+  const db = getConnection().db(dbName);
+  return await db.collection(collectionHosts).insertOne(hostingInformation);
+};
+
+const createNewEventRepo = async () => {
+  const db = getConnection().db(dbName);
+  return await db.collection(collectionEvents).insertOne(eventInformation);
+};
+
+module.exports = { getHostRepo, createNewHostRepo, createNewEventRepo };
