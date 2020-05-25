@@ -20,6 +20,9 @@ const {
   updateParticipantId,
   createRoom,
   getEventsRelatedToHost,
+  filterEventsRelatedToHostAtSamePark,
+  filterEventsRelatedToHostAtDifferentPark,
+  validateBookings,
 } = require("../../services/hostService");
 
 const { addUserEvent } = require("../../services/joinLeaveCancelService");
@@ -133,7 +136,6 @@ const handleHosting = async (req, res, next) => {
         hostingInformation.userId,
         eventInformation.bookedDate
       );
-      console.log(allEvents, "ALL EVNETS");
       // await db
       //   .collection(collectionEvents)
       //   .find({
@@ -150,142 +152,68 @@ const handleHosting = async (req, res, next) => {
       else {
         //allEvents only has the events related to the current host...
         //filter the events that are held at the CURRENT park at which the host is trying to book.
-        let filteredEvents = allEvents.filter((event) => {
-          if (event.parkId === eventInformation.parkId) {
-            return event;
-          }
-        });
+        let filteredEvents = filterEventsRelatedToHostAtSamePark(
+          allEvents,
+          eventInformation
+        );
         //filter and get back all the events related to that host at ANY park.
         //EXCLUDING the current park.
         //this is so we can seperate the messages we want to send back to the front end.
         //if its an error due to the same park or due to another park.
-        let filteredEventsAllParks = allEvents.filter((event) => {
-          if (event.parkId !== eventInformation.parkId) {
-            return event;
-          }
-        });
+        let filteredEventsAllParks = filterEventsRelatedToHostAtDifferentPark(
+          allEvents,
+          eventInformation
+        );
         //if current host has not booked any events at any other park...
         //if this passes then first bool text passes so there arnt any time conflicts from any other events at any park.
-        if (filteredEventsAllParks.length === 0) {
-          console.log("inside 1 bool");
+        if (!filteredEventsAllParks) {
           validBookingAllEvents = true;
         }
         //if we do find events from that host at different parks on the same day
         //then we need to make sure there are no time conflicts with the park that
         //we are currently trying to book with.
         else {
-          //---------------------TIME ----------------------------
-          let d = new Date();
-          //get the currentMinutes - live time.
-          let currentMinutes = d.getHours() * 60 + d.getMinutes();
-          // get the time in minutes that the person tried booked.
-          let startMinutes =
-            new Date(startDate).getHours() * 60 +
-            new Date(startDate).getMinutes();
-          // convert the duration to minutes.
-          let durationMinutes = parseInt(duration) * 60;
-          // get the end minutes (duration + the start.)
-          let endMinutes = startMinutes + durationMinutes;
-          //NOW we need to check if any of the other park times are WITHIN these times.
-          //this will be a range ...
-          //if so ... then there is a conflict.
-
           //CHECKING TIME CONFLICTS AT ALL THE PARKS THIS USER IS HOSTINGS EVENTS.
-          filteredEventsAllParks.forEach((event) => {
-            //for each event, grab the start time.
-            //NOW we get the range for the starting and ending time of each of the events.
-            //now we will check...
-            //if the start time of the event is within the range of the current event time,
-            //or if the end time is within that range...
-            //then there is a conflict.
-            //we will check for each of the events.
-            let eventStartTime =
-              new Date(event.time).getHours() * 60 +
-              new Date(event.time).getMinutes();
-            let eventEndTime = event.duration * 60 + eventStartTime;
-            //see if the start time is within the start-end time for the current booking.
-            //checking if start minutes is within the event range and if the end minutes is within the range.
-            //if one of them are true... then there is a time conflict.
-            if (
-              (startMinutes <= eventEndTime &&
-                startMinutes >= eventStartTime) ||
-              (endMinutes <= eventEndTime && endMinutes >= eventStartTime)
-            ) {
-              // timeConflict = true;
-              validBookingAllEvents = false;
-              res.status(409).json({
-                status: 409,
-                message:
-                  "Time conflict. Seems like you have other bookings during these hours at a different park.",
-                timeConflictPark: event,
-              });
-              return;
-            }
-            //if there wasnt any time conflicts, set bool of first test to true.
-            else {
-              validBookingAllEvents = true;
-              return;
-            }
-          });
+          let responseFromCheckingForTimeConflictsAtDifferentParks = validateBookings(
+            filteredEventsAllParks,
+            startDate,
+            duration,
+            eventInformation
+          );
+          if (responseFromCheckingForTimeConflictsAtDifferentParks) {
+            validBookingAllEvents = false;
+            return res.status(409).json({
+              status: 409,
+              message:
+                "Time conflict. Seems like you have other bookings during these hours at a different park.",
+              timeConflictPark: responseFromCheckingForTimeConflictsAtDifferentParks,
+            });
+          }
+          validBookingAllEvents = true;
         }
-
         //second validation for events at the SAME park.
-        if (filteredEvents.length === 0) {
-          console.log("inside 1 bool");
+        if (!filteredEvents) {
           validBooking = true;
         }
         //filtered events holds at least one park, by the same user, on the same day.
         else {
+          let responseFromCheckingForTimeConflictsAtSamePark = validateBookings(
+            filteredEvents,
+            startDate,
+            duration,
+            eventInformation
+          );
+          if (responseFromCheckingForTimeConflictsAtSamePark) {
+            validBooking = false;
+            return res.status(409).json({
+              status: 409,
+              message:
+                "There is a time conflict. You have already booked at this park during this time range.",
+              timeConflictPark: responseFromCheckingForTimeConflictsAtSamePark,
+            });
+          }
+          validBooking = true;
           //---------------------TIME ----------------------------
-          let d = new Date();
-          //get the currentMinutes - live time.
-          let currentMinutes = d.getHours() * 60 + d.getMinutes();
-          // get the time in minutes that the person tried booked.
-          let startMinutes =
-            new Date(startDate).getHours() * 60 +
-            new Date(startDate).getMinutes();
-          // convert the duration to minutes.
-          let durationMinutes = parseInt(duration) * 60;
-          // get the end minutes
-          let endMinutes = startMinutes + durationMinutes;
-          //
-
-          //now check for the time.
-          //CHECKING TIME CONFLICTS AT THE SPECIFIC PARK HE IS TRYING TO HOST.
-          // let timeConflict = false;
-          filteredEvents.forEach((event) => {
-            //for each event, grab the start time.
-            let eventStartTime =
-              new Date(event.time).getHours() * 60 +
-              new Date(event.time).getMinutes();
-            let eventEndTime = event.duration * 60 + eventStartTime;
-            //see if the start time is within the start-end time for the current booking.
-            if (
-              (startMinutes <= eventEndTime &&
-                startMinutes >= eventStartTime) ||
-              (endMinutes <= eventEndTime && endMinutes >= eventStartTime)
-            ) {
-              //also check if its the same day. becuase it it isnt
-              if (event.bookedDate === eventInformation.bookedDate) {
-                // timeConflict = true;
-                validBooking = false;
-                res.status(409).json({
-                  status: 409,
-                  message:
-                    "There is a time conflict. You have already booked at this park during this time range.",
-                  timeConflictPark: event,
-                });
-                return;
-              } else {
-                //if there are no time conflicts
-                validBooking = true;
-                return;
-              }
-            } else {
-              validBooking = true;
-              return;
-            }
-          });
           //everything passes so the booking can go through.
         }
       }
