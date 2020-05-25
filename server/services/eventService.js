@@ -8,10 +8,7 @@ var ObjectId = require("mongodb").ObjectID;
 
 const getAllEvents = async () => {
   let allEvents = await getAllEventsRepo();
-  if (allEvents.length > 0) {
-    return allEvents;
-  }
-  return;
+  return allEvents;
 };
 
 const getEventsAssociatedWithUser = async (_id) => {

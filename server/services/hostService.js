@@ -2,6 +2,9 @@ const {
   getHostRepo,
   createNewHostRepo,
   createNewEventRepo,
+  addAsParticipantRepo,
+  updateParticipantIdRepo,
+  createRoomRepo,
 } = require("../repositories/hostRepository");
 
 const getHost = async (hostUserId) => {
@@ -21,11 +24,42 @@ const createNewHost = async (hostingInformation) => {
 };
 
 const createNewEvent = async (eventInformation) => {
-  let eventInfo = await createNewHostRepo(eventInformation);
+  let eventInfo = await createNewEventRepo(eventInformation);
   if (eventInfo.insertedCount === 1) {
     return eventInfo;
   }
   return;
 };
 
-module.exports = { getHost, createNewHost, createNewEvent };
+const addAsParticipant = async (hostingInformation) => {
+  let participantAdded = await addAsParticipantRepo(hostingInformation);
+  if (participantAdded.insertedCount === 1) {
+    return participantAdded;
+  }
+  return;
+};
+
+const updateParticipantId = async (eventId, participantId) => {
+  let updated = await updateParticipantIdRepo(eventId, participantId);
+  if (updated.modifiedCount === 1 && updated.matchedCount === 1) {
+    return updated;
+  }
+  return;
+};
+
+const createRoom = async (eventId, participantId) => {
+  let roomAdded = await createRoomRepo(eventId, participantId);
+  if (roomAdded.insertedCount === 1) {
+    return roomAdded;
+  }
+  return;
+};
+
+module.exports = {
+  getHost,
+  createNewHost,
+  createNewEvent,
+  addAsParticipant,
+  updateParticipantId,
+  createRoom,
+};

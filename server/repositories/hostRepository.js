@@ -22,9 +22,42 @@ const createNewHostRepo = async (hostingInformation) => {
   return await db.collection(collectionHosts).insertOne(hostingInformation);
 };
 
-const createNewEventRepo = async () => {
+const createNewEventRepo = async (eventInformation) => {
   const db = getConnection().db(dbName);
   return await db.collection(collectionEvents).insertOne(eventInformation);
 };
 
-module.exports = { getHostRepo, createNewHostRepo, createNewEventRepo };
+const addAsParticipantRepo = async (hostingInformation) => {
+  const db = getConnection().db(dbName);
+  return await db
+    .collection(collectionParticipants)
+    .insertOne({ participants: [hostingInformation] });
+};
+
+const updateParticipantIdRepo = async (eventId, participantId) => {
+  const db = getConnection().db(dbName);
+  return await db
+    .collection(collectionEvents)
+    .updateOne(
+      { _id: ObjectId(eventId) },
+      { $set: { participantId: participantId } }
+    );
+};
+
+const createRoomRepo = async (eventId, participantId) => {
+  const db = getConnection().db(dbName);
+  return await db.collection(collectionRooms).insertOne({
+    _id: `${eventId}-Room-1`,
+    participantId: participantId,
+    chatParticipants: [],
+  });
+};
+
+module.exports = {
+  getHostRepo,
+  createNewHostRepo,
+  createNewEventRepo,
+  addAsParticipantRepo,
+  updateParticipantIdRepo,
+  createRoomRepo,
+};
