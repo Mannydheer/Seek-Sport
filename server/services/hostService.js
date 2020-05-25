@@ -6,6 +6,7 @@ const {
   updateParticipantIdRepo,
   createRoomRepo,
   getEventsRelatedToHostRepo,
+  getAllHostsRepo,
 } = require("../repositories/hostRepository");
 
 const getHost = async (hostUserId) => {
@@ -145,6 +146,11 @@ const validateBookings = (
   return check;
 };
 
+const getAllHosts = async () => {
+  let allHosts = await getAllHostsRepo();
+  return allHosts;
+};
+
 module.exports = {
   getHost,
   createNewHost,
@@ -156,4 +162,5 @@ module.exports = {
   filterEventsRelatedToHostAtSamePark,
   filterEventsRelatedToHostAtDifferentPark,
   validateBookings,
+  getAllHosts,
 };

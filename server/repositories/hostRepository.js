@@ -64,6 +64,11 @@ const getEventsRelatedToHostRepo = async (hostUserId, eventBookedDate) => {
     .toArray();
 };
 
+const getAllHostsRepo = async () => {
+  const db = getConnection().db(dbName);
+  return await db.collection(collectionHosts).find().toArray();
+};
+
 module.exports = {
   getHostRepo,
   createNewHostRepo,
@@ -72,4 +77,5 @@ module.exports = {
   updateParticipantIdRepo,
   createRoomRepo,
   getEventsRelatedToHostRepo,
+  getAllHostsRepo,
 };

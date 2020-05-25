@@ -23,6 +23,7 @@ const {
   filterEventsRelatedToHostAtSamePark,
   filterEventsRelatedToHostAtDifferentPark,
   validateBookings,
+  getAllHosts,
 } = require("../../services/hostService");
 
 const { addUserEvent } = require("../../services/joinLeaveCancelService");
@@ -283,29 +284,20 @@ const handleHosting = async (req, res, next) => {
 };
 
 //@endpoint GET/getParksWithHosts
-//@desc get all hosts for a park
+//@desc get all hosts for a park in Map components.
 //@access PRIVATE - will need to validate token? YES
 
 // ------------------- HOSTING ---------------------
 
 const handleGetHosts = async (req, res, next) => {
-  console.log("inside get hosts.");
-
   try {
-    const db = getConnection().db(dbName);
     //insert the hosting info into DB
-    await db
-      .collection(collectionHosts)
-      .find()
-      .toArray()
-      .then((data) => {
-        console.log(data);
-        res.status(200).json({
-          status: 200,
-          message: "Success getting all hosts!",
-          hosts: data,
-        });
-      });
+    let allHosts = await getAllHosts();
+    return res.status(200).json({
+      status: 200,
+      message: "Success getting all hosts!",
+      hosts: allHosts,
+    });
   } catch (error) {
     console.log(error.stack, "Catch Error in handleHosting");
     res.status(500).json({ status: 500, message: error.message });
