@@ -77,6 +77,7 @@ const Map = ({ coordinates, parkMenu, setParkMenu }) => {
         },
       });
       let allEvents = await eventResponse.json();
+      console.log(allEvents);
       if (eventResponse.status === 200) {
         dispatch(retrieveEvents(allEvents.events));
       } else {

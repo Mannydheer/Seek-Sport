@@ -16,16 +16,12 @@ const {
 const handleGetEvents = async (req, res, next) => {
   try {
     let allEvents = await getAllEvents();
-    if (allEvents) {
-      return res.status(200).json({
-        status: 200,
-        message: "Success getting all events!",
-        events: allEvents,
-      });
-    }
-    return res
-      .status(400)
-      .json({ status: 400, message: "Unable to get all events." });
+
+    return res.status(200).json({
+      status: 200,
+      message: "Success getting all events!",
+      events: allEvents,
+    });
   } catch (error) {
     console.log(error.stack, "Catch Error in handleEvents");
     res.status(500).json({ status: 500, message: error.message });
