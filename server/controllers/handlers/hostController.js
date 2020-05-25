@@ -136,13 +136,6 @@ const handleHosting = async (req, res, next) => {
         hostingInformation.userId,
         eventInformation.bookedDate
       );
-      // await db
-      //   .collection(collectionEvents)
-      //   .find({
-      //     userId: hostingInformation.userId,
-      //     bookedDate: eventInformation.bookedDate,
-      //   })
-      //   .toArray();
       if (!allEvents) {
         //if you don't have anything, then there are no issues booking.
         validBooking = true;
@@ -213,69 +206,71 @@ const handleHosting = async (req, res, next) => {
             });
           }
           validBooking = true;
-          //---------------------TIME ----------------------------
-          //everything passes so the booking can go through.
         }
       }
     }
     //HERE WILL BE THE FINAL TEST.
     if (validBooking && validBookingAllEvents) {
       eventInformation.hostId = findhost._id;
-      //meaning an event was successfully created.
-      let eventInfo = await db
-        .collection(collectionEvents)
-        .insertOne(eventInformation);
-      //grab the id of that event.
-      let eventId = eventInfo.ops[0]._id;
+      let createEvent = await createNewEvent(eventInformation);
+      if (!createEvent) {
+        return res
+          .status(400)
+          .json({ status: 400, message: "Failed to create new event." });
+      }
+      let eventId = createEvent.ops[0]._id;
       //get the event info.
-
       //then we need to make the host a participant as well
       //also since this will only happen once, will add also the host information as a participant.
       //push the details of the participant a document.
       hostingInformation.parkId = eventInformation.parkId;
-      let r = await db
-        .collection(collectionParticipants)
-        .insertOne({ participants: [hostingInformation] });
-      assert(1, r.insertedCount);
+      let addParticipant = await addAsParticipant(hostingInformation);
+      if (!addParticipant) {
+        return res
+          .status(400)
+          .json({ status: 400, message: "Failed to add participant." });
+      }
       //then assign the event with that participants Id object
-      let participantId = r.ops[0]._id;
-      let r2 = await db
-        .collection(collectionEvents)
-        .updateOne(
-          { _id: ObjectId(eventId) },
-          { $set: { participantId: participantId } }
-        );
-      assert(1, r2.modifiedCount);
-      assert(1, r2.matchedCount);
+      let participantId = addParticipant.ops[0]._id;
+      let updateParticipantIdForEvent = await updateParticipantId(
+        eventId,
+        participantId
+      );
+      if (!updateParticipantIdForEvent) {
+        return res.status(400).json({
+          status: 400,
+          message: "Failed to update participant Id in the event.",
+        });
+      }
       //also you need to add the event you joined into the userEvent collection.
-
       //also need to reupdate the room.
       //also if a there is a new reservation by the host, a room document needs to be recreated.
+      let addRoom = await createRoom(eventId, participantId);
+      if (!addRoom) {
+        return res.status(400).json({
+          status: 400,
+          message: "Failed to create new chat room.",
+        });
+      }
 
-      let r3 = await db.collection(collectionRooms).insertOne({
-        _id: `${eventId}-Room-1`,
-        participantId: participantId,
-        chatParticipants: [],
-      });
-      assert(1, r3.insertedCount);
-      //also a host should be registered in his own events.
-      //inside the collectionUserEvents.
-      let addUserEvent = await db
-        .collection(collectionUserEvents)
-        .updateOne(
-          { _id: ObjectId(hostingInformation.userId) },
-          { $push: { events: eventId } }
-        );
-      assert(1, addUserEvent.matchedCount);
-      assert(1, addUserEvent.modifiedCount);
-      res.status(200).json({
+      let addEventToUserEvents = await addUserEvent(
+        hostingInformation.userId,
+        eventId
+      );
+      if (!addEventToUserEvents) {
+        return res.status(400).json({
+          status: 400,
+          message: "Failed to event as an an event the user is registered for.",
+        });
+      }
+      return res.status(200).json({
         status: 200,
         message:
           "Reservation successful. Thanks for booking! Keep in mind you have other events under your name. Also you've been added as a participant",
         hostingInformation: hostingInformation,
       });
     } else {
-      res.status(400).json({
+      return res.status(400).json({
         status: 400,
         message: "Booking was not valid - time conflicts.",
       });
