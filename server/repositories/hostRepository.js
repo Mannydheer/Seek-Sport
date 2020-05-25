@@ -53,6 +53,17 @@ const createRoomRepo = async (eventId, participantId) => {
   });
 };
 
+const getEventsRelatedToHostRepo = async (hostUserId, eventBookedDate) => {
+  const db = getConnection().db(dbName);
+  return await db
+    .collection(collectionEvents)
+    .find({
+      userId: hostUserId,
+      bookedDate: eventBookedDate,
+    })
+    .toArray();
+};
+
 module.exports = {
   getHostRepo,
   createNewHostRepo,
@@ -60,4 +71,5 @@ module.exports = {
   addAsParticipantRepo,
   updateParticipantIdRepo,
   createRoomRepo,
+  getEventsRelatedToHostRepo,
 };

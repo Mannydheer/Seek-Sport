@@ -5,6 +5,7 @@ const {
   addAsParticipantRepo,
   updateParticipantIdRepo,
   createRoomRepo,
+  getEventsRelatedToHostRepo,
 } = require("../repositories/hostRepository");
 
 const getHost = async (hostUserId) => {
@@ -55,6 +56,14 @@ const createRoom = async (eventId, participantId) => {
   return;
 };
 
+const getEventsRelatedToHost = async (hostUserId, eventBookedDate) => {
+  let allEvents = await getEventsRelatedToHostRepo(hostUserId, eventBookedDate);
+  if (allEvents.length > 0) {
+    return allEvents;
+  }
+  return;
+};
+
 module.exports = {
   getHost,
   createNewHost,
@@ -62,4 +71,5 @@ module.exports = {
   addAsParticipant,
   updateParticipantId,
   createRoom,
+  getEventsRelatedToHost,
 };

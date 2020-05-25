@@ -19,6 +19,7 @@ const {
   addAsParticipant,
   updateParticipantId,
   createRoom,
+  getEventsRelatedToHost,
 } = require("../../services/hostService");
 
 const { addUserEvent } = require("../../services/joinLeaveCancelService");
@@ -64,18 +65,10 @@ const handleHosting = async (req, res, next) => {
           .status(400)
           .json({ status: 400, message: "Unable to create a new host." });
       }
-      // await db
-      //   .collection(collectionHosts)
-      //   .insertOne(hostingInformation)
-      //then get back the _id of the host and insert into the event.
-      // .then(async (data) => {
       //give the event key the refernece to the hostId.
       //data.ops[0]._id is the hosts object ID.
       eventInformation.hostId = hostInserted.ops[0]._id;
       let createEvent = await createNewEvent(eventInformation);
-      // await db
-      //   .collection(collectionEvents)
-      //   .insertOne(eventInformation);
       if (!createEvent) {
         return res
           .status(400)
@@ -93,10 +86,6 @@ const handleHosting = async (req, res, next) => {
           .status(400)
           .json({ status: 400, message: "Failed to add participant." });
       }
-      // let r = await db
-      //   .collection(collectionParticipants)
-      //   .insertOne({ participants: [hostingInformation] });
-
       //then assign the event with that participants Id object
       let participantId = addParticipant.ops[0]._id;
       let updateParticipantIdForEvent = await updateParticipantId(
@@ -109,16 +98,6 @@ const handleHosting = async (req, res, next) => {
           message: "Failed to update participant Id in the event.",
         });
       }
-
-      // await db
-      //   .collection(collectionEvents)
-      //   .updateOne(
-      //     { _id: ObjectId(eventId) },
-      //     { $set: { participantId: participantId } }
-      //   );
-      // assert(1, r2.modifiedCount);
-      // assert(1, r2.matchedCount);
-
       let addRoom = await createRoom(eventId, participantId);
       if (!addRoom) {
         return res.status(400).json({
@@ -126,13 +105,6 @@ const handleHosting = async (req, res, next) => {
           message: "Failed to create new chat room.",
         });
       }
-      // await db.collection(collectionRooms).insertOne({
-      //   _id: `${eventId}-Room-1`,
-      //   participantId: participantId,
-      //   chatParticipants: [],
-      // });
-      // assert(1, r3.insertedCount);
-
       let addEventToUserEvents = await addUserEvent(
         hostingInformation.userId,
         eventId
@@ -143,15 +115,6 @@ const handleHosting = async (req, res, next) => {
           message: "Failed to event as an an event the user is registered for.",
         });
       }
-      //  await db
-      //   .collection(collectionUserEvents)
-      //   .updateOne(
-      //     { _id: ObjectId(hostingInformation.userId) },
-      //     { $push: { events: eventId } }
-      //   );
-      // assert(1, addUserEvent.matchedCount);
-      // assert(1, addUserEvent.modifiedCount);
-
       return res.status(200).json({
         status: 200,
         message:
@@ -166,13 +129,18 @@ const handleHosting = async (req, res, next) => {
       //if a host exists, you can get all events related to that host.
       //find all events related to the host.
       //allEvents will get ALL THE EVENTS of that user... or host on the day he is trying to host.
-      let allEvents = await db
-        .collection(collectionEvents)
-        .find({
-          userId: hostingInformation.userId,
-          bookedDate: eventInformation.bookedDate,
-        })
-        .toArray();
+      let allEvents = await getEventsRelatedToHost(
+        hostingInformation.userId,
+        eventInformation.bookedDate
+      );
+      console.log(allEvents, "ALL EVNETS");
+      // await db
+      //   .collection(collectionEvents)
+      //   .find({
+      //     userId: hostingInformation.userId,
+      //     bookedDate: eventInformation.bookedDate,
+      //   })
+      //   .toArray();
       if (!allEvents) {
         //if you don't have anything, then there are no issues booking.
         validBooking = true;
