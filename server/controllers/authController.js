@@ -48,7 +48,7 @@ const handleGetUser = async (req, res, next) => {
 // @endpoint POST /Login
 // @desc authenticate user info.
 // @access PUBLIC
-const handleLogin = async (req, res) => {
+const handleLogin = async (req, res, next) => {
   //check if any data came.
   try {
     let loginInfo = req.body;
@@ -56,38 +56,31 @@ const handleLogin = async (req, res) => {
       throw new NotFoundError();
     }
     let checkForUser = await getUserByUserName(loginInfo.user);
-    if (checkForUser) {
-      let result = await compareHashPassword(
-        loginInfo.pass,
-        checkForUser.password
-      );
-      if (result) {
-        const accessToken = generateJwtToken(checkForUser._id);
-        res.status(200).json({
-          result: result,
-          status: 200,
-          message: "Success. Thanks for logging in.",
-          username: checkForUser.username,
-          _id: checkForUser._id,
-          profileImage: checkForUser.profileImage,
-          accessToken: accessToken,
-        });
-      } else {
-        let notFound = new NotFoundError();
-        console.log(notFound instanceof Error, "888888");
-        throw new NotFoundError("Wrong password");
-        res.status(404).json({
-          result: result,
-          status: 401,
-          message: "Incorrect password.",
-        });
-      }
-    } else {
-      res.status(404).json({
+    if (!checkForUser) {
+      return res.status(404).json({
         status: 404,
         message: "This user does not exist. Please sign up!",
       });
     }
+    //only comparing passwords at this points.
+    let result = await compareHashPassword(
+      loginInfo.pass,
+      checkForUser.password
+    );
+    if (!result) {
+      let err = new NotFoundError("Wrong password");
+      next(err);
+    }
+    const accessToken = generateJwtToken(checkForUser._id);
+    return res.status(200).json({
+      result: result,
+      status: 200,
+      message: "Success. Thanks for logging in.",
+      username: checkForUser.username,
+      _id: checkForUser._id,
+      profileImage: checkForUser.profileImage,
+      accessToken: accessToken,
+    });
   } catch (error) {
     console.log(error.stack, "Catch Error in handleLogin");
     res.status(500).json({ status: 500, message: error.message });
