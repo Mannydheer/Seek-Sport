@@ -9,6 +9,7 @@ const {
   generateJwtToken,
   compareHashPassword,
 } = require("../services/authService");
+const { NotFoundError } = require("../utils/errors");
 
 //@endpoint GET /user/profile
 //@desc authenticate user token and send back user info
@@ -48,49 +49,48 @@ const handleGetUser = async (req, res, next) => {
 // @desc authenticate user info.
 // @access PUBLIC
 const handleLogin = async (req, res) => {
-  let loginInfo = req.body;
   //check if any data came.
-  if (!loginInfo.user || !loginInfo.pass) {
-    res.status(401).json({
-      status: 401,
-      message: "Missing field. Please enter all fields.",
-    });
-  } else {
-    try {
-      let checkForUser = await getUserByUserName(loginInfo.user);
-      if (checkForUser) {
-        let result = await compareHashPassword(
-          loginInfo.pass,
-          checkForUser.password
-        );
-        if (result) {
-          const accessToken = generateJwtToken(checkForUser._id);
-          res.status(200).json({
-            result: result,
-            status: 200,
-            message: "Success. Thanks for logging in.",
-            username: checkForUser.username,
-            _id: checkForUser._id,
-            profileImage: checkForUser.profileImage,
-            accessToken: accessToken,
-          });
-        } else {
-          res.status(404).json({
-            result: result,
-            status: 401,
-            message: "Incorrect password.",
-          });
-        }
+  try {
+    let loginInfo = req.body;
+    if (!loginInfo) {
+      throw new NotFoundError();
+    }
+    let checkForUser = await getUserByUserName(loginInfo.user);
+    if (checkForUser) {
+      let result = await compareHashPassword(
+        loginInfo.pass,
+        checkForUser.password
+      );
+      if (result) {
+        const accessToken = generateJwtToken(checkForUser._id);
+        res.status(200).json({
+          result: result,
+          status: 200,
+          message: "Success. Thanks for logging in.",
+          username: checkForUser.username,
+          _id: checkForUser._id,
+          profileImage: checkForUser.profileImage,
+          accessToken: accessToken,
+        });
       } else {
+        let notFound = new NotFoundError();
+        console.log(notFound instanceof Error, "888888");
+        throw new NotFoundError("Wrong password");
         res.status(404).json({
-          status: 404,
-          message: "This user does not exist. Please sign up!",
+          result: result,
+          status: 401,
+          message: "Incorrect password.",
         });
       }
-    } catch (error) {
-      console.log(error.stack, "Catch Error in handleLogin");
-      res.status(500).json({ status: 500, message: error.message });
+    } else {
+      res.status(404).json({
+        status: 404,
+        message: "This user does not exist. Please sign up!",
+      });
     }
+  } catch (error) {
+    console.log(error.stack, "Catch Error in handleLogin");
+    res.status(500).json({ status: 500, message: error.message });
   }
 };
 
@@ -99,14 +99,14 @@ const handleLogin = async (req, res) => {
 //@desc Sign up user info.
 //@access PUBLIC
 const handleSignUp = async (req, res) => {
-  let filePath = req.file.path;
-  //new user registration date
-  let register = new Date();
-  let signUpInfo = {
-    user: req.body.name,
-    pass: req.body.pass,
-  };
   try {
+    let filePath = req.file.path;
+    //new user registration date
+    let register = new Date();
+    let signUpInfo = {
+      user: req.body.name,
+      pass: req.body.pass,
+    };
     //see if you find the user. //check for existing user
     let checkForUser = await getUserByUserName(signUpInfo.user);
     if (!checkForUser) {
