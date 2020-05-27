@@ -288,10 +288,9 @@ app.use(function (err, req, res, next) {
       .json({ message: err.message, stack: err.stack });
   }
   //if its a 500.
-  return res.status(err).json({ message: err.message, stack: err.stack });
+  return res.status(err).json({ message: "500 error" });
 });
 // ------------------------------CONNECT TO MONGODB ----------------------------
-
 const connection = async () => {
   try {
     let connectionResponse = await handleConnection();

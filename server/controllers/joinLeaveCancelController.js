@@ -1,4 +1,3 @@
-//env vairables
 const {
   //handleJoinEvent.
   getEventById,
@@ -37,10 +36,9 @@ const handleJoinEvent = async (req, res, next) => {
       !participantDetails.userId ||
       !participantDetails.eventId
     ) {
-      let err = new NotFoundError(
-        "Missing information from event or participant."
+      throw new BadRequestError(
+        "Missing information from event or participant in handleJoinEvent."
       );
-      next(err);
     }
     let getEvent = await getEventById(eventInformation._id);
     //ensure getEvent is not missing participantsId.
@@ -48,15 +46,15 @@ const handleJoinEvent = async (req, res, next) => {
     //if there is a participant ID.
     //check if that participant doesnt already exist... in that event.
     if (!getEvent.participantId) {
-      let err = new NotFoundError("Missing event participant Id.");
-      next(err);
+      throw new NotFoundError(
+        "Missing event participant Id in handleJoinEvent."
+      );
     }
     let getParticipants = await getParticipantsById(getEvent.participantId);
     if (!getParticipants) {
-      let err = new NotFoundError(
-        "Failed getting participants in handleJoinEvent function."
+      throw new NotFoundError(
+        "Failed getting participants in handleJoinEvent."
       );
-      next(err);
     }
     //if you get participants. Which you will 100% because if you have a apeticipant ID then there are participants
     //check if any of the participants in the array match the current participant trying to join.
@@ -66,8 +64,7 @@ const handleJoinEvent = async (req, res, next) => {
     );
     //if they do match...
     if (existingParticipant) {
-      let err = new ConflictError("You are already registered in this event.");
-      next(err);
+      throw new ConflictError("existing participant in handleJoinevent.");
     }
     //if you don't find a matching participant.
     //add the incoming participant to that.
@@ -82,17 +79,15 @@ const handleJoinEvent = async (req, res, next) => {
       participantDetails.eventId
     );
     if (!updateParticipant || !updateUserEvent) {
-      let err = new NotFoundError(
+      throw new NotFoundError(
         "Error occured. Unable to update participants and user events in handleJoinEvent function."
       );
-      next(err);
     }
     return res
       .status(200)
       .json({ status: 200, message: "Successfully joined the event!" });
-  } catch (error) {
-    console.log(error.stack, "Catch Error in handleJoinEvent");
-    res.status(500).json({ status: 500, message: error.message });
+  } catch (err) {
+    next(err);
   }
 };
 //@endpoint POST /leaveEvent
@@ -108,10 +103,9 @@ const handleLeaveEvent = async (req, res, next) => {
       !eventInformation._id ||
       !eventInformation.participantId
     ) {
-      let err = new NotFoundError(
-        "Missing information from event or participant."
+      throw new BadRequestError(
+        "Missing information from event or participant in handleLeaveEvent."
       );
-      next(err);
     }
     //now you have the participant ID from eventInformation.
     //find the participant collect from the event ParticipantId key.
@@ -125,17 +119,15 @@ const handleLeaveEvent = async (req, res, next) => {
       eventInformation._id
     );
     if (!updateParticipant || !updateUserEvent) {
-      let err = new NotFoundError(
+      throw new NotFoundError(
         "Error occured. Unable to remove participants and user events in handleLeaveEvent function."
       );
-      next(err);
     }
     return res
       .status(200)
       .json({ status: 200, message: "Successfully left the event!" });
-  } catch (error) {
-    console.log(error.stack, "Catch Error in handleLeaveEvent");
-    res.status(500).json({ status: 500, message: error.message });
+  } catch (err) {
+    next(err);
   }
 };
 
@@ -146,29 +138,24 @@ const handleCancelEvent = async (req, res, next) => {
   try {
     const eventId = req.body.eventId;
     if (!eventId) {
-      let err = new NotFoundError("Missing information from event");
-      next(err);
+      throw new BadRequestError("Missing information from event");
     }
     let getEvent = await getEventById(eventId); //get the event for participantId.
     if (!getEvent) {
-      let err = new NotFoundError("Unable to get event in handleCancelEvent.");
-      next(err);
+      throw new NotFoundError("Unable to get event in handleCancelEvent.");
     }
     let deletedRoom = await deleteRoom(eventId); //for chat system.
     let deletedEvent = await deleteEvent(eventId); //delete event.
-    console.log(deletedRoom, "DELETEDROOM");
     if (!deletedEvent || !deletedRoom) {
-      let err = new ConflictError(
+      throw new NotFoundError(
         "Unable to delete room or event in handleCancelEvent."
       );
-      next(err);
     }
     let getParticipants = await getParticipantsById(getEvent.participantId);
     if (!getParticipants) {
-      let err = new NotFoundError(
+      throw new NotFoundError(
         "Unable to get participants in handleCancelEvent"
       );
-      next(err);
     }
     let removeUserAsParticipant = await getParticipants.participants.forEach(
       async (participant) => {
@@ -177,17 +164,13 @@ const handleCancelEvent = async (req, res, next) => {
     );
     let deletedParticipants = await deleteParticipants(getEvent.participantId);
     if (!deletedParticipants) {
-      let err = new ConflictError(
-        "Unable to delete participants for the event"
-      );
-      next(err);
+      throw new ConflictError("Unable to delete participants for the event");
     }
     return res
       .status(200)
       .json({ status: 200, message: "Successfully canceled the event!" });
-  } catch (error) {
-    console.log(error.stack, "Catch Error in handleCancelEvent");
-    return res.status(500).json({ status: 500, message: error.message });
+  } catch (err) {
+    next(err);
   }
   //also must remove all users that were registered for this event.
   //since we have the eventId... we can get the participantId and find the participants from the participant collection.

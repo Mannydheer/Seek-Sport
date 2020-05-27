@@ -8,8 +8,7 @@ const auth = async (req, res, next) => {
   let token = req.headers["authorization"];
   //check for token.
   if (!token) {
-    let err = new UnauthorizedError("No token, authorization denied");
-    next(err);
+    throw new UnauthorizedError("No token, authorization denied");
   }
   try {
     const tokenVerification = jwt.verify(
@@ -22,7 +21,7 @@ const auth = async (req, res, next) => {
     //call next middleware.
     next();
   } catch (err) {
-    res.status(400).json({ message: "Token is not valid." });
+    next(err);
   }
 };
 
