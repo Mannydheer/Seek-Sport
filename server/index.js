@@ -281,13 +281,14 @@ app.get("/getChatRoom/:eventId", handleGetChatRoom);
 // ------------------------------CUSTOM ERROR ----------------------------
 app.use(function (err, req, res, next) {
   console.error(err);
-
   //check if the err is instance of any of our custom errors.
   if (err instanceof HttpException) {
     return res
       .status(err.code)
       .json({ message: err.message, stack: err.stack });
   }
+  //if its a 500.
+  return res.status(err).json({ message: err.message, stack: err.stack });
 });
 // ------------------------------CONNECT TO MONGODB ----------------------------
 

@@ -13,6 +13,7 @@ const {
   NotFoundError,
   UnauthorizedError,
   ConflictError,
+  BadRequestError,
 } = require("../utils/errors");
 
 //@endpoint GET /user/profile
@@ -23,15 +24,13 @@ const handleGetUser = async (req, res, next) => {
   try {
     let id = req.user.id;
     if (!id) {
-      let err = new NotFoundError(
+      throw new BadRequestError(
         "Verification Failed. User invalid. Try refreshing the page."
       );
-      next(err);
     }
     const checkForUser = await getUserById(id);
     if (!checkForUser) {
-      let err = new NotFoundError("This user does not exist. Please sign up!");
-      next(err);
+      throw new NotFoundError("This user does not exist. Please sign up!");
     }
     const accessToken = generateJwtToken(checkForUser._id);
     res.status(200).json({
@@ -44,9 +43,8 @@ const handleGetUser = async (req, res, next) => {
     });
 
     //if you do, success.
-  } catch (error) {
-    console.log(error.stack, "Catch Error in handleGetUser");
-    res.status(500).json({ status: 500, message: error.message });
+  } catch (err) {
+    next(err);
   }
 };
 // ----------------------------------------LOGIN - AUTHENTICATION----------------------------------------
@@ -58,15 +56,11 @@ const handleLogin = async (req, res, next) => {
   try {
     let loginInfo = req.body;
     if (!loginInfo) {
-      let err = new NotFoundError(
-        "Information not received. Try refreshing the page."
-      );
-      next(err);
+      throw new BadRequestError("Information not received when logging in.");
     }
     let checkForUser = await getUserByUserName(loginInfo.user);
     if (!checkForUser) {
-      let err = new NotFoundError("This user does not exist. Please sign up!");
-      next(err);
+      throw new NotFoundError("This user does not exist. Please sign up!");
     }
     //only comparing passwords at this points.
     let result = await compareHashPassword(
@@ -74,8 +68,7 @@ const handleLogin = async (req, res, next) => {
       checkForUser.password
     );
     if (!result) {
-      let err = new UnauthorizedError("Incorrect password");
-      next(err);
+      throw new UnauthorizedError("Incorrect password");
     }
     const accessToken = generateJwtToken(checkForUser._id);
     return res.status(200).json({
@@ -87,9 +80,8 @@ const handleLogin = async (req, res, next) => {
       profileImage: checkForUser.profileImage,
       accessToken: accessToken,
     });
-  } catch (error) {
-    console.log(error.stack, "Catch Error in handleLogin");
-    res.status(500).json({ status: 500, message: error.message });
+  } catch (err) {
+    next(err);
   }
 };
 
@@ -101,10 +93,9 @@ const handleSignUp = async (req, res, next) => {
   try {
     let filePath = req.file.path;
     if (!filePath || !req.body.name || !req.body.pass) {
-      let err = new NotFoundError(
+      throw new BadRequestError(
         "Information not received. Try refreshing the page."
       );
-      next(err);
     }
     //new user registration date
     let register = new Date();
@@ -115,8 +106,7 @@ const handleSignUp = async (req, res, next) => {
     //see if you find the user. //check for existing user
     let checkForUser = await getUserByUserName(signUpInfo.user);
     if (checkForUser) {
-      let err = new ConflictError("This user already exists. Please sign in!");
-      next(err);
+      throw new ConflictError("This user already exists. Please sign in!");
     }
     let hashedPass = await hashPassword(signUpInfo.pass);
     let information = {
@@ -131,10 +121,9 @@ const handleSignUp = async (req, res, next) => {
     //to keep track of all the events a user is participating in.
     let userEvent = await createUserEvent(userId);
     if (!r || !userEvent) {
-      let err = new ConflictError(
+      throw new ConflictError(
         "Something went wrong. Contact Customer Support."
       );
-      next(err);
     }
     const accessToken = generateJwtToken(userId);
     res.status(200).json({
@@ -145,9 +134,8 @@ const handleSignUp = async (req, res, next) => {
       _id: userId,
       profileImage: filePath,
     });
-  } catch (error) {
-    console.log(error.stack, "Catch Error in handleSignUp");
-    res.status(500).json({ status: 500, message: error.message });
+  } catch (err) {
+    next(err);
   }
 };
 module.exports = {
