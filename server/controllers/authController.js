@@ -9,7 +9,7 @@ const {
   generateJwtToken,
   compareHashPassword,
 } = require("../services/authService");
-const { NotFoundError } = require("../utils/errors");
+const { NotFoundError, UnauthorizedError } = require("../utils/errors");
 
 //@endpoint GET /user/profile
 //@desc authenticate user token and send back user info
@@ -53,14 +53,15 @@ const handleLogin = async (req, res, next) => {
   try {
     let loginInfo = req.body;
     if (!loginInfo) {
-      throw new NotFoundError();
+      let err = new NotFoundError(
+        "Information not received. Try refreshing the page."
+      );
+      next(err);
     }
     let checkForUser = await getUserByUserName(loginInfo.user);
     if (!checkForUser) {
-      return res.status(404).json({
-        status: 404,
-        message: "This user does not exist. Please sign up!",
-      });
+      let err = new NotFoundError("This user does not exist. Please sign up!");
+      next(err);
     }
     //only comparing passwords at this points.
     let result = await compareHashPassword(
@@ -68,7 +69,7 @@ const handleLogin = async (req, res, next) => {
       checkForUser.password
     );
     if (!result) {
-      let err = new NotFoundError("Wrong password");
+      let err = new UnauthorizedError("Incorrect password");
       next(err);
     }
     const accessToken = generateJwtToken(checkForUser._id);
