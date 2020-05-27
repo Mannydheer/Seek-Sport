@@ -108,10 +108,10 @@ const handleLeaveEvent = async (req, res, next) => {
       !eventInformation._id ||
       !eventInformation.participantId
     ) {
-      res.status(400).json({
-        status: 400,
-        message: "Missing information from event or participant.",
-      });
+      let err = new NotFoundError(
+        "Missing information from event or participant."
+      );
+      next(err);
     }
     //now you have the participant ID from eventInformation.
     //find the participant collect from the event ParticipantId key.
@@ -124,12 +124,15 @@ const handleLeaveEvent = async (req, res, next) => {
       participantDetails.userId,
       eventInformation._id
     );
-    if (updateParticipant && updateUserEvent) {
-      console.log("response in leave");
-      res
-        .status(200)
-        .json({ status: 200, message: "Successfully left the event!" });
+    if (!updateParticipant || !updateUserEvent) {
+      let err = new NotFoundError(
+        "Error occured. Unable to remove participants and user events in handleLeaveEvent function."
+      );
+      next(err);
     }
+    return res
+      .status(200)
+      .json({ status: 200, message: "Successfully left the event!" });
   } catch (error) {
     console.log(error.stack, "Catch Error in handleLeaveEvent");
     res.status(500).json({ status: 500, message: error.message });
