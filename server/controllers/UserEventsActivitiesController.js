@@ -5,6 +5,11 @@ const {
   filterEventData,
 } = require("../services/UserEventsActivitiesService");
 
+const {
+  ConflictError,
+  UnauthorizedError,
+  BadRequestError,
+} = require("../utils/errors");
 //@endpoint GET /userActivities
 //@desc get all events that the user joined
 //@access PRIVATE - will need to validate token? YES
@@ -12,41 +17,38 @@ const handleUserActivities = async (req, res, next) => {
   try {
     let userId = req.params.userId;
     if (!userId) {
-      res.status(400).json({
-        status: 400,
-        message: "Missing user credentials in handleUserActivities.",
-      });
+      let err = new UnauthorizedError(
+        "Missing user credentials in handleUserActivities."
+      );
+      next(err);
     }
     let userData = await getUserFromUserEvents(userId);
     //if you have never signed up for any events yet.
     if (!userData.events) {
-      return res.status(400).json({
-        status: 400,
-        message:
-          "Seems like you are new, you may head to the home page to find activities or talk to our chatbot!",
-      });
+      let err = new UnauthorizedError(
+        "Seems like you are new, you may head to the home page to find activities or talk to our chatbot!"
+      );
+      next(err);
     }
     //if you registered for events.
     let allEvents = allEventsArray(userData);
     let eventData = await getAllEventsUserRegisteredFor(allEvents, userId);
     if (!eventData) {
-      res.status(400).json({
-        status: 400,
-        message: "Currently not registered for any events.",
-      });
+      let err = new NotFoundError("Currently not registered for any events.");
+      next(err);
     }
+    //get all the events the user is signed up for but NOT HOSTING.
     let filteredEventData = filterEventData(eventData);
-    if (filteredEventData) {
-      return res.status(200).json({
-        status: 200,
-        message: "Success getting all events you have registered for!",
-        events: filteredEventData,
-      });
+    if (!filteredEventData) {
+      let err = new NotFoundError(
+        "Seems like you have no registered to any events! Head to the home page to find activities!"
+      );
+      next(err);
     }
-    return res.status(400).json({
-      status: 400,
-      message:
-        "Seems like you have no registered to any events! Head to the home page to find activities!",
+    return res.status(200).json({
+      status: 200,
+      message: "Success getting all events you have registered for!",
+      events: filteredEventData,
     });
 
     //find all the events that you have registered for.

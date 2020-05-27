@@ -12,7 +12,6 @@ const auth = async (req, res, next) => {
     next(err);
   }
   try {
-    //if there is a token. verify it.
     const tokenVerification = jwt.verify(
       token,
       process.env.ACCESS_TOKEN_SECRET
