@@ -18,33 +18,29 @@ const handleUserActivities = async (req, res, next) => {
   try {
     let userId = req.params.userId;
     if (!userId) {
-      let err = new UnauthorizedError(
+      throw new BadRequestError(
         "Missing user credentials in handleUserActivities."
       );
-      next(err);
     }
     let userData = await getUserFromUserEvents(userId);
     //if you have never signed up for any events yet.
     if (!userData.events) {
-      let err = new UnauthorizedError(
+      throw new NotFoundError(
         "Seems like you are new, you may head to the home page to find activities or talk to our chatbot!"
       );
-      next(err);
     }
     //if you registered for events.
     let allEvents = allEventsArray(userData);
     let eventData = await getAllEventsUserRegisteredFor(allEvents, userId);
     if (!eventData) {
-      let err = new NotFoundError("Currently not registered for any events.");
-      next(err);
+      throw new NotFoundError("Currently not registered for any events.");
     }
     //get all the events the user is signed up for but NOT HOSTING.
     let filteredEventData = filterEventData(eventData);
     if (!filteredEventData) {
-      let err = new NotFoundError(
+      throw new NotFoundError(
         "Seems like you have no registered to any events! Head to the home page to find activities!"
       );
-      next(err);
     }
     return res.status(200).json({
       status: 200,
@@ -53,9 +49,8 @@ const handleUserActivities = async (req, res, next) => {
     });
 
     //find all the events that you have registered for.
-  } catch (error) {
-    console.log(error.stack, "Catch Error in handleSelectedParkEvents");
-    res.status(500).json({ status: 500, message: error.message });
+  } catch (err) {
+    next(err);
   }
 };
 
@@ -66,17 +61,15 @@ const handleUserRegisteredEvents = async (req, res, next) => {
   try {
     const userId = req.params._id;
     if (!userId) {
-      let err = new UnauthorizedError(
+      throw new BadRequestError(
         "Missing user credentials in handleUserRegisteredEvents."
       );
-      next(err);
     }
     let userData = await getUserFromUserEvents(userId);
     if (!userData.events) {
-      let err = new UnauthorizedError(
+      throw new NotFoundError(
         "There are no registered events under this user."
       );
-      next(err);
     }
     //now we have array of event Ids... we can get back all ids.
     let allEvents = allEventsArray(userData);
@@ -94,9 +87,8 @@ const handleUserRegisteredEvents = async (req, res, next) => {
       userRegisteredEvents: allEvents.events,
       eventInfo: eventData,
     });
-  } catch (error) {
-    console.log(error.stack, "Catch Error in handleUserRegisteredEvents ");
-    res.status(500).json({ status: 500, message: error.message });
+  } catch (err) {
+    next(err);
   }
 };
 
