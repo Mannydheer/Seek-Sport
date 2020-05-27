@@ -126,7 +126,7 @@ const deleteEvent = async (eventId) => {
 
 const deleteParticipants = async (participantsId) => {
   let deletedParticipants = await deleteParticipantsRepo(participantsId);
-  if (deleteParticipants.deletedCount === 1) {
+  if (deletedParticipants.deletedCount === 1) {
     return deletedParticipants;
   }
   return;

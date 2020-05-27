@@ -146,17 +146,29 @@ const handleCancelEvent = async (req, res, next) => {
   try {
     const eventId = req.body.eventId;
     if (!eventId) {
-      res.status(400).json({
-        status: 400,
-        message: "Missing information from event inside handleCancelEvent.",
-      });
+      let err = new NotFoundError("Missing information from event");
+      next(err);
     }
     let getEvent = await getEventById(eventId); //get the event for participantId.
+    if (!getEvent) {
+      let err = new NotFoundError("Unable to get event in handleCancelEvent.");
+      next(err);
+    }
     let deletedRoom = await deleteRoom(eventId); //for chat system.
-    let deletedEvent = await deleteEvent(eventId); //delet
+    let deletedEvent = await deleteEvent(eventId); //delete event.
+    console.log(deletedRoom, "DELETEDROOM");
+    if (!deletedEvent || !deletedRoom) {
+      let err = new ConflictError(
+        "Unable to delete room or event in handleCancelEvent."
+      );
+      next(err);
+    }
     let getParticipants = await getParticipantsById(getEvent.participantId);
     if (!getParticipants) {
-      return;
+      let err = new NotFoundError(
+        "Unable to get participants in handleCancelEvent"
+      );
+      next(err);
     }
     let removeUserAsParticipant = await getParticipants.participants.forEach(
       async (participant) => {
@@ -164,12 +176,18 @@ const handleCancelEvent = async (req, res, next) => {
       }
     );
     let deletedParticipants = await deleteParticipants(getEvent.participantId);
-    res
+    if (!deletedParticipants) {
+      let err = new ConflictError(
+        "Unable to delete participants for the event"
+      );
+      next(err);
+    }
+    return res
       .status(200)
       .json({ status: 200, message: "Successfully canceled the event!" });
   } catch (error) {
     console.log(error.stack, "Catch Error in handleCancelEvent");
-    res.status(500).json({ status: 500, message: error.message });
+    return res.status(500).json({ status: 500, message: error.message });
   }
   //also must remove all users that were registered for this event.
   //since we have the eventId... we can get the participantId and find the participants from the participant collection.
