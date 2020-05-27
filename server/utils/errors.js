@@ -37,10 +37,19 @@ class UnauthorizedError extends HttpException {
   }
 }
 
+class UnprocessableEntity extends HttpException {
+  constructor(message) {
+    super(message);
+    this.code = 422;
+    this.name = "UnprocessableEntity";
+  }
+}
+
 module.exports = {
   HttpException,
   ConflictError,
   BadRequestError,
   NotFoundError,
   UnauthorizedError,
+  UnprocessableEntity,
 };
