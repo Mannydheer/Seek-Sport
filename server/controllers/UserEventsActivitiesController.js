@@ -5,12 +5,7 @@ const {
   filterEventData,
 } = require("../services/UserEventsActivitiesService");
 
-const {
-  ConflictError,
-  UnauthorizedError,
-  BadRequestError,
-  NotFoundError,
-} = require("../utils/errors");
+const { BadRequestError, NotFoundError } = require("../utils/errors");
 //@endpoint GET /userActivities
 //@desc get all events that the user joined
 //@access PRIVATE - will need to validate token? YES
@@ -75,10 +70,9 @@ const handleUserRegisteredEvents = async (req, res, next) => {
     let allEvents = allEventsArray(userData);
     let eventData = await getAllEventsUserRegisteredFor(allEvents, userId);
     if (!eventData) {
-      let err = new NotFoundError(
+      throw new NotFoundError(
         "Currently not registered for any events in handleUserRegisteredEvents."
       );
-      next(err);
     }
     res.status(200).json({
       status: 200,
