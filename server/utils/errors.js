@@ -29,10 +29,18 @@ class NotFoundError extends HttpException {
     this.name = "NotFoundError";
   }
 }
+class UnauthorizedError extends HttpException {
+  constructor(message) {
+    super(message);
+    this.code = 401;
+    this.name = "UnautorizedError";
+  }
+}
 
 module.exports = {
   HttpException,
   ConflictError,
   BadRequestError,
   NotFoundError,
+  UnauthorizedError,
 };
