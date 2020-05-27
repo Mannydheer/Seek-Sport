@@ -9,6 +9,7 @@ const {
   ConflictError,
   UnauthorizedError,
   BadRequestError,
+  NotFoundError,
 } = require("../utils/errors");
 //@endpoint GET /userActivities
 //@desc get all events that the user joined
@@ -65,27 +66,26 @@ const handleUserRegisteredEvents = async (req, res, next) => {
   try {
     const userId = req.params._id;
     if (!userId) {
-      res.status(400).json({
-        status: 400,
-        message: "Missing user credentials in handleUserRegisteredEvents.",
-      });
+      let err = new UnauthorizedError(
+        "Missing user credentials in handleUserRegisteredEvents."
+      );
+      next(err);
     }
     let userData = await getUserFromUserEvents(userId);
     if (!userData.events) {
-      return res.status(404).json({
-        status: 404,
-        message: "There are no registered events under this user.",
-      });
+      let err = new UnauthorizedError(
+        "There are no registered events under this user."
+      );
+      next(err);
     }
     //now we have array of event Ids... we can get back all ids.
     let allEvents = allEventsArray(userData);
     let eventData = await getAllEventsUserRegisteredFor(allEvents, userId);
     if (!eventData) {
-      res.status(400).json({
-        status: 400,
-        message:
-          "Currently not registered for any events in handleUserRegisteredEvents.",
-      });
+      let err = new NotFoundError(
+        "Currently not registered for any events in handleUserRegisteredEvents."
+      );
+      next(err);
     }
     res.status(200).json({
       status: 200,
