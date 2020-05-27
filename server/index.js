@@ -288,7 +288,9 @@ app.use(function (err, req, res, next) {
       .json({ message: err.message, stack: err.stack });
   }
   //if its a 500.
-  return res.status(err).json({ message: "500 error" });
+  return res
+    .status(500)
+    .json({ message: "unexpected error occured.", error: JSON.stringify(err) });
 });
 // ------------------------------CONNECT TO MONGODB ----------------------------
 const connection = async () => {
