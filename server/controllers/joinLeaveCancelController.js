@@ -81,11 +81,15 @@ const handleJoinEvent = async (req, res, next) => {
       participantDetails.userId,
       participantDetails.eventId
     );
-    if (updateUserEvent && updateParticipant) {
-      res
-        .status(200)
-        .json({ status: 200, message: "Successfully joined the event!" });
-    } else return;
+    if (!updateParticipant || !updateUserEvent) {
+      let err = new NotFoundError(
+        "Error occured. Unable to update participants and user events in handleJoinEvent function."
+      );
+      next(err);
+    }
+    return res
+      .status(200)
+      .json({ status: 200, message: "Successfully joined the event!" });
   } catch (error) {
     console.log(error.stack, "Catch Error in handleJoinEvent");
     res.status(500).json({ status: 500, message: error.message });
