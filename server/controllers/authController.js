@@ -9,7 +9,11 @@ const {
   generateJwtToken,
   compareHashPassword,
 } = require("../services/authService");
-const { NotFoundError, UnauthorizedError } = require("../utils/errors");
+const {
+  NotFoundError,
+  UnauthorizedError,
+  ConflictError,
+} = require("../utils/errors");
 
 //@endpoint GET /user/profile
 //@desc authenticate user token and send back user info
@@ -92,9 +96,15 @@ const handleLogin = async (req, res, next) => {
 //@endpoint POST /SignUp
 //@desc Sign up user info.
 //@access PUBLIC
-const handleSignUp = async (req, res) => {
+const handleSignUp = async (req, res, next) => {
   try {
     let filePath = req.file.path;
+    if (!filePath || !req.body.name || !req.body.pass) {
+      let err = new NotFoundError(
+        "Information not received. Try refreshing the page."
+      );
+      next(err);
+    }
     //new user registration date
     let register = new Date();
     let signUpInfo = {
@@ -103,43 +113,37 @@ const handleSignUp = async (req, res) => {
     };
     //see if you find the user. //check for existing user
     let checkForUser = await getUserByUserName(signUpInfo.user);
-    if (!checkForUser) {
-      let hashedPass = await hashPassword(signUpInfo.pass);
-      let information = {
-        username: signUpInfo.user,
-        password: hashedPass,
-        registrationDate: register,
-        profileImage: filePath,
-      };
-      let r = await insertNewUser(information);
-      let userId = r.ops[0]._id;
-      //give the same _id of the user to the collectionUserEvents.
-      //to keep track of all the events a user is participating in.
-      let userEvent = await createUserEvent(userId);
-      if (r && userEvent) {
-        const accessToken = generateJwtToken(userId);
-        res.status(200).json({
-          status: 200,
-          message: "Success. Thanks for signing up.",
-          username: signUpInfo.user,
-          accessToken: accessToken,
-          _id: userId,
-          profileImage: filePath,
-        });
-      } else {
-        res.status(404).json({
-          status: 401,
-          message: "Something went wrong. Contact Customer Support.",
-        });
-      }
-      //
-    } else {
-      //if there is already a user.
-      res.status(404).json({
-        status: 404,
-        message: "This user already exists. Please sign in!",
-      });
+    if (checkForUser) {
+      let err = new ConflictError("This user already exists. Please sign in!");
+      next(err);
     }
+    let hashedPass = await hashPassword(signUpInfo.pass);
+    let information = {
+      username: signUpInfo.user,
+      password: hashedPass,
+      registrationDate: register,
+      profileImage: filePath,
+    };
+    let r = await insertNewUser(information);
+    let userId = r.ops[0]._id;
+    //give the same _id of the user to the collectionUserEvents.
+    //to keep track of all the events a user is participating in.
+    let userEvent = await createUserEvent(userId);
+    if (!r || !userEvent) {
+      let err = new ConflictError(
+        "Something went wrong. Contact Customer Support."
+      );
+      next(err);
+    }
+    const accessToken = generateJwtToken(userId);
+    res.status(200).json({
+      status: 200,
+      message: "Success. Thanks for signing up.",
+      username: signUpInfo.user,
+      accessToken: accessToken,
+      _id: userId,
+      profileImage: filePath,
+    });
   } catch (error) {
     console.log(error.stack, "Catch Error in handleSignUp");
     res.status(500).json({ status: 500, message: error.message });
