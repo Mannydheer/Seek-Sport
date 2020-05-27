@@ -2,6 +2,8 @@ const {
   getEventById,
   getParticipantsById,
 } = require("../../services/joinLeaveCancelService");
+
+const { UnauthorizedError, NotFoundError } = require("../../utils/errors");
 //@endpoint GET /getChatRoom
 //@desc get chat room ID for specified EVENT.
 //@access PRIVATE - will need to validate token? YES - add...
@@ -9,23 +11,21 @@ const handleGetChatRoom = async (req, res, next) => {
   try {
     const eventId = req.params.eventId;
     if (!eventId) {
-      return res
-        .status(400)
-        .json({ status: 400, message: "Missing event Id for chat room." });
+      let err = new UnauthorizedError("Missing event Id for chat room.");
+      next(err);
     }
     // const db = getConnection().db(dbName);
     let eventData = await getEventById(eventId);
     if (!eventData) {
-      return res
-        .status(404)
-        .json({ status: 404, message: "There are no events." });
+      let err = new NotFoundError(
+        "Unable to retrieve event data for handleGetChatRoom."
+      );
+      next(err);
     }
     let participantData = await getParticipantsById(eventData.participantId);
     if (!participantData) {
-      return res.status(404).json({
-        status: 404,
-        message: "There are no participants for this event.",
-      });
+      let err = new NotFoundError("There are no participants for this event.");
+      next(err);
     }
     res.status(200).json({
       status: 200,
