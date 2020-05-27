@@ -16,6 +16,13 @@ const {
   //handleCancelEvent.
 } = require("../services/joinLeaveCancelService");
 
+const {
+  NotFoundError,
+  UnauthorizedError,
+  ConflictError,
+  BadRequestError,
+} = require("../utils/errors");
+
 //@endpoint POST /joinEvent
 //@desc join the event selected from ViewActivity component.
 //@access PRIVATE - will need to validate token? YES
@@ -30,10 +37,10 @@ const handleJoinEvent = async (req, res, next) => {
       !participantDetails.userId ||
       !participantDetails.eventId
     ) {
-      res.status(400).json({
-        status: 400,
-        message: "Missing information from event or participant.",
-      });
+      let err = new NotFoundError(
+        "Missing information from event or participant."
+      );
+      next(err);
     }
     let getEvent = await getEventById(eventInformation._id);
     //ensure getEvent is not missing participantsId.
@@ -41,16 +48,15 @@ const handleJoinEvent = async (req, res, next) => {
     //if there is a participant ID.
     //check if that participant doesnt already exist... in that event.
     if (!getEvent.participantId) {
-      res
-        .status(400)
-        .json({ status: 400, message: "Missing event participant Id." });
+      let err = new NotFoundError("Missing event participant Id.");
+      next(err);
     }
     let getParticipants = await getParticipantsById(getEvent.participantId);
     if (!getParticipants) {
-      res.status(400).json({
-        status: 400,
-        message: "Failed getting participants in handleJoinEvent function.",
-      });
+      let err = new NotFoundError(
+        "Failed getting participants in handleJoinEvent function."
+      );
+      next(err);
     }
     //if you get participants. Which you will 100% because if you have a apeticipant ID then there are participants
     //check if any of the participants in the array match the current participant trying to join.
@@ -60,10 +66,8 @@ const handleJoinEvent = async (req, res, next) => {
     );
     //if they do match...
     if (existingParticipant) {
-      return res.status(409).json({
-        status: 409,
-        message: "You are already registered in this event.",
-      });
+      let err = new ConflictError("You are already registered in this event.");
+      next(err);
     }
     //if you don't find a matching participant.
     //add the incoming participant to that.
