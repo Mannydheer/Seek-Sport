@@ -281,6 +281,7 @@ app.get("/getChatRoom/:eventId", handleGetChatRoom);
 // ------------------------------CUSTOM ERROR ----------------------------
 app.use(function (err, req, res, next) {
   console.error(err);
+
   //check if the err is instance of any of our custom errors.
   if (err instanceof HttpException) {
     return res

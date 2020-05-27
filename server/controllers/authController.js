@@ -23,14 +23,15 @@ const handleGetUser = async (req, res, next) => {
   try {
     let id = req.user.id;
     if (!id) {
-      return res.status(400).json({
-        status: 400,
-        message: "Verification Failed. User invalid. Try refreshing the page.",
-      });
+      let err = new NotFoundError(
+        "Verification Failed. User invalid. Try refreshing the page."
+      );
+      next(err);
     }
     const checkForUser = await getUserById(id);
     if (!checkForUser) {
-      return res.status(400).json({ status: 400, message: "User not found." });
+      let err = new NotFoundError("This user does not exist. Please sign up!");
+      next(err);
     }
     const accessToken = generateJwtToken(checkForUser._id);
     res.status(200).json({
