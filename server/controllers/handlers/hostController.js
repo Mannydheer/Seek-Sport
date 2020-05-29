@@ -1,17 +1,4 @@
 "use strict";
-
-const { getConnection } = require("../../connection/connection");
-
-const dbName = "ParkGames";
-const collectionHosts = "Hosts";
-const collectionEvents = "Events";
-const collectionParticipants = "Participants";
-const collectionUserEvents = "UserEvents";
-const collectionRooms = "Rooms";
-
-const assert = require("assert");
-var ObjectId = require("mongodb").ObjectID;
-
 const {
   getHost,
   createNewHost,
@@ -27,13 +14,17 @@ const {
 } = require("../../services/hostService");
 
 const { addUserEvent } = require("../../services/joinLeaveCancelService");
+const {
+  NotFoundError,
+  BadRequestError,
+  UnprocessableEntity,
+} = require("../../utils/errors");
 
 //@endpoint POST /hostingInformation
 //@desc store the info into the database of the reservating
 //@access PRIVATE - will need to validate token? YES
 
 // ------------------- HOSTING ---------------------
-
 const handleHosting = async (req, res, next) => {
   //pseudocode for time coonflicts.
   //first find all the events associated with that USERID and at the SAME PARK.
@@ -47,12 +38,10 @@ const handleHosting = async (req, res, next) => {
     let startDate = eventInformation.time;
     let duration = eventInformation.duration;
     if (!hostingInformation || !eventInformation || !startDate || !duration) {
-      return res.status(400).json({
-        status: 400,
-        message: "Missing information in order to host.",
-      });
+      throw new BadRequestError(
+        "Missing information in order to host in handleHosting."
+      );
     }
-    const db = getConnection().db(dbName);
     //first see if the host already exists.
     let findhost = await getHost(hostingInformation.userId);
     let validBooking = false;
@@ -60,65 +49,36 @@ const handleHosting = async (req, res, next) => {
     //if you dont find a host.
     //will only run once... see if you can refactor this..
     if (!findhost) {
-      console.log("THIS IS FIND HOST");
       //make a new host because there are no event related to this host.
       //insert the hosting info into DB
       let hostInserted = await createNewHost(hostingInformation);
-      if (!hostInserted) {
-        return res
-          .status(400)
-          .json({ status: 400, message: "Unable to create a new host." });
-      }
       //give the event key the refernece to the hostId.
       //data.ops[0]._id is the hosts object ID.
       eventInformation.hostId = hostInserted.ops[0]._id;
+
       let createEvent = await createNewEvent(eventInformation);
-      if (!createEvent) {
-        return res
-          .status(400)
-          .json({ status: 400, message: "Failed to create new event." });
+      let eventId = createEvent.ops[0]._id;
+      if (!eventId) {
+        throw new NotFoundError(
+          "No event Id from createEvent variable in handleHost."
+        );
       }
       //insert as participant.
-      let eventId = createEvent.ops[0]._id;
       //then we need to make the host a participant as well.
       //also since this will only happen once, will add also the host information as a participant.
       //push the details of the participant a document.
       hostingInformation.parkId = eventInformation.parkId;
       let addParticipant = await addAsParticipant(hostingInformation);
-      if (!addParticipant) {
-        return res
-          .status(400)
-          .json({ status: 400, message: "Failed to add participant." });
-      }
       //then assign the event with that participants Id object
       let participantId = addParticipant.ops[0]._id;
-      let updateParticipantIdForEvent = await updateParticipantId(
-        eventId,
-        participantId
-      );
-      if (!updateParticipantIdForEvent) {
-        return res.status(400).json({
-          status: 400,
-          message: "Failed to update participant Id in the event.",
-        });
+      if (!participantId) {
+        throw new NotFoundError(
+          "No participant Id from participantId variable in handleHost."
+        );
       }
-      let addRoom = await createRoom(eventId, participantId);
-      if (!addRoom) {
-        return res.status(400).json({
-          status: 400,
-          message: "Failed to create new chat room.",
-        });
-      }
-      let addEventToUserEvents = await addUserEvent(
-        hostingInformation.userId,
-        eventId
-      );
-      if (!addEventToUserEvents) {
-        return res.status(400).json({
-          status: 400,
-          message: "Failed to event as an an event the user is registered for.",
-        });
-      }
+      await updateParticipantId(eventId, participantId);
+      await createRoom(eventId, participantId);
+      await addUserEvent(hostingInformation.userId, eventId);
       return res.status(200).json({
         status: 200,
         message:
@@ -214,72 +174,41 @@ const handleHosting = async (req, res, next) => {
     if (validBooking && validBookingAllEvents) {
       eventInformation.hostId = findhost._id;
       let createEvent = await createNewEvent(eventInformation);
-      if (!createEvent) {
-        return res
-          .status(400)
-          .json({ status: 400, message: "Failed to create new event." });
-      }
       let eventId = createEvent.ops[0]._id;
+      if (!eventId) {
+        throw new NotFoundError(
+          "No event Id from createEvent variable in handleHost."
+        );
+      }
       //get the event info.
       //then we need to make the host a participant as well
       //also since this will only happen once, will add also the host information as a participant.
       //push the details of the participant a document.
       hostingInformation.parkId = eventInformation.parkId;
       let addParticipant = await addAsParticipant(hostingInformation);
-      if (!addParticipant) {
-        return res
-          .status(400)
-          .json({ status: 400, message: "Failed to add participant." });
-      }
       //then assign the event with that participants Id object
       let participantId = addParticipant.ops[0]._id;
-      let updateParticipantIdForEvent = await updateParticipantId(
-        eventId,
-        participantId
-      );
-      if (!updateParticipantIdForEvent) {
-        return res.status(400).json({
-          status: 400,
-          message: "Failed to update participant Id in the event.",
-        });
+      if (!participantId) {
+        throw new NotFoundError(
+          "No participant Id from participantId variable in handleHost."
+        );
       }
+      await updateParticipantId(eventId, participantId);
       //also you need to add the event you joined into the userEvent collection.
       //also need to reupdate the room.
       //also if a there is a new reservation by the host, a room document needs to be recreated.
-      let addRoom = await createRoom(eventId, participantId);
-      if (!addRoom) {
-        return res.status(400).json({
-          status: 400,
-          message: "Failed to create new chat room.",
-        });
-      }
-
-      let addEventToUserEvents = await addUserEvent(
-        hostingInformation.userId,
-        eventId
-      );
-      if (!addEventToUserEvents) {
-        return res.status(400).json({
-          status: 400,
-          message: "Failed to event as an an event the user is registered for.",
-        });
-      }
+      await createRoom(eventId, participantId);
+      await addUserEvent(hostingInformation.userId, eventId);
       return res.status(200).json({
         status: 200,
         message:
           "Reservation successful. Thanks for booking! Keep in mind you have other events under your name. Also you've been added as a participant",
         hostingInformation: hostingInformation,
       });
-    } else {
-      return res.status(400).json({
-        status: 400,
-        message: "Booking was not valid - time conflicts.",
-      });
     }
     //if you do, success.
-  } catch (error) {
-    console.log(error.stack, "Catch Error in handleHosting");
-    res.status(500).json({ status: 500, message: error.message });
+  } catch (err) {
+    next(err);
   }
 };
 
@@ -293,14 +222,16 @@ const handleGetHosts = async (req, res, next) => {
   try {
     //insert the hosting info into DB
     let allHosts = await getAllHosts();
+    if (!allHosts) {
+      throw new NotFoundError("Unable to get all hosts in handleGetHosts.");
+    }
     return res.status(200).json({
       status: 200,
       message: "Success getting all hosts!",
       hosts: allHosts,
     });
-  } catch (error) {
-    console.log(error.stack, "Catch Error in handleHosting");
-    res.status(500).json({ status: 500, message: error.message });
+  } catch (err) {
+    next(err);
   }
 };
 

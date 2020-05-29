@@ -81,7 +81,13 @@ const UserHostedEvents = () => {
       ) : (
         <ClipLoader css={override} size={150} color={"black"} />
       )}
-      {error && <div>Error occured on the page.</div>}
+      {error && (
+        <div
+          style={{ textAlign: "center", marginTop: "2rem", fontSize: "2rem" }}
+        >
+          Currently not hosting any events.
+        </div>
+      )}
     </Wrapper>
   );
 };

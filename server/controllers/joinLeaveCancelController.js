@@ -1,4 +1,3 @@
-//env vairables
 const {
   //handleJoinEvent.
   getEventById,
@@ -16,6 +15,13 @@ const {
   //handleCancelEvent.
 } = require("../services/joinLeaveCancelService");
 
+const {
+  NotFoundError,
+  UnauthorizedError,
+  ConflictError,
+  BadRequestError,
+} = require("../utils/errors");
+
 //@endpoint POST /joinEvent
 //@desc join the event selected from ViewActivity component.
 //@access PRIVATE - will need to validate token? YES
@@ -30,10 +36,9 @@ const handleJoinEvent = async (req, res, next) => {
       !participantDetails.userId ||
       !participantDetails.eventId
     ) {
-      res.status(400).json({
-        status: 400,
-        message: "Missing information from event or participant.",
-      });
+      throw new BadRequestError(
+        "Missing information from event or participant in handleJoinEvent."
+      );
     }
     let getEvent = await getEventById(eventInformation._id);
     //ensure getEvent is not missing participantsId.
@@ -41,16 +46,15 @@ const handleJoinEvent = async (req, res, next) => {
     //if there is a participant ID.
     //check if that participant doesnt already exist... in that event.
     if (!getEvent.participantId) {
-      res
-        .status(400)
-        .json({ status: 400, message: "Missing event participant Id." });
+      throw new NotFoundError(
+        "Missing event participant Id in handleJoinEvent."
+      );
     }
     let getParticipants = await getParticipantsById(getEvent.participantId);
     if (!getParticipants) {
-      res.status(400).json({
-        status: 400,
-        message: "Failed getting participants in handleJoinEvent function.",
-      });
+      throw new NotFoundError(
+        "Failed getting participants in handleJoinEvent."
+      );
     }
     //if you get participants. Which you will 100% because if you have a apeticipant ID then there are participants
     //check if any of the participants in the array match the current participant trying to join.
@@ -60,10 +64,7 @@ const handleJoinEvent = async (req, res, next) => {
     );
     //if they do match...
     if (existingParticipant) {
-      return res.status(409).json({
-        status: 409,
-        message: "You are already registered in this event.",
-      });
+      throw new ConflictError("existing participant in handleJoinevent.");
     }
     //if you don't find a matching participant.
     //add the incoming participant to that.
@@ -77,14 +78,16 @@ const handleJoinEvent = async (req, res, next) => {
       participantDetails.userId,
       participantDetails.eventId
     );
-    if (updateUserEvent && updateParticipant) {
-      res
-        .status(200)
-        .json({ status: 200, message: "Successfully joined the event!" });
-    } else return;
-  } catch (error) {
-    console.log(error.stack, "Catch Error in handleJoinEvent");
-    res.status(500).json({ status: 500, message: error.message });
+    if (!updateParticipant || !updateUserEvent) {
+      throw new NotFoundError(
+        "Error occured. Unable to update participants and user events in handleJoinEvent function."
+      );
+    }
+    return res
+      .status(200)
+      .json({ status: 200, message: "Successfully joined the event!" });
+  } catch (err) {
+    next(err);
   }
 };
 //@endpoint POST /leaveEvent
@@ -100,10 +103,9 @@ const handleLeaveEvent = async (req, res, next) => {
       !eventInformation._id ||
       !eventInformation.participantId
     ) {
-      res.status(400).json({
-        status: 400,
-        message: "Missing information from event or participant.",
-      });
+      throw new BadRequestError(
+        "Missing information from event or participant in handleLeaveEvent."
+      );
     }
     //now you have the participant ID from eventInformation.
     //find the participant collect from the event ParticipantId key.
@@ -116,15 +118,16 @@ const handleLeaveEvent = async (req, res, next) => {
       participantDetails.userId,
       eventInformation._id
     );
-    if (updateParticipant && updateUserEvent) {
-      console.log("response in leave");
-      res
-        .status(200)
-        .json({ status: 200, message: "Successfully left the event!" });
+    if (!updateParticipant || !updateUserEvent) {
+      throw new NotFoundError(
+        "Error occured. Unable to remove participants and user events in handleLeaveEvent function."
+      );
     }
-  } catch (error) {
-    console.log(error.stack, "Catch Error in handleLeaveEvent");
-    res.status(500).json({ status: 500, message: error.message });
+    return res
+      .status(200)
+      .json({ status: 200, message: "Successfully left the event!" });
+  } catch (err) {
+    next(err);
   }
 };
 
@@ -135,17 +138,24 @@ const handleCancelEvent = async (req, res, next) => {
   try {
     const eventId = req.body.eventId;
     if (!eventId) {
-      res.status(400).json({
-        status: 400,
-        message: "Missing information from event inside handleCancelEvent.",
-      });
+      throw new BadRequestError("Missing information from event");
     }
     let getEvent = await getEventById(eventId); //get the event for participantId.
+    if (!getEvent) {
+      throw new NotFoundError("Unable to get event in handleCancelEvent.");
+    }
     let deletedRoom = await deleteRoom(eventId); //for chat system.
-    let deletedEvent = await deleteEvent(eventId); //delet
+    let deletedEvent = await deleteEvent(eventId); //delete event.
+    if (!deletedEvent || !deletedRoom) {
+      throw new NotFoundError(
+        "Unable to delete room or event in handleCancelEvent."
+      );
+    }
     let getParticipants = await getParticipantsById(getEvent.participantId);
     if (!getParticipants) {
-      return;
+      throw new NotFoundError(
+        "Unable to get participants in handleCancelEvent"
+      );
     }
     let removeUserAsParticipant = await getParticipants.participants.forEach(
       async (participant) => {
@@ -153,12 +163,14 @@ const handleCancelEvent = async (req, res, next) => {
       }
     );
     let deletedParticipants = await deleteParticipants(getEvent.participantId);
-    res
+    if (!deletedParticipants) {
+      throw new ConflictError("Unable to delete participants for the event");
+    }
+    return res
       .status(200)
       .json({ status: 200, message: "Successfully canceled the event!" });
-  } catch (error) {
-    console.log(error.stack, "Catch Error in handleCancelEvent");
-    res.status(500).json({ status: 500, message: error.message });
+  } catch (err) {
+    next(err);
   }
   //also must remove all users that were registered for this event.
   //since we have the eventId... we can get the participantId and find the participants from the participant collection.

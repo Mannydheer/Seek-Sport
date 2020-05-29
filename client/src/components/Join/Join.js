@@ -80,7 +80,7 @@ export default function Join({ setJoined, joined, event }) {
         throw (err, "inside catch JOIN component");
       }
     } else {
-      console.log("not auth inside JOIN component. In the else.");
+      return;
     }
   };
   return (

@@ -198,10 +198,10 @@ const ChatJoin = () => {
         {/* ALL MESSAGES FROM THE FRONT END. */}
         {allMessages && userChats.actualParticipants && (
           <ChatBox>
-            {allMessages.map((message) => {
+            {allMessages.map((message, index) => {
               //CHANGE KEY
               return (
-                <div key={`${message.room}${message.timeStamp}`}>
+                <div key={`${message.room}${message.timeStamp}${index}`}>
                   {message.sender === userInfo.user ? (
                     <SenderText>
                       <div>

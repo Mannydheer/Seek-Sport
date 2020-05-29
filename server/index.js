@@ -16,11 +16,12 @@ const uri =
 
 const collectionRooms = "Rooms";
 const assert = require("assert");
-var ObjectId = require("mongodb").ObjectID;
 
 //built in node module
 const http = require("http");
 const socketio = require("socket.io");
+//errors.
+const { HttpException } = require("./utils/errors");
 
 //chat controller.
 const { handleGetChatRoom } = require("./controllers/handlers/chatController");
@@ -277,9 +278,21 @@ app.get("/userRegisteredEvents/:_id", handleUserRegisteredEvents);
 //gets the room associated with a particular event.
 //inside ChatJoin component.
 app.get("/getChatRoom/:eventId", handleGetChatRoom);
-
+// ------------------------------CUSTOM ERROR ----------------------------
+app.use(function (err, req, res, next) {
+  console.error(err);
+  //check if the err is instance of any of our custom errors.
+  if (err instanceof HttpException) {
+    return res
+      .status(err.code)
+      .json({ message: err.message, stack: err.stack });
+  }
+  //if its a 500.
+  return res
+    .status(500)
+    .json({ message: "unexpected error occured.", error: JSON.stringify(err) });
+});
 // ------------------------------CONNECT TO MONGODB ----------------------------
-
 const connection = async () => {
   try {
     let connectionResponse = await handleConnection();
