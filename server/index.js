@@ -7,7 +7,7 @@ const morgan = require("morgan");
 //multer
 const multer = require("multer");
 //logger.
-const { logger } = require("./config/logger");
+const { Logger } = require("./config/logger");
 
 //mongo
 const MongoClient = require("mongodb").MongoClient;
@@ -296,10 +296,12 @@ app.use(function (err, req, res, next) {
 const connection = async () => {
   try {
     let connectionResponse = await handleConnection();
+    let l = new Logger();
     if (connectionResponse) {
       server.listen(PORT, () =>
         //logger.
-        logger.log("info", `Listening on port ${PORT}`)
+
+        console.log("info", `Listening on port ${PORT}`)
       );
     }
   } catch (err) {
