@@ -8,6 +8,8 @@ const getDateFormat = () => {
 
 class Logger {
   constructor() {
+    //The data relevant about the log.
+    this.logData = null;
     const logger = createLogger({
       //carry data from application to console file or database, whereare we define.
       level: "info",
@@ -16,14 +18,17 @@ class Logger {
         format.colorize(),
         format.prettyPrint(),
         format.printf((info) => {
-          console.log(info);
-          let message = `${getDateFormat()} || [${info.level}]: `;
+          // console.log(info);
+          let message = `${getDateFormat()} || [${info.level}]: || Data: ${
+            this.logData
+          } || Message: `;
           message += `${info.message}`;
           return message;
         })
       ),
       transports: [new transports.Console()],
     });
+    //-----------------PROPERTIES OF THE LOGGER CLASS.------------
     this.logger = logger;
   }
   //singleton application.
@@ -38,12 +43,17 @@ class Logger {
     return Logger.instance;
   }
 
+  //----------------------METHODS-------------------------
   //info and error will also be the levels.
   info(message) {
     this.logger.log("info", message);
   }
   error(message) {
     this.logger.log("error", message);
+  }
+  //method for the data about the error.
+  getLogData(data) {
+    this.logData = data;
   }
 }
 

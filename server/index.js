@@ -298,10 +298,7 @@ const connection = async () => {
     let connectionResponse = await handleConnection();
     let logger = new Logger();
     if (connectionResponse) {
-      server.listen(PORT, () =>
-        //logger.
-        logger.info(`Listening on port ${PORT}`)
-      );
+      server.listen(PORT, () => logger.info(`Listening on port ${PORT}`));
     }
   } catch (err) {
     console.log(err);
