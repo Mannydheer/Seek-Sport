@@ -296,12 +296,11 @@ app.use(function (err, req, res, next) {
 const connection = async () => {
   try {
     let connectionResponse = await handleConnection();
-    let l = new Logger();
+    let logger = new Logger();
     if (connectionResponse) {
       server.listen(PORT, () =>
         //logger.
-
-        console.log("info", `Listening on port ${PORT}`)
+        logger.info(`Listening on port ${PORT}`)
       );
     }
   } catch (err) {

@@ -1,8 +1,31 @@
 const { createLogger, transports, format } = require("winston");
 
-class Logger {
-  constructor() {}
+const getDateFormat = () => {
+  let date = new Date().toDateString();
+  let time = new Date().toLocaleTimeString();
+  return `${date} || ${time}`;
+};
 
+class Logger {
+  constructor() {
+    const logger = createLogger({
+      //carry data from application to console file or database, whereare we define.
+      level: "info",
+      format: format.combine(
+        format.json(),
+        format.colorize(),
+        format.prettyPrint(),
+        format.printf((info) => {
+          console.log(info);
+          let message = `${getDateFormat()} || [${info.level}]: `;
+          message += `${info.message}`;
+          return message;
+        })
+      ),
+      transports: [new transports.Console()],
+    });
+    this.logger = logger;
+  }
   //singleton application.
   //static method where we don't need to instantiate the class to access the method.
   static getInstance() {
@@ -15,12 +38,13 @@ class Logger {
     return Logger.instance;
   }
 
-  // const logger = createLogger({
-  //   //carry data from application to console file or database, whereare we define.
-  //   level: "info",
-  //   format: format.combine(format.timestamp(), format.json()),
-  //   transports: [new transports.Console()],
-  // });
+  //info and error will also be the levels.
+  info(message) {
+    this.logger.log("info", message);
+  }
+  error(message) {
+    this.logger.log("error", message);
+  }
 }
 
 module.exports = { Logger };
