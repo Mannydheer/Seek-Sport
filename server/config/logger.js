@@ -1,5 +1,16 @@
 const { createLogger, transports, format } = require("winston");
 
+// built in NPM levels.
+// {
+//   error: 0,
+//   warn: 1,
+//   info: 2,
+//   http: 3,
+//   verbose: 4,
+//   debug: 5,
+//   silly: 6
+// }
+
 const getDateFormat = () => {
   let date = new Date().toDateString();
   let time = new Date().toLocaleTimeString();
@@ -18,8 +29,7 @@ class Logger {
         format.colorize(),
         format.prettyPrint(),
         format.printf((info) => {
-          // console.log(info);
-          let message = `${getDateFormat()} || [${info.level}]: || Data: ${
+          let message = `${getDateFormat()} || *${info.level}* || Log Data: ${
             this.logData
           } || Message: `;
           message += `${info.message}`;
@@ -47,6 +57,7 @@ class Logger {
   //info and error will also be the levels.
   info(message) {
     this.logger.log("info", message);
+    // this.logger.log({ level: "info", message: message });
   }
   error(message) {
     this.logger.log("error", message);
