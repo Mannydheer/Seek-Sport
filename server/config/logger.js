@@ -51,6 +51,9 @@ class Logger {
   error(message) {
     this.logger.log("error", message);
   }
+  warn(message) {
+    this.logger.log("warn", message);
+  }
   //method for the data about the error.
   getLogData(data) {
     this.logData = data;
