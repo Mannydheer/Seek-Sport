@@ -52,9 +52,6 @@ class Logger {
   }
 
   //----------------------METHODS-------------------------
-  setLogLevel(lvl) {
-    this.logger.level = lvl;
-  }
 
   //info and error will also be the levels.
   info(message) {

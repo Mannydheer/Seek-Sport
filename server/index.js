@@ -310,5 +310,3 @@ const connection = async () => {
   }
 };
 connection();
-
-logger.setLogLevel("info");
