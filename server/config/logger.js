@@ -22,7 +22,6 @@ class Logger {
       throw new Error("Has already been instantiated.");
     }
 
-    this.logData = "cuti";
     const logger = createLogger({
       //CUSTOMIZE LOG LEVELS.
       levels: Loglevels,
