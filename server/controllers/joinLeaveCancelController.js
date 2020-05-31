@@ -165,9 +165,11 @@ const handleCancelEvent = async (req, res, next) => {
       }
     );
     let deletedParticipants = await deleteParticipants(getEvent.participantId);
+
     if (!deletedParticipants) {
       throw new ConflictError("Unable to delete participants for the event");
     }
+    logger.info(`Deleted participant: ${getEvent.participantId}`);
     return res
       .status(200)
       .json({ status: 200, message: "Successfully canceled the event!" });
