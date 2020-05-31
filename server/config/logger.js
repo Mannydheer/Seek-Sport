@@ -52,8 +52,6 @@ class Logger {
       Logger.instance = new Logger(process.env.LOG_LEVEL);
       return Logger.instance;
     } else {
-      console.log("else");
-
       return Logger.instance;
     }
     //if already has been, return the reference of the instantiated class in memory.
@@ -71,6 +69,9 @@ class Logger {
   }
   warn(message) {
     this.logger.log("warn", message);
+  }
+  debug(message) {
+    this.logger.log("debug", message);
   }
   //method for the data about the error.
 }

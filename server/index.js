@@ -5,7 +5,6 @@ const { Logger } = require("./config/logger");
 //getInstance will return the logger.
 
 let logger = Logger.getInstance();
-console.log(logger.logData);
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -288,15 +287,14 @@ app.get("/getChatRoom/:eventId", handleGetChatRoom);
 // ------------------------------CUSTOM ERROR ----------------------------
 app.use(function (err, req, res, next) {
   //check if the err is instance of any of our custom errors.
-
   if (err instanceof HttpException) {
-    logger.error(`${err} - Code: ${err.code}`);
+    logger.error(`File: ${err.stack} || Code: ${err.code} `);
     return res
       .status(err.code)
       .json({ message: err.message, stack: err.stack });
   }
   //if its a 500.
-  logger.error(`${err} - Code: ${err.code}`);
+  logger.error(`File: ${err.stack} || Code: ${err.code} `);
   return res
     .status(500)
     .json({ message: "unexpected error occured.", error: JSON.stringify(err) });
