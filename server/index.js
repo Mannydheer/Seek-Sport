@@ -1,5 +1,9 @@
 "use strict";
 require("dotenv").config();
+const { Logger } = require("./config/logger");
+
+//getInstance will return the logger.
+let logger = Logger.getInstance();
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -7,7 +11,6 @@ const morgan = require("morgan");
 //multer
 const multer = require("multer");
 //logger.
-const { Logger } = require("./config/logger");
 
 //mongo
 const MongoClient = require("mongodb").MongoClient;
@@ -71,9 +74,6 @@ const PORT = 4000;
 const dbName = "ParkGames";
 
 // LOGGER.
-
-let logger = new Logger(process.env.LOG_LEVEL);
-Logger.getInstance();
 
 var app = express();
 
@@ -301,6 +301,7 @@ app.use(function (err, req, res, next) {
 const connection = async () => {
   try {
     let connectionResponse = await handleConnection();
+
     if (connectionResponse) {
       server.listen(PORT, () => logger.info(`Listening on port ${PORT}`));
     }
@@ -309,3 +310,5 @@ const connection = async () => {
   }
 };
 connection();
+
+logger.setLogLevel("info");

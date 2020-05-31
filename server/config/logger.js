@@ -1,16 +1,6 @@
 const { createLogger, transports, format } = require("winston");
 
-// built in NPM levels.
-// {
-//   error: 0,
-//   warn: 1,
-//   info: 2,
-//   http: 3,
-//   verbose: 4,
-//   debug: 5,
-//   silly: 6
-// }
-
+//custom log levels.
 const Loglevels = {
   silly: 0,
   verbose: 1,
@@ -39,9 +29,7 @@ class Logger {
         format.colorize(),
         format.prettyPrint(),
         format.printf((info) => {
-          let message = `${getDateFormat()} || *${info.level}* || Log Data: ${
-            this.logData
-          } || Message: `;
+          let message = `${getDateFormat()} || *${info.level}* || Message: `;
           message += `${info.message}`;
           return message;
         })
@@ -57,7 +45,7 @@ class Logger {
     //if the Logger class has not been instantiated yett.
     if (Logger.instance == null) {
       //then instantiate it.
-      Logger.instance = new Logger();
+      Logger.instance = new Logger(process.env.LOG_LEVEL);
     }
     //if already has been, return the reference of the instantiated class in memory.
     return Logger.instance;
@@ -65,8 +53,9 @@ class Logger {
 
   //----------------------METHODS-------------------------
   setLogLevel(lvl) {
-    this.logger.log({ level: lvl });
+    this.logger.level = lvl;
   }
+
   //info and error will also be the levels.
   info(message) {
     this.logger.log("info", message);
@@ -79,9 +68,6 @@ class Logger {
     this.logger.log("warn", message);
   }
   //method for the data about the error.
-  getLogData(data) {
-    this.logData = data;
-  }
 }
 
 module.exports = { Logger };
