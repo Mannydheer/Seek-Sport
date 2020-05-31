@@ -1,3 +1,5 @@
+const { Logger } = require("../config/logger");
+const logger = Logger.getInstance();
 const {
   getUserFromUserEvents,
   allEventsArray,

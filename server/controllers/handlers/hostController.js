@@ -14,11 +14,7 @@ const {
 } = require("../../services/hostService");
 
 const { addUserEvent } = require("../../services/joinLeaveCancelService");
-const {
-  NotFoundError,
-  BadRequestError,
-  UnprocessableEntity,
-} = require("../../utils/errors");
+const { NotFoundError, BadRequestError } = require("../../utils/errors");
 
 //@endpoint POST /hostingInformation
 //@desc store the info into the database of the reservating
