@@ -17,8 +17,12 @@ const getDateFormat = () => {
 
 class Logger {
   constructor(lvl) {
-    //The data relevant about the log.
-    this.logData = null;
+    //The data relevant about the log
+    if (Logger.instance) {
+      throw new Error("Has already been instantiated.");
+    }
+
+    this.logData = "cuti";
     const logger = createLogger({
       //CUSTOMIZE LOG LEVELS.
       levels: Loglevels,
@@ -45,10 +49,15 @@ class Logger {
     //if the Logger class has not been instantiated yett.
     if (Logger.instance == null) {
       //then instantiate it.
+      // Logger.instance = new Logger(process.env.LOG_LEVEL);
       Logger.instance = new Logger(process.env.LOG_LEVEL);
+      return Logger.instance;
+    } else {
+      console.log("else");
+
+      return Logger.instance;
     }
     //if already has been, return the reference of the instantiated class in memory.
-    return Logger.instance;
   }
 
   //----------------------METHODS-------------------------

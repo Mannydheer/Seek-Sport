@@ -3,7 +3,12 @@ require("dotenv").config();
 const { Logger } = require("./config/logger");
 
 //getInstance will return the logger.
+
 let logger = Logger.getInstance();
+console.log(logger.logData);
+
+let logger2 = new Logger("info");
+console.log(logger2.logData);
 
 const express = require("express");
 const bodyParser = require("body-parser");
