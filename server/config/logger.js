@@ -11,6 +11,14 @@ const { createLogger, transports, format } = require("winston");
 //   silly: 6
 // }
 
+const Loglevels = {
+  silly: 0,
+  verbose: 1,
+  info: 2,
+  debug: 3,
+  warn: 4,
+  error: 5,
+};
 const getDateFormat = () => {
   let date = new Date().toDateString();
   let time = new Date().toLocaleTimeString();
@@ -18,12 +26,14 @@ const getDateFormat = () => {
 };
 
 class Logger {
-  constructor() {
+  constructor(lvl) {
     //The data relevant about the log.
     this.logData = null;
     const logger = createLogger({
+      //CUSTOMIZE LOG LEVELS.
+      levels: Loglevels,
       //carry data from application to console file or database, whereare we define.
-      level: "info",
+      level: lvl,
       format: format.combine(
         format.json(),
         format.colorize(),
@@ -54,6 +64,9 @@ class Logger {
   }
 
   //----------------------METHODS-------------------------
+  setLogLevel(lvl) {
+    this.logger.log({ level: lvl });
+  }
   //info and error will also be the levels.
   info(message) {
     this.logger.log("info", message);

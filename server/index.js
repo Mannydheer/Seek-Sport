@@ -70,6 +70,11 @@ const upload = multer({ dest: "./public/uploads/" });
 const PORT = 4000;
 const dbName = "ParkGames";
 
+// LOGGER.
+
+let logger = new Logger(process.env.LOG_LEVEL);
+Logger.getInstance();
+
 var app = express();
 
 //set up socket io.
@@ -296,7 +301,6 @@ app.use(function (err, req, res, next) {
 const connection = async () => {
   try {
     let connectionResponse = await handleConnection();
-    let logger = new Logger();
     if (connectionResponse) {
       server.listen(PORT, () => logger.info(`Listening on port ${PORT}`));
     }
