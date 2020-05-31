@@ -1,3 +1,6 @@
+const { Logger } = require("../config/logger");
+const logger = Logger.getInstance();
+
 const {
   //handleJoinEvent.
   getEventById,
@@ -17,7 +20,6 @@ const {
 
 const {
   NotFoundError,
-  UnauthorizedError,
   ConflictError,
   BadRequestError,
 } = require("../utils/errors");
