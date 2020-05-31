@@ -1,3 +1,5 @@
+const { Logger } = require("../config/logger");
+const logger = Logger.getInstance();
 const jwt = require("jsonwebtoken");
 const { UnauthorizedError } = require("../utils/errors");
 
@@ -18,6 +20,7 @@ const auth = async (req, res, next) => {
     //take the user Id from the token. Put that into req.user,
     //add user from the pauload.
     req.user = tokenVerification;
+    logger.info(`Token Verication Id: ${tokenVerification}`);
     //call next middleware.
     next();
   } catch (err) {

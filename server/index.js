@@ -1,5 +1,10 @@
 "use strict";
 require("dotenv").config();
+const { Logger } = require("./config/logger");
+
+//getInstance will return the logger.
+
+let logger = Logger.getInstance();
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -7,7 +12,6 @@ const morgan = require("morgan");
 //multer
 const multer = require("multer");
 //logger.
-const { Logger } = require("./config/logger");
 
 //mongo
 const MongoClient = require("mongodb").MongoClient;
@@ -69,6 +73,8 @@ const { handleConnection, getConnection } = require("./connection/connection");
 const upload = multer({ dest: "./public/uploads/" });
 const PORT = 4000;
 const dbName = "ParkGames";
+
+// LOGGER.
 
 var app = express();
 
@@ -280,14 +286,15 @@ app.get("/userRegisteredEvents/:_id", handleUserRegisteredEvents);
 app.get("/getChatRoom/:eventId", handleGetChatRoom);
 // ------------------------------CUSTOM ERROR ----------------------------
 app.use(function (err, req, res, next) {
-  console.error(err);
   //check if the err is instance of any of our custom errors.
   if (err instanceof HttpException) {
+    logger.error(`File: ${err.stack} || Code: ${err.code} `);
     return res
       .status(err.code)
       .json({ message: err.message, stack: err.stack });
   }
   //if its a 500.
+  logger.error(`File: ${err.stack} || Code: ${err.code} `);
   return res
     .status(500)
     .json({ message: "unexpected error occured.", error: JSON.stringify(err) });
@@ -296,13 +303,9 @@ app.use(function (err, req, res, next) {
 const connection = async () => {
   try {
     let connectionResponse = await handleConnection();
-    let l = new Logger();
-    if (connectionResponse) {
-      server.listen(PORT, () =>
-        //logger.
 
-        console.log("info", `Listening on port ${PORT}`)
-      );
+    if (connectionResponse) {
+      server.listen(PORT, () => logger.info(`Listening on port ${PORT}`));
     }
   } catch (err) {
     console.log(err);
