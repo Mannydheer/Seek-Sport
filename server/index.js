@@ -1,32 +1,25 @@
 "use strict";
 require("dotenv").config();
 const { Logger } = require("./config/logger");
-
 //getInstance will return the logger.
-
 let logger = Logger.getInstance();
-
 const express = require("express");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 //multer
 const multer = require("multer");
 //logger.
-
 //mongo
 const MongoClient = require("mongodb").MongoClient;
 const uri =
   "mongodb+srv://dbUser:YOFwbi6x3P5o3H4d@cluster0-seh3x.mongodb.net/test?authSource=admin&replicaSet=Cluster0-shard-0&w=majority&readPreference=primary&retryWrites=true&ssl=true";
-
 const collectionRooms = "Rooms";
 const assert = require("assert");
-
 //built in node module
 const http = require("http");
 const socketio = require("socket.io");
 //errors.
 const { HttpException } = require("./utils/errors");
-
 //chat controller.
 const { handleGetChatRoom } = require("./controllers/handlers/chatController");
 //user events controller.
@@ -46,7 +39,6 @@ const {
   handleCurrentEventParticipants,
   handleSelectedParkEvents,
 } = require("./controllers/handlers/eventController");
-
 //user login-signup controller.
 const {
   handleGetUser,
@@ -73,11 +65,8 @@ const { handleConnection, getConnection } = require("./connection/connection");
 const upload = multer({ dest: "./public/uploads/" });
 const PORT = 4000;
 const dbName = "ParkGames";
-
 // LOGGER.
-
 var app = express();
-
 //set up socket io.
 const server = http.createServer(app);
 //socket io server.
@@ -95,7 +84,6 @@ client.connect(async (err) => {
   const db = client.db(dbName);
   io.on("connection", (socket) => {
     console.log("we have a new connections!!!");
-    console.log(socket.id, "SOCKETID");
     socket.on("join", async ({ name, userId, room }, callback) => {
       console.log("inside join socket.");
       let chatMemberDetails = {
@@ -226,7 +214,6 @@ client.connect(async (err) => {
     });
   });
 });
-
 //const server
 app.use(function (req, res, next) {
   res.header(
@@ -253,7 +240,6 @@ app.post("/Login", handleLogin);
 app.get("/user/profile", auth, handleGetUser);
 //nearby search parks
 app.post("/nearbySearch", handleNearbySearch);
-//
 app.post("/parkPhoto", handlePhoto);
 //store the hosting informaiton
 app.post("/hostingInformation", auth, handleHosting);
@@ -274,7 +260,7 @@ app.get(
   auth,
   handleCurrentEventParticipants
 );
-//
+//*******************************************************************/
 app.get("/selectedParkEvents/:parkId", auth, handleSelectedParkEvents);
 //user activities.
 app.get("/userActivities/:userId", auth, handleUserActivities);

@@ -81,10 +81,7 @@ const ChatJoin = () => {
             dispatch(selectedRoom(`${eventId}-Room-1`));
           }
         } catch (err) {
-          console.log(
-            err,
-            "error occured inside catch for handler user events."
-          );
+          throw new err();
         }
       };
       handleGetChatRoom();
@@ -176,6 +173,7 @@ const ChatJoin = () => {
       };
       // dispatch(addMessage(data))
       socket.emit("sendMessage", data, () => setMessage(""));
+      setMessage("");
     }
   };
   //--------------SCROLL TO BOTTOM---------------
@@ -256,6 +254,7 @@ const ChatJoin = () => {
       <StyledForm>
         <Send>
           <textarea
+            value={message}
             cols="33"
             value={message}
             placeholder="Type your message..."

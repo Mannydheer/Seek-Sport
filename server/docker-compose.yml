@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+#####################################
+#      Setup server/node container
+######################################
+
+server:
+  build: ./server
+  expose:
+    - ${APP_SERVER_PORT}
+  environment:
+    APP_SERVER_PORT: ${APP_SERVER_PORT}
+  ports: -${APP_SERVER_PORT}:${APP_SERVER_PORT}
+  volumes: -./server
+  command: yarn start
