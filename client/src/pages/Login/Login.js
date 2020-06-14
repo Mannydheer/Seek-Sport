@@ -84,7 +84,6 @@ export default function SignIn() {
           body: JSON.stringify(userInfo),
         });
         let userResponse = await response.json();
-        console.log(userResponse);
         if (response.status === 200) {
           let name = userResponse.username.split("@")[0];
           localStorage.setItem("accesstoken", userResponse.accessToken);
