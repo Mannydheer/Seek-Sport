@@ -20,7 +20,7 @@ const auth = async (req, res, next) => {
     //take the user Id from the token. Put that into req.user,
     //add user from the pauload.
     req.user = tokenVerification;
-    logger.info(`Token Verication Id: ${tokenVerification}`);
+    logger.info(`Token Verication Id: ${tokenVerification.id}`);
     //call next middleware.
     next();
   } catch (err) {

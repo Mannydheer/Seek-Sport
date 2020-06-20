@@ -235,6 +235,11 @@ braces@~3.0.2:
   dependencies:
     fill-range "^7.0.1"
 
+brcypt@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/brcypt/-/brcypt-1.0.1.tgz#2fe5788f85c2624cff1c7a861b586f8dbbc7fc7e"
+  integrity sha1-L+V4j4XCYkz/HHqGG1hvjbvH/H4=
+
 bson@^1.1.4:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/bson/-/bson-1.1.4.tgz#f76870d799f15b854dffb7ee32f0a874797f7e89"

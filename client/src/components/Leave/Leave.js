@@ -85,7 +85,6 @@ export default function Leave({ setJoined, joined, event }) {
       >
         Leave?
       </Button>
-
       <Dialog
         open={open}
         onClose={handleClose}
