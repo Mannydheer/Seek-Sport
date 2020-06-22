@@ -9,6 +9,7 @@ import {
 import Rooms from "./components/Rooms";
 import styled from "styled-components";
 import ClipLoader from "react-spinners/ClipLoader";
+import {url} from '../../endpoint';
 
 const Chat = () => {
   //pseudocode.
@@ -34,7 +35,7 @@ const Chat = () => {
     const handleUserRegisteredEvents = async () => {
       dispatch(requestRegisteredUserEvents());
       try {
-        let response = await fetch(`/userRegisteredEvents/${userId}`);
+        let response = await fetch(`${url}/userRegisteredEvents/${userId}`);
         let userResponse = await response.json();
         if (userResponse.status === 200) {
           dispatch(retrieveRegisteredUserEvents(userResponse.eventInfo));
@@ -113,7 +114,7 @@ const Chat = () => {
                   style={{ position: "relative", display: "flex" }}
                 >
                   {checkOnlineParticipant(participant.userId)}
-                  <Image src={`/${participant.profileImage}`} />
+                  <Image src={participant.profileImage} />
                   <Name>{participant.name}</Name>
                 </div>
               );

@@ -21,6 +21,8 @@ import { useDispatch, useSelector } from "react-redux";
 //components
 import ParkSidebar from "../../../../components/ParkSidebar/ParkSidebar";
 import styled from "styled-components";
+import { url } from "../../../../endpoint";
+
 const Map = ({ coordinates, parkMenu, setParkMenu }) => {
   //pass down coordinates as props.
   const dispatch = useDispatch();
@@ -36,7 +38,7 @@ const Map = ({ coordinates, parkMenu, setParkMenu }) => {
   useEffect(() => {
     const handleNearestPlacesAndHosts = async () => {
       dispatch(requestParks());
-      let response = await fetch("/nearbySearch", {
+      let response = await fetch(`${url}/nearbySearch`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -53,7 +55,7 @@ const Map = ({ coordinates, parkMenu, setParkMenu }) => {
       //----------------------------------------
       //HOSTS - BETTER WAY TO DO THIS.
       dispatch(requestHosts());
-      let hostResponse = await fetch("/getParksWithHosts", {
+      let hostResponse = await fetch(`${url}/getParksWithHosts`, {
         method: "GET",
         headers: {
           Accept: "application/json",
@@ -69,7 +71,7 @@ const Map = ({ coordinates, parkMenu, setParkMenu }) => {
       }
       //----------------------------------------
       dispatch(requestEvents());
-      let eventResponse = await fetch("/getEvents", {
+      let eventResponse = await fetch(`${url}/getEvents`, {
         method: "GET",
         headers: {
           Accept: "application/json",
@@ -101,8 +103,8 @@ const Map = ({ coordinates, parkMenu, setParkMenu }) => {
           parkMenu
             ? { transform: "translateX(0px)" }
             : {
-                transform: "translateX(-400px)",
-              }
+              transform: "translateX(-400px)",
+            }
         }
       >
         {/* park info needs to be loaded.  */}

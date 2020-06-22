@@ -69,37 +69,37 @@ function App() {
             {userLoggedIn.isAuthenticated ? (
               <Host></Host>
             ) : (
-              <h1 style={{ textAlign: "center" }}>
-                Must be logged in to view this page.
-              </h1>
-            )}
+                <h1 style={{ textAlign: "center" }}>
+                  Must be logged in to view this page.
+                </h1>
+              )}
           </Route>
           <Route exact path="/viewActivity">
             {userLoggedIn.isAuthenticated ? (
               <ViewActivity></ViewActivity>
             ) : (
-              <h1 style={{ textAlign: "center" }}>
-                Must be logged in to view this page.
-              </h1>
-            )}
+                <h1 style={{ textAlign: "center" }}>
+                  Must be logged in to view this page.
+                </h1>
+              )}
           </Route>
           <Route exact path="/userEvents">
             {userLoggedIn.isAuthenticated ? (
               <UserHostedEvents></UserHostedEvents>
             ) : (
-              <h1 style={{ textAlign: "center" }}>
-                Must be logged in to view this page.
-              </h1>
-            )}
+                <h1 style={{ textAlign: "center" }}>
+                  Must be logged in to view this page.
+                </h1>
+              )}
           </Route>
           <Route exact path="/userActivities">
             {userLoggedIn.isAuthenticated ? (
               <UserActivities></UserActivities>
             ) : (
-              <h1 style={{ textAlign: "center" }}>
-                Must be logged in to view this page.
-              </h1>
-            )}
+                <h1 style={{ textAlign: "center" }}>
+                  Must be logged in to view this page.
+                </h1>
+              )}
           </Route>
           <Route exact path="/chat">
             {userLoggedIn.isAuthenticated ? (
@@ -110,10 +110,10 @@ function App() {
                 </ChatWrapper>
               </BigWrapper>
             ) : (
-              <h1 style={{ textAlign: "center" }}>
-                Must be logged in to view this page.
-              </h1>
-            )}
+                <h1 style={{ textAlign: "center" }}>
+                  Must be logged in to view this page.
+                </h1>
+              )}
           </Route>
           <Route exact path="/chatJoin/:eventId/:groupName">
             {userLoggedIn.isAuthenticated ? (
@@ -124,10 +124,10 @@ function App() {
                 </ChatWrapper>
               </BigWrapper>
             ) : (
-              <h1 style={{ textAlign: "center" }}>
-                Must be logged in to view this page.
-              </h1>
-            )}
+                <h1 style={{ textAlign: "center" }}>
+                  Must be logged in to view this page.
+                </h1>
+              )}
           </Route>
         </Switch>
         <FooterDiv>

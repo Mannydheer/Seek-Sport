@@ -7,6 +7,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { makeStyles } from "@material-ui/core/styles";
 import Snackbars from "../SnackBar";
+import { url } from '../../endpoint'
 
 //styled.
 const useStyles = makeStyles({
@@ -37,7 +38,7 @@ export default function Cancel({ event, setCanceled }) {
     //ensure user is authenticated.
     let token = localStorage.getItem("accesstoken");
     try {
-      let response = await fetch("/cancelEvent", {
+      let response = await fetch(`${url}/cancelEvent`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

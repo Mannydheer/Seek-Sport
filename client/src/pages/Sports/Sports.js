@@ -18,34 +18,34 @@ const Sports = () => {
       {userLoggedIn.status !== "authenticated" ? (
         <h1>You must be logged in to find games.</h1>
       ) : (
-        <div>
-          {/* // */}
-          <div style={{ padding: "10px" }}>
-            <h2>
-              Enter your location to start finding activities at your local
-              park!
+          <div>
+            {/* // */}
+            <div style={{ padding: "10px" }}>
+              <h2>
+                Enter your location to start finding activities at your local
+                park!
             </h2>
-            <GoogleAddress
-              setParkMenu={setParkMenu}
-              setCoordinates={setCoordinates}
-            ></GoogleAddress>
-          </div>
-          {/* //call component to find games. */}
-          <StyledMap style={{ width: "100vw", height: "80vh" }}>
-            {coordinates.lat !== null && (
-              <WrappedMap
-                parkMenu={parkMenu}
+              <GoogleAddress
                 setParkMenu={setParkMenu}
-                coordinates={coordinates}
-                googleMapURL={`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=${process.env.REACT_APP_GOOGLE_KEY}`}
-                loadingElement={<div style={{ height: "100%" }}></div>}
-                containerElement={<div style={{ height: "100%" }}></div>}
-                mapElement={<div style={{ height: "100%" }}></div>}
-              ></WrappedMap>
-            )}
-          </StyledMap>
-        </div>
-      )}
+                setCoordinates={setCoordinates}
+              ></GoogleAddress>
+            </div>
+            {/* //call component to find games. */}
+            <StyledMap style={{ width: "100vw", height: "80vh" }}>
+              {coordinates.lat !== null && (
+                <WrappedMap
+                  parkMenu={parkMenu}
+                  setParkMenu={setParkMenu}
+                  coordinates={coordinates}
+                  googleMapURL={`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=${process.env.REACT_APP_GOOGLE_KEY}`}
+                  loadingElement={<div style={{ height: "100%" }}></div>}
+                  containerElement={<div style={{ height: "100%" }}></div>}
+                  mapElement={<div style={{ height: "100%" }}></div>}
+                ></WrappedMap>
+              )}
+            </StyledMap>
+          </div>
+        )}
     </Wrapper>
   );
 };

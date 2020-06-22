@@ -13,6 +13,7 @@ const RightNav = ({ open }) => {
     localStorage.removeItem("accesstoken");
     dispatch(logOutUser());
   };
+  console.log(userLoggedIn.profileImage)
 
   return (
     <>
@@ -43,7 +44,7 @@ const RightNav = ({ open }) => {
           {!userLoggedIn.isAuthenticated && <Signup></Signup>}
 
           {userLoggedIn.isAuthenticated && (
-            <UserImage src={`./${userLoggedIn.profileImage}`} />
+            <UserImage src={userLoggedIn.profileImage} />
           )}
           {userLoggedIn.isAuthenticated && (
             <List onClick={handleLogout}>Logout</List>

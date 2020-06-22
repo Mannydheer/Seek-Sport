@@ -7,6 +7,17 @@ const assert = require("assert");
 var ObjectId = require("mongodb").ObjectID;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+//
+
+
+const cloudinary = require('cloudinary').v2;
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_SECRET,
+
+})
 
 const {
   getUserByIdRepo,
@@ -76,6 +87,15 @@ const generateJwtToken = (userId) => {
   });
 };
 
+const uploadFile = async (path) => {
+  return await cloudinary.uploader.upload(path, function (err, result) {
+    if (err) return
+    return result;
+
+  })
+
+}
+
 module.exports = {
   getUserById,
   getUserByUserName,
@@ -84,4 +104,5 @@ module.exports = {
   hashPassword,
   generateJwtToken,
   compareHashPassword,
+  uploadFile
 };

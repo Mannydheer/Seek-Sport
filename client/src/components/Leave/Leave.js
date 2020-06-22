@@ -8,6 +8,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import { makeStyles } from "@material-ui/core/styles";
 import { useDispatch, useSelector } from "react-redux";
 import Snackbars from "../SnackBar";
+import { url } from "../../endpoint"
 
 const useStyles = makeStyles({
   root: {
@@ -42,7 +43,7 @@ export default function Leave({ setJoined, joined, event }) {
       };
       let token = localStorage.getItem("accesstoken");
       try {
-        let response = await fetch("/leaveEvent", {
+        let response = await fetch(`${url}/leaveEvent`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

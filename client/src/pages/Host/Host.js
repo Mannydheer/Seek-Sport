@@ -12,6 +12,8 @@ import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import EventDetails from "../../../src/components/EventDetails";
 import "react-datepicker/dist/react-datepicker.css";
+import { url } from '../../endpoint';
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -145,7 +147,7 @@ const Host = () => {
         };
         let token = localStorage.getItem("accesstoken");
         try {
-          let response = await fetch("/hostingInformation", {
+          let response = await fetch(`${url}/hostingInformation`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -206,8 +208,8 @@ const Host = () => {
         {selectedPark !== null ? (
           <ParkDetails parkInfo={selectedPark}></ParkDetails>
         ) : (
-          <div>You must select a park to host!</div>
-        )}
+            <div>You must select a park to host!</div>
+          )}
       </Details>
 
       <FormWrapper

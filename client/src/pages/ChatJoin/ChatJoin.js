@@ -17,13 +17,15 @@ import {
 import { IoMdSend } from "react-icons/io";
 import ClipLoader from "react-spinners/ClipLoader";
 import ReactEmoji from "react-emoji";
+import { url } from '../../endpoint';
+
 
 let socket;
 let ENDPOINT = "localhost:4000";
 
 const ChatJoin = () => {
   //initialize SOCKET ENDPOINT.
-  socket = io(ENDPOINT);
+  // socket = io(ENDPOINT);
   let eventId = useParams().eventId;
   let groupName = useParams().groupName;
   const scrollRef = useRef(null);
@@ -58,11 +60,15 @@ const ChatJoin = () => {
   //--------------FETCH ALL PARTICIPANTS OF THAT ROOM...---------------
 
   useEffect(() => {
+    socket = io(ENDPOINT);
+
     if (eventId) {
+      //SOCKET CONNECTION
+
       const handleGetChatRoom = async () => {
         let token = localStorage.getItem("accesstoken");
         try {
-          let response = await fetch(`/getChatRoom/${eventId}`, {
+          let response = await fetch(`${url}/getChatRoom/${eventId}`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
@@ -124,13 +130,8 @@ const ChatJoin = () => {
         socket.off();
       };
     }
-  }, [eventId, ENDPOINT]);
-  //--------------SOCKET WILL LISTEN FOR CHAT-MESSAGE---------------
-  useEffect(() => {
-    socket.on("chat-message", (message) => {
-      dispatch(addMessage(message));
-    });
-  }, []);
+  }, [ENDPOINT, eventId]);
+
   //--------------JOIN OR LEAVE GROUP MESSAGE!---------------
   useEffect(() => {
     socket.on("users-join-leave", (message) => {
@@ -171,11 +172,20 @@ const ChatJoin = () => {
         sender: userInfo.user,
         timeStamp: new Date(),
       };
-      // dispatch(addMessage(data))
-      socket.emit("sendMessage", data, () => setMessage(""));
+      socket.emit("sendMessage", data, (messageBack) => console.log('hi'));
       setMessage("");
     }
   };
+  //--------------SOCKET WILL LISTEN FOR CHAT-MESSAGE---------------
+  useEffect(() => {
+    socket.on("chat-message", (message) => {
+      console.log(message)
+      dispatch(addMessage(message));
+    });
+    return () => {
+      socket.off("chat-message")
+    }
+  }, []);
   //--------------SCROLL TO BOTTOM---------------
   useEffect(() => {
     if (allMessages && userChats.actualParticipants) {
@@ -189,8 +199,8 @@ const ChatJoin = () => {
         {groupName ? (
           <GroupName>{groupName}</GroupName>
         ) : (
-          <GroupName>Chat Room</GroupName>
-        )}
+            <GroupName>Chat Room</GroupName>
+          )}
       </GroupNameWrapper>
       <ChatWrapper>
         {/* ALL MESSAGES FROM THE FRONT END. */}
@@ -212,38 +222,38 @@ const ChatJoin = () => {
                       </div>
                       {userChats.actualParticipants[message.userId] ? (
                         <Image
-                          src={`/${
+                          src={
                             userChats.actualParticipants[message.userId]
                               .profileImage
-                          }`}
+                          }
                         />
                       ) : (
-                        <ClipLoader size={50} color={"white"} />
-                      )}
+                          <ClipLoader size={50} color={"white"} />
+                        )}
                     </SenderText>
                   ) : (
-                    <ReceiverText>
-                      {userChats.actualParticipants[message.userId] ? (
-                        <Image
-                          src={`/${
-                            userChats.actualParticipants[message.userId]
-                              .profileImage
-                          }`}
-                        />
-                      ) : (
-                        <ClipLoader size={50} color={"white"} />
-                      )}
-                      <div>
-                        <ReceiverMessage>
-                          {ReactEmoji.emojify(message.message)}
-                        </ReceiverMessage>
+                      <ReceiverText>
+                        {userChats.actualParticipants[message.userId] ? (
+                          <Image
+                            src={
+                              userChats.actualParticipants[message.userId]
+                                .profileImage
+                            }
+                          />
+                        ) : (
+                            <ClipLoader size={50} color={"white"} />
+                          )}
+                        <div>
+                          <ReceiverMessage>
+                            {ReactEmoji.emojify(message.message)}
+                          </ReceiverMessage>
 
-                        <ReceiveTimeWrapper>
-                          {dateConverter(message.timeStamp)}
-                        </ReceiveTimeWrapper>
-                      </div>
-                    </ReceiverText>
-                  )}
+                          <ReceiveTimeWrapper>
+                            {dateConverter(message.timeStamp)}
+                          </ReceiveTimeWrapper>
+                        </div>
+                      </ReceiverText>
+                    )}
                 </div>
               );
             })}

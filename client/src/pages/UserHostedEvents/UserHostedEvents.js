@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import EventDetails from "../../../src/components/EventDetails";
 import ClipLoader from "react-spinners/ClipLoader";
 import { css } from "@emotion/core";
+import { url } from "../../endpoint"
 
 const UserHostedEvents = () => {
   const userInfo = useSelector((state) => state.userReducer);
@@ -25,7 +26,7 @@ const UserHostedEvents = () => {
         let token = localStorage.getItem("accesstoken");
         //will get all events related to the user.
         try {
-          let response = await fetch(`/userEvents/${userInfo._id}`, {
+          let response = await fetch(`${url}/userEvents/${userInfo._id}`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
@@ -79,8 +80,8 @@ const UserHostedEvents = () => {
           );
         })
       ) : (
-        <ClipLoader css={override} size={150} color={"black"} />
-      )}
+          <ClipLoader css={override} size={150} color={"black"} />
+        )}
       {error && (
         <div
           style={{ textAlign: "center", marginTop: "2rem", fontSize: "2rem" }}

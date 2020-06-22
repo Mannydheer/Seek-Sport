@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-
+import { url } from "../../endpoint"
 const ParkDetails = ({ parkInfo }) => {
   const [image, setImage] = useState(null);
   //-----------------------SELECTED PARK PHOTO ------------------------------
@@ -11,7 +11,7 @@ const ParkDetails = ({ parkInfo }) => {
       } else {
         let photo = parkInfo.photos[0].photo_reference;
         try {
-          let response = await fetch("/parkPhoto", {
+          let response = await fetch(`${url}/parkPhoto`, {
             method: "POST",
             headers: {
               Accept: "application/json",

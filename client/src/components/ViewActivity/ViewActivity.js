@@ -4,6 +4,7 @@ import styled from "styled-components";
 import EventDetails from "../EventDetails";
 //components.
 import ParkDetails from "../ParkDetails";
+import { url } from "../../endpoint"
 const ViewActivity = () => {
   //stores all nearby parks in store.
   const allParks = useSelector((state) => state.parkReducer);
@@ -21,7 +22,7 @@ const ViewActivity = () => {
           let token = localStorage.getItem("accesstoken");
           try {
             let response = await fetch(
-              `/selectedParkEvents/${allParks.selectedPark.id}`,
+              `${url}/selectedParkEvents/${allParks.selectedPark.id}`,
               {
                 method: "GET",
                 headers: {
@@ -79,10 +80,10 @@ const ViewActivity = () => {
             })}
         </PageContainer>
       ) : (
-        <div style={{ textAlign: "center" }}>
-          Please head over to the sports tab to view park acitivities.
-        </div>
-      )}
+          <div style={{ textAlign: "center" }}>
+            Please head over to the sports tab to view park acitivities.
+          </div>
+        )}
     </>
   );
 };

@@ -1,11 +1,14 @@
+import { url } from '../../endpoint'
+
 export const fetchUserProfile = async () => {
   let token = localStorage.getItem("accesstoken");
   if (!token) {
     console.log("token is not value.");
+
   }
   try {
     //validate for no tokens
-    let response = await fetch("/user/profile", {
+    let response = await fetch(`${url}/user/profile`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

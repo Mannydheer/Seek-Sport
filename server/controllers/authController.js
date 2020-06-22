@@ -10,6 +10,7 @@ const {
   hashPassword,
   generateJwtToken,
   compareHashPassword,
+  uploadFile
 } = require("../services/authService");
 const {
   NotFoundError,
@@ -17,6 +18,8 @@ const {
   ConflictError,
   BadRequestError,
 } = require("../utils/errors");
+
+
 
 //@endpoint GET /user/profile
 //@desc authenticate user token and send back user info
@@ -56,6 +59,7 @@ const handleGetUser = async (req, res, next) => {
 // @desc authenticate user info.
 // @access PUBLIC
 const handleLogin = async (req, res, next) => {
+
   //check if any data came.
   try {
     let loginInfo = req.body;
@@ -95,8 +99,13 @@ const handleLogin = async (req, res, next) => {
 //@desc Sign up user info.
 //@access PUBLIC
 const handleSignUp = async (req, res, next) => {
+
+
+
   try {
     let filePath = req.file.path;
+
+
     if (!filePath || !req.body.name || !req.body.pass) {
       throw new BadRequestError(
         "Information not received. Try refreshing the page."
@@ -114,11 +123,15 @@ const handleSignUp = async (req, res, next) => {
       throw new ConflictError("This user already exists. Please sign in!");
     }
     let hashedPass = await hashPassword(signUpInfo.pass);
+    //at this point, it is safe to guarantee a new user will be created.
+    let cloudinaryImageInfo = await uploadFile(req.file.path);
+    if (!cloudinaryImageInfo) throw new BadRequestError("Failed to upload image to cloudinary")
+
     let information = {
       username: signUpInfo.user,
       password: hashedPass,
       registrationDate: register,
-      profileImage: filePath,
+      profileImage: cloudinaryImageInfo.url,
     };
     let r = await insertNewUser(information);
     let userId = r.ops[0]._id;
@@ -141,7 +154,7 @@ const handleSignUp = async (req, res, next) => {
       username: signUpInfo.user,
       accessToken: accessToken,
       _id: userId,
-      profileImage: filePath,
+      profileImage: cloudinaryImageInfo.url,
     });
   } catch (err) {
     next(err);

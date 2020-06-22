@@ -8,6 +8,8 @@ const bodyParser = require("body-parser");
 const morgan = require("morgan");
 //multer
 const multer = require("multer");
+//cors
+const cors = require('cors')
 //logger.
 //mongo
 const MongoClient = require("mongodb").MongoClient;
@@ -63,7 +65,7 @@ const { handleConnection, getConnection } = require("./connection/connection");
 
 //data file for items
 const upload = multer({ dest: "./public/uploads/" });
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 const dbName = "ParkGames";
 // LOGGER.
 var app = express();
@@ -133,7 +135,6 @@ client.connect(async (err) => {
           //room is the eventId-First-Room.
           socket.join(room);
           // socket.emit('room-message-history', getRoom)
-          // io.to(room).emit('chat-message', 'JOINED') //useless - change.
           let messageInfo = {
             joined: true,
             message: `${name} has joined ${room}.`,
@@ -179,14 +180,11 @@ client.connect(async (err) => {
     socket.on("sendMessage", async (data, callback) => {
       //now that we have the message...
       //get particular room
-      console.log(data);
-      let getRoom = await db
-        .collection(collectionRooms)
-        .findOne({ _id: data.room });
-      await db
-        .collection(collectionRooms)
-        .updateOne({ _id: data.room }, { $push: { messages: data } });
-      // io.in(data.room).emit('chat-message', data)
+
+
+      await db.collection(collectionRooms).findOne({ _id: data.room });
+      await db.collection(collectionRooms).updateOne({ _id: data.room }, { $push: { messages: data } });
+      callback(data)
       socket.broadcast.emit("chat-message", data);
     });
     socket.on("leaveRoom", async (data, callback) => {
@@ -226,11 +224,14 @@ app.use(function (req, res, next) {
   );
   next();
 });
+app.use(cors())
+
 app.use(morgan("tiny"));
 app.use(express.static("./server/assets"));
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
 app.use("/", express.static(__dirname + "/"));
+
 // --------------------ENDPOINTS-------------------
 //signup
 app.post("/SignUp", upload.single("file"), handleSignUp);

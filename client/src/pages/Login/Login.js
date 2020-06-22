@@ -17,6 +17,7 @@ import {
   loginRequest,
 } from "../../components/actions/userActions";
 import { useDispatch } from "react-redux";
+import { url } from '../../endpoint'
 //Reference Sebastian Silbermann - Materials UI OpenSource Code
 function Copyright() {
   return (
@@ -74,8 +75,10 @@ export default function SignIn() {
       //action to request user data.
       dispatch(loginRequest());
 
+
+
       try {
-        let response = await fetch("/Login", {
+        let response = await fetch(`${url}/Login`, {
           method: "POST",
           headers: {
             Accept: "application/json",
@@ -84,6 +87,7 @@ export default function SignIn() {
           body: JSON.stringify(userInfo),
         });
         let userResponse = await response.json();
+
         if (response.status === 200) {
           let name = userResponse.username.split("@")[0];
           localStorage.setItem("accesstoken", userResponse.accessToken);

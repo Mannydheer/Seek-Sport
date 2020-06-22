@@ -5,6 +5,7 @@ import Join from "../Join";
 import Leave from "../Leave";
 import Cancel from "../Cancel";
 import { useLocation } from "react-router-dom";
+import { url } from '../../endpoint'
 
 const EventDetails = ({ index, event, canceled, setCanceled }) => {
   const userInfo = useSelector((state) => state.userReducer);
@@ -24,7 +25,7 @@ const EventDetails = ({ index, event, canceled, setCanceled }) => {
         let token = localStorage.getItem("accesstoken");
         try {
           let response = await fetch(
-            `/currentEventParticipants/${event.participantId}`,
+            `${url}/currentEventParticipants/${event.participantId}`,
             {
               method: "GET",
               headers: {
@@ -111,16 +112,16 @@ const EventDetails = ({ index, event, canceled, setCanceled }) => {
           )}
         </JoinLeave>
       ) : (
-        userInfo._id === event.userId && (
-          <JoinLeave>
-            <Cancel
-              canceled={canceled}
-              setCanceled={setCanceled}
-              event={event}
-            />
-          </JoinLeave>
-        )
-      )}
+          userInfo._id === event.userId && (
+            <JoinLeave>
+              <Cancel
+                canceled={canceled}
+                setCanceled={setCanceled}
+                event={event}
+              />
+            </JoinLeave>
+          )
+        )}
       {/* IMAGES. */}
       <ParticipantText>
         <Participants>Participants</Participants>

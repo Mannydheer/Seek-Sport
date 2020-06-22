@@ -13,6 +13,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
 import { makeStyles } from "@material-ui/core/styles";
+import { url } from '../../endpoint'
 //styled.
 const useStyles = makeStyles({
   root: {
@@ -50,7 +51,7 @@ export default function Join({ setJoined, joined, event }) {
       };
       let token = localStorage.getItem("accesstoken");
       try {
-        let response = await fetch("/joinEvent", {
+        let response = await fetch(`${url}/joinEvent`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

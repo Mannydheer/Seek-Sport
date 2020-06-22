@@ -18,6 +18,8 @@ import {
   loginSuccess,
   loginError,
 } from "../../components/actions/userActions";
+import { url } from "../../endpoint";
+
 
 //Reference Sebastian Silbermann - Materials UI OpenSource Code
 function Copyright() {
@@ -81,6 +83,8 @@ export default function SignUp() {
     files.append("file", file);
     files.append("name", userInfo.user);
     files.append("pass", userInfo.pass);
+
+    console.log(files)
     const handleSignup = async () => {
       if (userInfo.user !== "" && userInfo.pass !== "" && file !== null) {
         //remove previous token since there is a new user.
@@ -88,7 +92,7 @@ export default function SignUp() {
 
         dispatch(loginRequest());
         try {
-          let response = await fetch("/SignUp", {
+          let response = await fetch(`${url}/SignUp`, {
             method: "POST",
             body: files,
           });

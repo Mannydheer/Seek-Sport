@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectPark } from "../actions/parkActions";
 import ParkDetails from "../ParkDetails";
 
+
 const ParkSidebar = ({ parkInfo, parkMenu, setParkMenu }) => {
   let history = useHistory();
   const dispatch = useDispatch();

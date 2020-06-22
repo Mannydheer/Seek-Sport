@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import EventDetails from "../../../src/components/EventDetails";
+import { url } from "../../endpoint"
 
 const UserActivities = () => {
   const userLoggedIn = useSelector((state) => state.userReducer);
@@ -16,7 +17,7 @@ const UserActivities = () => {
       if (!unmounted) {
         let token = localStorage.getItem("accesstoken");
         try {
-          let response = await fetch(`/userActivities/${userLoggedIn._id}`, {
+          let response = await fetch(`${url}/userActivities/${userLoggedIn._id}`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
