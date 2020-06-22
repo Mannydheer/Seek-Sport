@@ -1,2 +1,2 @@
-export const url = "https://seeksport.herokuapp.com"
+export const url = ""
 //https://seeksport.herokuapp.com

@@ -76,6 +76,10 @@ const io = socketio(server);
 //this wil run when we have a client connection on our ion instance.
 //this will be used to keep track of clients joining and leaving. (connect and disconnect0)
 //connect to db
+io.clients((error, clients) => {
+  if (error) throw error;
+  console.log(clients, 'outside'); // => [6em3d4TJP8Et9EMNAAAA, G5p55dHhGgUnLUctAAAB]
+});
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -85,6 +89,13 @@ client.connect(async (err) => {
   console.log("Connected to DB in addUserChat");
   const db = client.db(dbName);
   io.on("connection", (socket) => {
+    //
+
+    io.clients((error, clients) => {
+      if (error) throw error;
+      console.log(clients, 'CLIENT'); // => [6em3d4TJP8Et9EMNAAAA, G5p55dHhGgUnLUctAAAB]
+    });
+    //
     console.log("we have a new connections!!!");
     socket.on("join", async ({ name, userId, room }, callback) => {
       console.log("inside join socket.");

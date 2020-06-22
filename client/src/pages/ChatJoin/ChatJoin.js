@@ -21,7 +21,8 @@ import { url } from '../../endpoint';
 
 
 let socket;
-let ENDPOINT = "localhost:4000";
+let ENDPOINT = "localhost:4000" || url;
+console.log(ENDPOINT, 'THIS IS ENPOINT ')
 
 const ChatJoin = () => {
   //initialize SOCKET ENDPOINT.
@@ -127,7 +128,7 @@ const ChatJoin = () => {
           dispatch(leaveRoom(data));
           //also redirect to room page.
         });
-        socket.off();
+        socket.disconnect();
       };
     }
   }, [ENDPOINT, eventId]);
@@ -179,7 +180,7 @@ const ChatJoin = () => {
   //--------------SOCKET WILL LISTEN FOR CHAT-MESSAGE---------------
   useEffect(() => {
     socket.on("chat-message", (message) => {
-      console.log(message)
+
       dispatch(addMessage(message));
     });
     return () => {
